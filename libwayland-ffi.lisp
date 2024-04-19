@@ -28,3 +28,7 @@
   (pid :pointer)
   (uid :pointer)
   (gid :pointer))
+
+(defcfun ("wl_client_create" client-create) :pointer
+  (display :pointer)
+  (fd :int32))

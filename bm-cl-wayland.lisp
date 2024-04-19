@@ -11,7 +11,7 @@
 (defpackage #:bm-cl-wayland
   (:use #:cl #:bm-cl-libwayland #:cffi)
   (:nicknames :wl)
-  (:export display-create))
+  (:export display-create create-client))
 (in-package :bm-cl-wayland)
 
 (defclass object ()
@@ -37,6 +37,15 @@
   (let* ((pid (client-get-credentials client))
 	 (client (gethash pid *client-tracker*)))
     (unless client (error (format nil "No client found for pid ~a" pid)))
+    client))
+
+(defun create-client (display fd)
+  "This function should be called when a new client connects to the socket.
+This will in essence forward the client to the libwayland implementation
+and set up the client object in the lisp world for further referencing."
+  (let* ((client (client-create display fd))
+	 (pid (client-get-credentials client)))
+    (setf (gethash pid *client-tracker*) (make-instance 'client))
     client))
 
 
