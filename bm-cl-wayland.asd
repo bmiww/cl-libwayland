@@ -12,6 +12,8 @@
   :license "GPLv3"
   :version "0.0.1"
   :depends-on (#:xmls
-	       #:str)
+	       #:str
+	       #:cffi)
   :components ((:file "package")
+	       (:file "libwayland-ffi")
 	       (:file "bm-cl-wayland")))
