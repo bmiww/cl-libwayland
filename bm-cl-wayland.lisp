@@ -18,13 +18,17 @@
   ((display :initarg :display :reader display)
    (version :initarg :version :reader version)))
 
+(defvar *global-tracker* (make-hash-table :test 'equal))
+
 (defclass global (object) ())
+(defgeneric bind (client resource id))
 
 ;; ┌─┐┬  ┬┌─┐┌┐┌┌┬┐
 ;; │  │  │├┤ │││ │
 ;; └─┘┴─┘┴└─┘┘└┘ ┴
 (defclass client ()
-  ((objects :initform (make-hash-table :test 'equal) :accessor objects)))
+  ((objects :initform (make-hash-table :test 'eq) :accessor objects)
+   (display :initarg :display :reader display)))
 
 (defvar *client-tracker* (make-hash-table :test 'equal))
 
@@ -45,45 +49,49 @@ This will in essence forward the client to the libwayland implementation
 and set up the client object in the lisp world for further referencing."
   (let* ((client (client-create display fd))
 	 (pid (client-get-credentials client)))
-    (setf (gethash pid *client-tracker*) (make-instance 'client))
+    (setf (gethash pid *client-tracker*) (make-instance 'client :display display))
     client))
+
+(defmethod iface ((client client) interface)
+  (let ((iface (gethash interface (objects client))))
+    (unless iface (error (format nil "No interface found for ~a" interface)))
+    iface))
+
+(defmethod (setf iface) (iface (client client) interface)
+  (setf (gethash interface (objects client)) iface))
 
 
 ;; ┌┬┐┌─┐┌┬┐┌─┐
 ;;  ││├─┤ │ ├─┤
 ;; ─┴┘┴ ┴ ┴ ┴ ┴
-
-;; TODO: Need to create a way to insert incremental/random values here
 ;; TODO: Might not need to be a hash-table since i intend this to be ephemeral
 (defvar *data-tracker* (make-hash-table :test 'equal))
+;; TODO: This could technically run out - so reserve data should possibly check for C uint32 limits
+(defvar *data-counter* 0)
 
+(defun reserve-data () (incf *data-counter*))
 (defun get-data (data-ptr) (gethash (mem-ref data-ptr :int) *data-tracker*))
+(defun pop-data (data-ptr) (prog1 (get-data data-ptr) (remhash (mem-ref data-ptr :int) *data-tracker*)))
+(defun data-ptr (data) (let ((ptr (make-pointer :int))) (setf (mem-ref ptr :int) data) ptr))
+(defun set-data (index data) (setf (gethash index *data-tracker*) data))
 
-;; ┌─┐┌─┐┬  ┌─┐┬  ┌─┐┌─┐┌─┐
-;; ├┤ ├┤ │  │  │  ├─┤└─┐└─┐
-;; └  └  ┴  └─┘┴─┘┴ ┴└─┘└─┘
+;; ┌─┐┌─┐┬  ┬┌─┐┌─┐┌─┐┌─┐
+;; ├┤ ├┤ │  │├┤ ├─┤│  ├┤
+;; └  └  ┴  ┴└  ┴ ┴└─┘└─┘
 (defpackage #:bm-cl-wayland.compositor
-  (:use #:cl #:cffi)
+  (:use #:cl #:cffi #:bm-cl-wayland)
   (:nicknames :wl-compositor))
 (in-package #:bm-cl-wayland.compositor)
-
-(defclass compositor (global) ()
+(defclass compositor (object) ()
   (:default-initargs :version 4))
 
 (defgeneric create-surface (client resource id))
 (defgeneric create-region (client resource id))
-(defgeneric bind (client resource id))
 
-(defvar *bind* nil)
 (defvar *interface* nil)
 (defcstruct interface
   (create-surface :pointer)
   (create-region :pointer))
-
-(cl-async::define-c-callback bind-ffi :void ((client :pointer) (data :pointer) (version :uint) (id :uint))
-  (let* ((client (get-client client))
-	 (data (get-data data)))
-    (funcall (bind client data (mem-ref version :uint) (mem-ref id :uint)))))
 
 (cl-async::define-c-callback create-surface-ffi :void ((client :pointer) (resource :pointer) (id :uint))
   (format t "CREATE-SURFACE: ~a ~a ~a~%" client resource id))
@@ -92,14 +100,41 @@ and set up the client object in the lisp world for further referencing."
   (format t "CREATE-REGION: ~a ~a ~a~%" client resource id))
 
 (defmethod initialize-instance :after ((compositor compositor) &key)
-  (unless *bind* (setf *bind* (callback bind-ffi)))
   (unless *interface*
     (with-foreign-object (interface 'interface)
       (setf (foreign-slot-value interface '(:struct interface) 'create-surface) (callback create-surface-ffi))
       (setf (foreign-slot-value interface '(:struct interface) 'create-region) (callback create-region-ffi))
-      (setf *interface* interface)))
-  (global-create (display compositor) *interface* (version compositor) (null-pointer) *bind*))
+      (setf *interface* interface))))
 
+;; ┌─┐┌─┐┬  ┌─┐┬  ┌─┐┌┐ ┌─┐┬
+;; ├┤ ├┤ │  │ ┬│  │ │├┴┐├─┤│
+;; └  └  ┴  └─┘┴─┘└─┘└─┘┴ ┴┴─┘
+(defpackage #:bm-cl-wayland.compositor-global
+  (:use #:cl #:cffi #:bm-cl-wayland)
+  (:nicknames :wl-compositor-global))
+(in-package #:bm-cl-wayland.compositor-global)
+
+(defclass compositor (global) ()
+  (:default-initargs :version 4))
+
+;; TODO: Needs to post resource to client too.
+(defmethod bind ((compositor compositor) client data version id)
+  "Default bind implementation for the wl_compositor global object.
+This can be overriden by inheritance in case if custom behaviour is required."
+  (compositor (make-instance 'bm-cl-wayland.compositor::compositor (display client))))
+
+(cl-async::define-c-callback bind-ffi :void ((client :pointer) (data :pointer) (version :uint) (id :uint))
+  (let* ((client (get-client client))
+	 (data (pop-data data))
+	 (compositor (gethash data *global-tracker*)))
+    (funcall 'bind compositor client (null-pointer) (mem-ref version :uint) (mem-ref id :uint))))
+
+(defvar *bind* (callback bind-ffi))
+
+(defmethod initialize-instance :after ((compositor compositor) &key)
+  (let* ((next-data-id (reserve-data))
+	 (global (global-create (display compositor) *interface* (version compositor) (data-ptr next-data-id) *bind*)))
+    (set-data next-data-id (setf (gethash (global-get-name global) *global-tracker*) global))))
 
 ;; ┌─┐─┐ ┬┌┬┐┌─┐┌┐┌┌─┐┬┌─┐┌┐┌  ┌─┐┬  ┌─┐┌─┐┌─┐
 ;; ├┤ ┌┴┬┘ │ ├┤ │││└─┐││ ││││  │  │  ├─┤└─┐└─┐
