@@ -8,7 +8,7 @@
 (defpackage :bm-cl-wayland.parser
   (:use :cl :xmls :split-sequence)
   (:export name enum description arg-type args value entries enum-name bitfield-p requests events
-	   version enums read-protocol))
+	   version enums read-protocol event))
 (in-package :bm-cl-wayland.parser)
 
 ;; ┌─┐┌┐┌┌┬┐┬─┐┬ ┬

@@ -139,20 +139,51 @@
 (defun gen-event-c-struct (event)
   `(,(symbolify (name event)) :pointer))
 
-;; TODO: Generate initialize instance - depends also on the list of events
-(defun gen-interface (interface namespace)
+(defun gen-bind-callback (interface namespace)
+  (let ((parent-name (symbolify ":~a/~a" namespace (name interface))))
+  `(defmethod bind ((compositor compositor) client data version id)
+     "Default bind implementation for the ,(name interface) global object.
+This can be overriden by inheritance in case if custom behaviour is required."
+     (let ((global (make-instance ',(symbolify "~a::~a" parent-name (name interface)) (display client))))
+       (setf (iface client id) global)
+       (create-resource client ,(symbolify "~a::*interface*" pkg-name) version id)))))
+
+(defun gen-bind-c-callback (interface)
+  `(cl-async::define-c-callback bind-ffi :void ((client :pointer) (data :pointer) (version :uint) (id :uint))
+     (let* ((client (get-client client))
+	    (data (pop-data data))
+	    (global (gethash data *global-tracker*)))
+       (funcall 'bind global client (null-pointer) (mem-ref version :uint) (mem-ref id :uint)))))
+
+(defun gen-interface-global (interface namespace)
+  (print "GENNING GLOB")
+  (let ((pkg-name  (symbolify ":~a/~a.global" namespace (name interface)))
+	(classname (symbolify (name interface))))
+    (append
+     `((defpackage ,pkg-name
+	 (:use :cl :wl)
+	 (:export ,classname)))
+     `((in-package ,pkg-name))
+     `((defclass ,classname (wl:global) ()
+	 (:default-initargs :version ,(version interface))
+	 (:documentation ,(description interface))))
+     `(,(gen-bind-callback interface namespace))
+     `(,(gen-bind-c-callback interface))
+     `((defvar *bind* (callback ,(symbolify "~a-ffi" (name interface)))))
+     )))
+
+
+(defun gen-interface-regular (interface namespace)
+  (print "GENNING REG")
   (let ((pkg-name  (symbolify ":~a/~a" namespace (name interface)))
-	(classname (symbolify (name interface)))
-	(global?   (member (name interface) *global-interfaces*)))
-    ;; TODO: Actually generate two packages, one for global and one for non-global... Maybe?
+	(classname (symbolify (name interface))))
     (append
      `((defpackage ,pkg-name
 	 (:use :cl :wl)
 	 (:export
 	  ,classname)))
      `((in-package ,pkg-name))
-     `((defclass ,classname ,(if global? `(wl:global) `(wl:object))
-	 ()
+     `((defclass ,classname (wl:object) ()
 	 (:default-initargs :version ,(version interface))
 	 (:documentation ,(description interface))))
      `((defvar *interface* nil))
@@ -160,6 +191,15 @@
 	 ,@(mapcar 'gen-event-c-struct (events interface))))
      (mapcar 'gen-event-generic (events interface))
      (mapcar 'gen-event-callback (events interface)))))
+
+;; TODO: Generate initialize instance - depends also on the list of events
+(defun gen-interface (interface namespace)
+  (let ((global? (member (name interface) *global-interfaces* :test #'string=)))
+    (if global?
+	(append
+	 (gen-interface-regular interface namespace)
+	 (gen-interface-global interface namespace))
+	(gen-interface-regular interface namespace))))
 
 
 (defun gen-code (protocol namespace)

@@ -47,15 +47,15 @@
 (defmethod bind ((compositor compositor) client data version id)
   "Default bind implementation for the wl_compositor global object.
 This can be overriden by inheritance in case if custom behaviour is required."
-  (let ((compositor (make-instance 'bm-cl-wayland.example.compositor::compositor (display client))))
-    (setf (iface client id) compositor)
+  (let ((global (make-instance 'bm-cl-wayland.example.compositor::compositor (display client))))
+    (setf (iface client id) global)
     (create-resource client bm-cl-wayland.example.compositor::*interface* version id)))
 
 (cl-async::define-c-callback bind-ffi :void ((client :pointer) (data :pointer) (version :uint) (id :uint))
   (let* ((client (get-client client))
 	 (data (pop-data data))
-	 (compositor (gethash data *global-tracker*)))
-    (funcall 'bind compositor client (null-pointer) (mem-ref version :uint) (mem-ref id :uint))))
+	 (global (gethash data *global-tracker*)))
+    (funcall 'bind global client (null-pointer) (mem-ref version :uint) (mem-ref id :uint))))
 
 (defvar *bind* (callback bind-ffi))
 
