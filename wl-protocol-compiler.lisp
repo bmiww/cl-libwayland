@@ -6,7 +6,6 @@
 ;; ╚██████╗╚██████╔╝██║ ╚═╝ ██║██║     ██║███████╗███████╗██║  ██║
 ;;  ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚═╝     ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝
 ;; NOTE: Example invocations
-;; (generate-wayland-base)
 ;; (generate-wayland-classes 'wayland-server "/usr/share/wayland/wayland.xml" :namespace "wl")
 ;; (generate-wayland-classes 'xdg-shell "protocol/xdg-shell.xml" :namespace "xdg")
 
@@ -127,34 +126,6 @@
 	 (protocol (read-protocol xml))
 	 (code (gen-lisp-code protocol namespace)))
     (with-open-file (stream (format nil "~A.lisp" package)
-			    :direction :output
-			    :if-exists :supersede)
-      (loop :for xep :in code
-	    :do (format stream "~S~%~%" xep)))))
-
-
-;; ┌┐ ┌─┐┌─┐┌─┐
-;; ├┴┐├─┤└─┐├┤
-;; └─┘┴ ┴└─┘└─┘
-(defun gen-lisp-code-main-pkg ()
-  (append
-   `((defpackage :wl
-       (:use #:cl)
-       (:export wl-object match-event-opcode match-request-opcode get-request-arg-types
-		id ifname version
-		,@(mapcar (lambda (a) a) *arg-type-symbols*))))
-   `((in-package :wl))
-   `((defvar *arg-type-symbols* ',*arg-type-symbols*))
-   `((defclass wl-object () ((id :initarg :id :accessor id)
-			     (ifname :initarg :ifname :reader ifname)
-			     (version :initarg :version :reader version))))
-   `((defgeneric match-event-opcode (obj opcode)))
-   `((defgeneric match-request-opcode (obj opcode)))
-   `((defgeneric get-request-arg-types (obj opcode)))))
-
-(defun generate-wayland-base ()
-  (let* ((code (gen-lisp-code-main-pkg)))
-    (with-open-file (stream "wl-base.lisp"
 			    :direction :output
 			    :if-exists :supersede)
       (loop :for xep :in code
