@@ -13,7 +13,8 @@
   :version "0.0.1"
   :depends-on (#:xmls
 	       #:str
-	       #:cffi)
-  :components ((:file "package")
-	       (:file "libwayland-ffi")
+	       #:cffi
+	       ;; NOTE: Primarily for the define-c-callback macro
+	       #:cl-async)
+  :components ((:file "libwayland-ffi")
 	       (:file "bm-cl-wayland")))
