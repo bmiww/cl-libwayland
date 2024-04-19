@@ -6,8 +6,8 @@
 ;; ╚███╔███╔╝██║  ██║   ██║   ███████╗██║  ██║██║ ╚████║██████╔╝
 ;;  ╚══╝╚══╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═════╝
 ;; TODO: You might need to keep a list of all the interfaces that are actually globals.......
-;; TODO: Maybe one day try to refer to the darn book: https://github.com/rcalixte/wayland-book
-;; It is however also highly incomplete
+;; NOTE: Maybe one day try to refer to the darn book: https://github.com/rcalixte/wayland-book
+;; NOTE: SWC compositor reference: https://github.com/michaelforney/swc
 (defpackage #:bm-cl-wayland
   (:use #:cl #:bm-cl-libwayland #:cffi)
   (:nicknames :wl)
