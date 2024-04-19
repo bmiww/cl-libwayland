@@ -126,19 +126,23 @@
 ;; ┘└┘└─┘└┴┘
 
 ;; TODO: Need to dynamically fill out arguments - instead of just the id thing
-(defun gen-event (interface event)
-  (append
-   `((cl-async::define-c-callback ,(symbolify "~a-ffi" (ev-name event)) :void
-	 ((client :pointer) (resource :pointer) (id :uint))
-       (let ((client (get-client client))
-	     (resource (resource-get-id resource)))
-	 (funcall ',(ev-name event) (iface client resource) client id))))
-   `((defgeneric ,(ev-name event) (resource client id)))))
+(defun gen-event-callback (event)
+  `(cl-async::define-c-callback ,(symbolify "~a-ffi" (name event)) :void
+       ((client :pointer) (resource :pointer) (id :uint))
+     (let ((client (get-client client))
+	   (resource (resource-get-id resource)))
+       (funcall ',(symbolify (name event)) (iface client resource) client id))))
+
+(defun gen-event-generic (event)
+  `(defgeneric ,(symbolify (name event)) (resource client id)))
+
+(defun gen-event-c-struct (event)
+  `(,(symbolify (name event)) :pointer))
 
 ;; TODO: Generate initialize instance - depends also on the list of events
 (defun gen-interface (interface namespace)
   (let ((pkg-name  (symbolify ":~a/~a" namespace (name interface)))
-	(classname (symbolify "~a" (name interface)))
+	(classname (symbolify (name interface)))
 	(global?   (member (name interface) *global-interfaces*)))
     ;; TODO: Actually generate two packages, one for global and one for non-global... Maybe?
     (append
@@ -151,7 +155,11 @@
 	 ()
 	 (:default-initargs :version ,(version interface))
 	 (:documentation ,(description interface))))
-     (mapcar (lambda (event) (gen-event (name interface) event)) (events interface)))))
+     `((defvar *interface* nil))
+     `((defcstruct interface
+	 ,@(mapcar 'gen-event-c-struct (events interface))))
+     (mapcar 'gen-event-generic (events interface))
+     (mapcar 'gen-event-callback (events interface)))))
 
 
 (defun gen-code (protocol namespace)
