@@ -107,7 +107,7 @@
      `((in-package ,if-name))
 
     ;; TODO: This could probably move the client to the wl-object thing
-     `((defclass ,class-name (wl:wl-object)
+     `((defclass ,class-name (wl:object)
 	 ((client :initarg :client :accessor client))
 	 (:default-initargs :version ,(version interface) :ifname ,(name interface))
 	 (:documentation ,(description interface))))

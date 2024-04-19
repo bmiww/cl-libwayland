@@ -6,7 +6,9 @@
 ;; ██║     ██║  ██║██║  ██║███████║███████╗██║  ██║
 ;; ╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝
 (defpackage :bm-cl-wayland.parser
-  (:use :cl :xmls :split-sequence))
+  (:use :cl :xmls :split-sequence)
+  (:export name enum description arg-type args value entries enum-name bitfield-p requests events
+	   version enums read-protocol))
 (in-package :bm-cl-wayland.parser)
 
 ;; ┌─┐┌┐┌┌┬┐┬─┐┬ ┬

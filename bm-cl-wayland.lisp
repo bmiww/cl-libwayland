@@ -11,7 +11,7 @@
 (defpackage #:bm-cl-wayland
   (:use #:cl #:bm-cl-libwayland #:cffi)
   (:nicknames :wl)
-  (:export display-create create-client *global-tracker* resource-get-id))
+  (:export display-create create-client *global-tracker* resource-get-id object))
 (in-package :bm-cl-wayland)
 
 (defclass object ()
