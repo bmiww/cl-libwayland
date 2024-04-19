@@ -6,7 +6,7 @@
 ;; ╚██████╗╚██████╔╝██║ ╚═╝ ██║██║     ██║███████╗███████╗██║  ██║
 ;;  ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚═╝     ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝
 ;; NOTE: Example invocations
-;; (generate-wayland-classes 'wayland-server "/usr/share/wayland/wayland.xml" :namespace "wl")
+;; (generate-wayland-classes 'wayland-core "/usr/share/wayland/wayland.xml" :namespace "wl")
 ;; (generate-wayland-classes 'xdg-shell "protocol/xdg-shell.xml" :namespace "xdg")
 
 (defpackage :bm-cl-wayland.compiler
@@ -121,20 +121,62 @@
 
 (defun gen-lisp-code (protocol namespace) (apply #'append (mapcar (lambda (part) (do-interface part namespace)) protocol)))
 
+;; ┌┐┌┌─┐┬ ┬
+;; │││├┤ │││
+;; ┘└┘└─┘└┴┘
+
+;; TODO: Need to dynamically fill out arguments - instead of just the id thing
+(defun gen-event (interface event)
+  (append
+   `((cl-async::define-c-callback ,(symbolify "~a-ffi" (ev-name event)) :void
+	 ((client :pointer) (resource :pointer) (id :uint))
+       (let ((client (get-client client))
+	     (resource (resource-get-id resource)))
+	 (funcall ',(ev-name event) (iface client resource) client id))))
+   `((defgeneric ,(ev-name event) (resource client id)))))
+
+;; TODO: Generate initialize instance - depends also on the list of events
+(defun gen-interface (interface namespace)
+  (let ((pkg-name  (symbolify ":~a/~a" namespace (name interface)))
+	(classname (symbolify "~a" (name interface)))
+	(global?   (member (name interface) *global-interfaces*)))
+    ;; TODO: Actually generate two packages, one for global and one for non-global... Maybe?
+    (append
+     `((defpackage ,pkg-name
+	 (:use :cl :wl)
+	 (:export
+	  ,classname)))
+     `((in-package ,pkg-name))
+     `((defclass ,classname ,(if global? `(wl:global) `(wl:object))
+	 ()
+	 (:default-initargs :version ,(version interface))
+	 (:documentation ,(description interface))))
+     (mapcar (lambda (event) (gen-event (name interface) event)) (events interface)))))
+
+
+(defun gen-code (protocol namespace)
+  (apply #'append (mapcar (lambda (part) (gen-interface part namespace)) protocol)))
+
 (defun generate-wayland-classes (package xml-file &key namespace)
   (let* ((xml (with-open-file (s xml-file :if-does-not-exist :error) (xmls:parse s)))
 	 (protocol (read-protocol xml))
-	 (code (gen-lisp-code protocol namespace)))
-    (with-open-file (stream (format nil "~A.lisp" package)
+	 (code (gen-code protocol namespace)))
+    (with-open-file (stream (format nil "~a.lisp" package)
 			    :direction :output
 			    :if-exists :supersede)
       (loop :for xep :in code
-	    :do (format stream "~S~%~%" xep)))))
+	    :do (format stream "~s~%~%" xep)))))
 
 
 ;; ┬ ┬┌┬┐┬┬
 ;; │ │ │ ││
 ;; └─┘ ┴ ┴┴─┘
+
+(defvar *global-interfaces*
+  '("wl_compositor"
+    "wl_subcompositor"))
+
+(defun symbolify (&rest args) (read-from-string (apply 'format `(nil ,@args))))
 
 (defun nump (s)
   "Return t if `s' contains at least one character and all characters are numbers."
