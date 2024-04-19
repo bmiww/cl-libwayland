@@ -23,6 +23,9 @@
 (defclass global (object) ())
 (defgeneric bind (client resource id))
 
+(defun create-resource (client interface version id)
+  ())
+
 ;; ┌─┐┬  ┬┌─┐┌┐┌┌┬┐
 ;; │  │  │├┤ │││ │
 ;; └─┘┴─┘┴└─┘┘└┘ ┴
@@ -121,11 +124,12 @@ and set up the client object in the lisp world for further referencing."
 (defclass compositor (global) ()
   (:default-initargs :version 4))
 
-;; TODO: Needs to post resource to client too.
 (defmethod bind ((compositor compositor) client data version id)
   "Default bind implementation for the wl_compositor global object.
 This can be overriden by inheritance in case if custom behaviour is required."
-  (compositor (make-instance 'bm-cl-wayland.compositor::compositor (display client))))
+  (let ((compositor (make-instance 'bm-cl-wayland.compositor::compositor (display client))))
+    (setf (iface client id) compositor)
+    (create-resource client bm-cl-wayland.compositor::*interface* version id)))
 
 (cl-async::define-c-callback bind-ffi :void ((client :pointer) (data :pointer) (version :uint) (id :uint))
   (let* ((client (get-client client))
