@@ -23,8 +23,7 @@
 (defclass global (object) ())
 (defgeneric bind (client resource id))
 
-(defun create-resource (client interface version id)
-  ())
+(defun create-resource (client interface version id) (resource-create client interface version id))
 
 ;; ┌─┐┬  ┬┌─┐┌┐┌┌┬┐
 ;; │  │  │├┤ │││ │
