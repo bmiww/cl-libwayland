@@ -8,7 +8,8 @@
 (defpackage :bm-cl-libwayland
   (:use :cl :cffi)
   (:nicknames :wl-ffi)
-  (:export display-create global-create global-get-name resource-get-id resource-create))
+  (:export display-create global-create global-get-name resource-get-id resource-create
+	   client-create))
 
 (in-package :bm-cl-libwayland)
 (define-foreign-library wayland-server

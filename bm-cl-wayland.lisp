@@ -39,7 +39,7 @@
     (wl-ffi::client-get-credentials client pid uid gid)
     (values (mem-aref pid :int) (mem-aref uid :int) (mem-aref gid :int))))
 
-(defun get-client (client-ptr)
+(defun get-client (client)
   (let* ((pid (client-get-credentials client))
 	 (client (gethash pid *client-tracker*)))
     (unless client (error (format nil "No client found for pid ~a" pid)))
