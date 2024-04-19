@@ -11,7 +11,7 @@
 (defpackage #:bm-cl-wayland
   (:use #:cl #:bm-cl-libwayland #:cffi)
   (:nicknames :wl)
-  (:export display-create create-client))
+  (:export display-create create-client *global-tracker* resource-get-id))
 (in-package :bm-cl-wayland)
 
 (defclass object ()
@@ -85,8 +85,8 @@ and set up the client object in the lisp world for further referencing."
 (defclass compositor (object) ()
   (:default-initargs :version 4))
 
-(defgeneric create-surface (client resource id))
-(defgeneric create-region (client resource id))
+(defgeneric create-surface (resource client id))
+(defgeneric create-region (resource client id))
 
 (defvar *interface* nil)
 (defcstruct interface
@@ -94,10 +94,14 @@ and set up the client object in the lisp world for further referencing."
   (create-region :pointer))
 
 (cl-async::define-c-callback create-surface-ffi :void ((client :pointer) (resource :pointer) (id :uint))
-  (format t "CREATE-SURFACE: ~a ~a ~a~%" client resource id))
+  (let ((client (get-client client))
+	(resource (resource-get-id resource)))
+    (funcall 'create-surface (iface client resource) client id)))
 
 (cl-async::define-c-callback create-region-ffi :void ((client :pointer) (resource :pointer) (id :uint))
-  (format t "CREATE-REGION: ~a ~a ~a~%" client resource id))
+  (let ((client (get-client client))
+	(resource (resource-get-id resource)))
+    (funcall 'create-surface (iface client resource) client id)))
 
 (defmethod initialize-instance :after ((compositor compositor) &key)
   (unless *interface*
@@ -143,6 +147,12 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
 (defclass compositor (bm-cl-wayland.compositor::compositor)
   ())
+
+(defmethod create-surface ((compositor compositor) client resource id)
+  (format t "CREATE-SURFACE: ~a ~a ~a~%" client resource id))
+
+(defmethod create-region ((compositor compositor) client resource id)
+  (format t "CREATE-REGION: ~a ~a ~a~%" client resource id))
 
 (defun pretend-func ()
   (let ((display (display-create)))

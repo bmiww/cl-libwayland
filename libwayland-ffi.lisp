@@ -8,7 +8,7 @@
 (defpackage :bm-cl-libwayland
   (:use :cl :cffi)
   (:nicknames :wl-ffi)
-  (:export display-create global-create global-get-name))
+  (:export display-create global-create global-get-name resource-get-id resource-create))
 
 (in-package :bm-cl-libwayland)
 (define-foreign-library wayland-server
@@ -35,3 +35,13 @@
 (defcfun ("wl_client_create" client-create) :pointer
   (display :pointer)
   (fd :int32))
+
+
+(defcfun ("wl_resource_create" resource-create) :pointer
+  (client :pointer)
+  (interface :pointer)
+  (version :int32)
+  (id :uint32))
+
+(defcfun ("wl_resource_get_id" resource-get-id) :uint32
+  (resource :pointer))
