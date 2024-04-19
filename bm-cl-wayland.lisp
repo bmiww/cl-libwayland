@@ -73,6 +73,14 @@ and set up the client object in the lisp world for further referencing."
 
 (defun reserve-data () (incf *data-counter*))
 (defun get-data (data-ptr) (gethash (mem-ref data-ptr :int) *data-tracker*))
-(defun pop-data (data-ptr) (prog1 (get-data data-ptr) (remhash (mem-ref data-ptr :int) *data-tracker*)))
-(defun data-ptr (data) (let ((ptr (make-pointer :int))) (setf (mem-ref ptr :int) data) ptr))
+(defun pop-data (data-ptr)
+  (prog1 (get-data data-ptr)
+    (remhash (mem-ref data-ptr :int) *data-tracker*)
+    (foreign-free data-ptr)))
+
+(defun data-ptr (data)
+  (with-foreign-object (data-ptr :int)
+    (setf (mem-ref data-ptr :int) data)
+    data-ptr))
+
 (defun set-data (index data) (setf (gethash index *data-tracker*) data))
