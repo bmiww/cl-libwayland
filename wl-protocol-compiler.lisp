@@ -150,7 +150,7 @@
   `(,(symbolify (name request)) :pointer))
 
 (defun gen-bind-callback ()
-  `(defmethod bind ((compositor compositor) client data version id)
+  `(defmethod dispatch-bind ((global global) client data version id)
      "Default bind implementation for the ,(name interface) global object.
 This can be overriden by inheritance in case if custom behaviour is required."
      (let ((bound (make-instance ',(symbolify "dispatch") (display client))))
@@ -158,19 +158,18 @@ This can be overriden by inheritance in case if custom behaviour is required."
        (create-resource client ,(symbolify "*interface*") version id))))
 
 (defun gen-bind-c-callback ()
-  `(cl-async::define-c-callback bind-ffi :void ((client :pointer) (data :pointer) (version :uint) (id :uint))
+  `(cl-async::define-c-callback dispatch-bind-ffi :void ((client :pointer) (data :pointer) (version :uint) (id :uint))
      (let* ((client (get-client client))
 	    (data (pop-data data))
 	    (global (gethash data *global-tracker*)))
-       (funcall 'bind global client (null-pointer) (mem-ref version :uint) (mem-ref id :uint)))))
+       (funcall 'dispatch-bind global client (null-pointer) (mem-ref version :uint) (mem-ref id :uint)))))
 
 (defun gen-interface (interface namespace)
   (let ((pkg-name  (symbolify ":~a/~a" namespace (name interface)))
 	(global? (member (name interface) *global-interfaces* :test #'string=)))
     (append
      `((defpackage ,pkg-name
-	 (:shadowing-import-from #:wl #:global)
-	 (:use :cl :wl)
+	 (:use :cl :wl :cffi)
 	 (:export dispatch global)))
      `((in-package ,pkg-name))
      `((defclass dispatch (wl:object) ()
@@ -184,12 +183,12 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
      ;; NOTE: Global class when applicable
      (when global?
-       `((defclass global (wl:global) ()
+       `((defclass global (wl::global) ()
 	   (:default-initargs :version ,(version interface))
 	   (:documentation ,(description interface)))
-	 (defvar *bind* (callback ,(symbolify "~a-ffi" (name interface))))
 	 ,(gen-bind-callback)
-	 ,(gen-bind-c-callback))))))
+	 ,(gen-bind-c-callback)
+	 (defvar *dispatch-bind* (callback ,(symbolify "dispatch-bind-ffi"))))))))
 
 
 (defun gen-code (protocol namespace)
