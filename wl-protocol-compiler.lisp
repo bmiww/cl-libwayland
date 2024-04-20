@@ -158,13 +158,19 @@
 (defun gen-request-c-arg (arg) `(,(symbolify (name arg)) ,(map-arg-type-to-c arg)))
 (defun gen-generic-arg (arg) (symbolify (name arg)))
 
+(defun gen-request-c-funcall-arg (arg) (symbolify (name arg)))
+
 ;; TODO: Need to dynamically fill out arguments - instead of just the id thing
 (defun gen-request-callback (request)
   `(cl-async::define-c-callback ,(symbolify "~a-ffi" (name request)) :void
        ((client :pointer) (resource :pointer) ,@(mapcar 'gen-request-c-arg (args request)))
      (let ((client (get-client client))
 	   (resource (resource-get-id resource)))
-       (funcall ',(symbolify (name request)) (iface client resource) client id))))
+       (funcall
+	',(symbolify (name request))
+	(iface client resource)
+	client
+	,@(mapcar 'gen-request-c-funcall-arg (args request))))))
 
 (defun gen-request-generic (request)
   `(defgeneric ,(symbolify (name request)) (resource client ,@(mapcar 'gen-generic-arg (args request)))))
