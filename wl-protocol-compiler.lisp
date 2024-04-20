@@ -147,7 +147,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
 (defun gen-c-slot-init (request)
   `(setf
-    (foreign-slot-value interface '(:struct interface) (symbolify "'~a" (name request)))
+    (foreign-slot-value interface '(:struct interface) ,(symbolify "'~a" (name request)))
     (callback ,(symbolify "~a-ffi" (name request)))))
 
 (defun gen-dispatch-init (interface)
