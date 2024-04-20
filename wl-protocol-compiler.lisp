@@ -217,16 +217,27 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (defun gen-code (protocol namespace)
   (apply #'append (mapcar (lambda (part) (gen-interface part namespace)) protocol)))
 
+(defun gen-asd (package namespace)
+  `((asdf:defsystem ,(symbolify "#:bm-cl-wayland.~a" package)
+     :serial t
+     :license "GPLv3"
+     :version "0.0.1"
+     :depends-on (#:cffi #:cl-async)
+     :components ((:file "bm-cl-wayland")
+		  (:file package)))))
+
 (defun generate-wayland-classes (package xml-file &key namespace)
   (let* ((xml (with-open-file (s xml-file :if-does-not-exist :error) (xmls:parse s)))
 	 (protocol (read-protocol xml))
-	 (code (gen-code protocol namespace)))
-    (with-open-file (stream (format nil "~a.lisp" package)
-			    :direction :output
-			    :if-exists :supersede)
+	 (code (gen-code protocol namespace))
+	 (asd (gen-asd package namespace))
+	 (filename (format nil "~a.lisp" package)))
+    (with-open-file (stream filename :direction :output :if-exists :supersede)
       (loop :for xep :in code
+	    :do (format stream "~s~%~%" xep)))
+    (with-open-file (stream (format nil "~a.asd" package) :direction :output :if-exists :supersede)
+      (loop :for xep :in asd
 	    :do (format stream "~s~%~%" xep)))))
-
 
 ;; ┬ ┬┌┬┐┬┬
 ;; │ │ │ ││
