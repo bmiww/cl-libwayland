@@ -150,12 +150,11 @@ This can be overriden by inheritance in case if custom behaviour is required."
     (foreign-slot-value interface '(:struct interface) ,(symbolify "'~a" (name request)))
     (callback ,(symbolify "~a-ffi" (name request)))))
 
-(defun gen-dispatch-init (interface)
-  `((defmethod initialize-instance :after ((dispatch dispatch) &key)
-     (unless *interface*
-       (with-foreign-object (interface 'interface)
-	 ,@(mapcar 'gen-c-slot-init (requests interface))
-	 (setf *interface* interface))))))
+(defun gen-interface-struct-var (interface)
+  `((defvar *interface*
+      (with-foreign-object (interface 'interface)
+	,@(mapcar 'gen-c-slot-init (requests interface))
+	interface))))
 
 (defun gen-global-init ()
   `((defmethod initialize-instance :after ((global global) &key)
@@ -176,12 +175,11 @@ This can be overriden by inheritance in case if custom behaviour is required."
      `((defclass dispatch (wl:object) ()
 	 (:default-initargs :version ,(version interface))
 	 (:documentation ,(description interface))))
-     `((defvar *interface* nil))
-     `((defcstruct interface
-	 ,@(mapcar 'gen-request-c-struct (requests interface))))
-     (gen-dispatch-init interface)
      (mapcar 'gen-request-generic (requests interface))
      (mapcar 'gen-request-callback (requests interface))
+     `((defcstruct interface
+	 ,@(mapcar 'gen-request-c-struct (requests interface))))
+     (gen-interface-struct-var interface)
 
      `((defclass global (wl::global) ()
 	 (:default-initargs :version ,(version interface))

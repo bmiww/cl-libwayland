@@ -1,3 +1,13 @@
+
+;; ███████╗██╗  ██╗ █████╗ ███╗   ███╗██████╗ ██╗     ███████╗
+;; ██╔════╝╚██╗██╔╝██╔══██╗████╗ ████║██╔══██╗██║     ██╔════╝
+;; █████╗   ╚███╔╝ ███████║██╔████╔██║██████╔╝██║     █████╗
+;; ██╔══╝   ██╔██╗ ██╔══██║██║╚██╔╝██║██╔═══╝ ██║     ██╔══╝
+;; ███████╗██╔╝ ██╗██║  ██║██║ ╚═╝ ██║██║     ███████╗███████╗
+;; ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝     ╚══════╝╚══════╝
+;; TODO: This example is outdated. The example dispatch and global
+;; could be extracted from one of the compiled protocol lisp files
+;; TODO: The usage example is also not that great.
 ;; ┌─┐┌─┐┬  ┬┌─┐┌─┐┌─┐┌─┐
 ;; ├┤ ├┤ │  │├┤ ├─┤│  ├┤
 ;; └  └  ┴  ┴└  ┴ ┴└─┘└─┘
@@ -11,10 +21,14 @@
 (defgeneric create-surface (resource client id))
 (defgeneric create-region (resource client id))
 
-(defvar *interface* nil)
 (defcstruct interface
   (create-surface :pointer)
   (create-region :pointer))
+(defvar *interface*
+  (with-foreign-object (interface 'interface)
+    (setf (foreign-slot-value interface '(:struct interface) 'create-surface) (callback create-surface-ffi))
+    (setf (foreign-slot-value interface '(:struct interface) 'create-region) (callback create-region-ffi))
+    interface))
 
 (cl-async::define-c-callback create-surface-ffi :void ((client :pointer) (resource :pointer) (id :uint))
   (let ((client (get-client client))
