@@ -13,6 +13,8 @@
   (:use :cl :xmls :bm-cl-wayland.parser))
 (in-package :bm-cl-wayland.compiler)
 
+;; TODO: Perhaps you can instead just generate a global for everything.
+;; Might be a bit confusing - but at least wouldn't have to keep a list of these things
 (defvar *global-interfaces*
   '("wl_registry"
     "wl_compositor"
