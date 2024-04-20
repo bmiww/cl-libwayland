@@ -8,10 +8,13 @@
 ;; TODO: You might need to keep a list of all the interfaces that are actually globals.......
 ;; NOTE: Maybe one day try to refer to the darn book: https://github.com/rcalixte/wayland-book
 ;; NOTE: SWC compositor reference: https://github.com/michaelforney/swc
+;; TODO: create another package entry file - which exports the functions that could be used by the end user
+;; Currently exporting things that the generated files can use
 (defpackage #:bm-cl-wayland
   (:use #:cl #:bm-cl-libwayland #:cffi)
   (:nicknames :wl)
-  (:export display-create create-client *global-tracker* resource-get-id object))
+  (:export display-create create-client *global-tracker* resource-get-id object get-client iface
+	   pop-data display create-resource))
 (in-package :bm-cl-wayland)
 
 (defclass object ()
