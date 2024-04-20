@@ -14,8 +14,14 @@
 (in-package :bm-cl-wayland.compiler)
 
 (defvar *global-interfaces*
-  '("wl_compositor"
-    "wl_subcompositor"))
+  '("wl_registry"
+    "wl_compositor"
+    "wl_subcompositor"
+    "wl_shm"
+    "wl_data_device"
+    "wl_data_device_manager"
+    "wl_seat"
+    "wl_output"))
 
 (defun ev-name (event) (read-from-string (format nil "evt-~a" (name event))))
 (defun req-name (request) (read-from-string (format nil "req-~a" (name request))))
