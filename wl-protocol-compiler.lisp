@@ -13,6 +13,10 @@
   (:use :cl :xmls :bm-cl-wayland.parser))
 (in-package :bm-cl-wayland.compiler)
 
+(defvar *global-interfaces*
+  '("wl_compositor"
+    "wl_subcompositor"))
+
 (defun ev-name (event) (read-from-string (format nil "evt-~a" (name event))))
 (defun req-name (request) (read-from-string (format nil "req-~a" (name request))))
 (defun enum-name (enum) (read-from-string (format nil "enum-~a" (name enum))))
@@ -126,18 +130,18 @@
 ;; ┘└┘└─┘└┴┘
 
 ;; TODO: Need to dynamically fill out arguments - instead of just the id thing
-(defun gen-event-callback (event)
-  `(cl-async::define-c-callback ,(symbolify "~a-ffi" (name event)) :void
+(defun gen-request-callback (request)
+  `(cl-async::define-c-callback ,(symbolify "~a-ffi" (name request)) :void
        ((client :pointer) (resource :pointer) (id :uint))
      (let ((client (get-client client))
 	   (resource (resource-get-id resource)))
-       (funcall ',(symbolify (name event)) (iface client resource) client id))))
+       (funcall ',(symbolify (name request)) (iface client resource) client id))))
 
-(defun gen-event-generic (event)
-  `(defgeneric ,(symbolify (name event)) (resource client id)))
+(defun gen-request-generic (request)
+  `(defgeneric ,(symbolify (name request)) (resource client id)))
 
-(defun gen-event-c-struct (event)
-  `(,(symbolify (name event)) :pointer))
+(defun gen-request-c-struct (request)
+  `(,(symbolify (name request)) :pointer))
 
 (defun gen-bind-callback (interface namespace)
   (let ((parent-name (symbolify ":~a/~a" namespace (name interface))))
@@ -146,9 +150,9 @@
 This can be overriden by inheritance in case if custom behaviour is required."
      (let ((global (make-instance ',(symbolify "~a::~a" parent-name (name interface)) (display client))))
        (setf (iface client id) global)
-       (create-resource client ,(symbolify "~a::*interface*" pkg-name) version id)))))
+       (create-resource client ,(symbolify "~a::*interface*" parent-name) version id)))))
 
-(defun gen-bind-c-callback (interface)
+(defun gen-bind-c-callback ()
   `(cl-async::define-c-callback bind-ffi :void ((client :pointer) (data :pointer) (version :uint) (id :uint))
      (let* ((client (get-client client))
 	    (data (pop-data data))
@@ -168,7 +172,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 	 (:default-initargs :version ,(version interface))
 	 (:documentation ,(description interface))))
      `(,(gen-bind-callback interface namespace))
-     `(,(gen-bind-c-callback interface))
+     `(,(gen-bind-c-callback))
      `((defvar *bind* (callback ,(symbolify "~a-ffi" (name interface)))))
      )))
 
@@ -188,11 +192,12 @@ This can be overriden by inheritance in case if custom behaviour is required."
 	 (:documentation ,(description interface))))
      `((defvar *interface* nil))
      `((defcstruct interface
-	 ,@(mapcar 'gen-event-c-struct (events interface))))
-     (mapcar 'gen-event-generic (events interface))
-     (mapcar 'gen-event-callback (events interface)))))
+	 ,@(mapcar 'gen-request-c-struct (requests interface))))
+     (mapcar 'gen-request-generic (requests interface))
+     (mapcar 'gen-request-callback (requests interface)))))
 
-;; TODO: Generate initialize instance - depends also on the list of events
+
+;; TODO: Generate initialize instance - depends also on the list of requests
 (defun gen-interface (interface namespace)
   (let ((global? (member (name interface) *global-interfaces* :test #'string=)))
     (if global?
@@ -200,7 +205,6 @@ This can be overriden by inheritance in case if custom behaviour is required."
 	 (gen-interface-regular interface namespace)
 	 (gen-interface-global interface namespace))
 	(gen-interface-regular interface namespace))))
-
 
 (defun gen-code (protocol namespace)
   (apply #'append (mapcar (lambda (part) (gen-interface part namespace)) protocol)))
@@ -220,11 +224,8 @@ This can be overriden by inheritance in case if custom behaviour is required."
 ;; │ │ │ ││
 ;; └─┘ ┴ ┴┴─┘
 
-(defvar *global-interfaces*
-  '("wl_compositor"
-    "wl_subcompositor"))
-
-(defun symbolify (&rest args) (read-from-string (apply 'format `(nil ,@args))))
+(defun symbolify (&rest args)
+  (read-from-string (apply 'format `(nil ,@args))))
 
 (defun nump (s)
   "Return t if `s' contains at least one character and all characters are numbers."
