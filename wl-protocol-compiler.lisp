@@ -151,12 +151,12 @@
     ;; TODO: Most likely correct, but needs to be checked
     "enum" :uint))
 
-
 (defun map-arg-type-to-c (arg)
   (let ((c-type (getf-string-equal *arg-type-map* (arg-type arg))))
     (unless c-type (error "Unknown arg type: ~a" (arg-type arg)))
     c-type))
 (defun gen-request-c-arg (arg) `(,(symbolify (name arg)) ,(map-arg-type-to-c arg)))
+(defun gen-generic-arg (arg) (symbolify (name arg)))
 
 ;; TODO: Need to dynamically fill out arguments - instead of just the id thing
 (defun gen-request-callback (request)
@@ -167,7 +167,7 @@
        (funcall ',(symbolify (name request)) (iface client resource) client id))))
 
 (defun gen-request-generic (request)
-  `(defgeneric ,(symbolify (name request)) (resource client id)))
+  `(defgeneric ,(symbolify (name request)) (resource client ,@(mapcar 'gen-generic-arg (args request)))))
 
 (defun gen-request-c-struct (request)
   `(,(symbolify (name request)) :pointer))
