@@ -7,23 +7,11 @@
 ;;  ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚═╝     ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝
 ;; NOTE: Example invocations
 ;; (generate-wayland-classes 'wayland-core "/usr/share/wayland/wayland.xml" :namespace "wl")
-;; (generate-wayland-classes 'xdg-shell "protocol/xdg-shell.xml" :namespace "xdg")
+;; (generate-wayland-classes 'xdg-shell "xmls/xdg-shell.xml" :namespace "xdg")
 
 (defpackage :bm-cl-wayland.compiler
   (:use :cl :xmls :bm-cl-wayland.parser))
 (in-package :bm-cl-wayland.compiler)
-
-;; TODO: Perhaps you can instead just generate a global for everything.
-;; Might be a bit confusing - but at least wouldn't have to keep a list of these things
-(defvar *global-interfaces*
-  '("wl_registry"
-    "wl_compositor"
-    "wl_subcompositor"
-    "wl_shm"
-    "wl_data_device"
-    "wl_data_device_manager"
-    "wl_seat"
-    "wl_output"))
 
 (defun ev-name (event) (read-from-string (format nil "evt-~a" (name event))))
 (defun enum-name (enum) (read-from-string (format nil "enum-~a" (name enum))))
@@ -158,8 +146,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
        (funcall 'dispatch-bind global client (null-pointer) (mem-ref version :uint) (mem-ref id :uint)))))
 
 (defun gen-interface (interface namespace)
-  (let ((pkg-name  (symbolify ":~a/~a" namespace (name interface)))
-	(global? (member (name interface) *global-interfaces* :test #'string=)))
+  (let ((pkg-name  (symbolify ":~a/~a" namespace (name interface))))
     (append
      `((defpackage ,pkg-name
 	 (:use :cl :wl :cffi)
@@ -175,14 +162,12 @@ This can be overriden by inheritance in case if custom behaviour is required."
      (mapcar 'gen-request-generic (requests interface))
      (mapcar 'gen-request-callback (requests interface))
 
-     ;; NOTE: Global class when applicable
-     (when global?
-       `((defclass global (wl::global) ()
-	   (:default-initargs :version ,(version interface))
-	   (:documentation ,(description interface)))
-	 ,(gen-bind-callback)
-	 ,(gen-bind-c-callback)
-	 (defvar *dispatch-bind* (callback ,(symbolify "dispatch-bind-ffi"))))))))
+     `((defclass global (wl::global) ()
+	 (:default-initargs :version ,(version interface))
+	 (:documentation ,(description interface)))
+       ,(gen-bind-callback)
+       ,(gen-bind-c-callback)
+       (defvar *dispatch-bind* (callback ,(symbolify "dispatch-bind-ffi")))))))
 
 
 (defun gen-code (protocol namespace)

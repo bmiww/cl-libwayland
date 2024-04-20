@@ -34,6 +34,31 @@ The core global object.  This is a special singleton object.  It
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
     (FUNCALL 'GET_REGISTRY (IFACE CLIENT RESOURCE) CLIENT REGISTRY)))
 
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 1)
+          (:DOCUMENTATION "core global object
+
+The core global object.  This is a special singleton object.  It
+      is used for internal Wayland protocol features.
+"))
+
+(DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
+  "Default bind implementation for the ,(name interface) global object.
+This can be overriden by inheritance in case if custom behaviour is required."
+  (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
+    (SETF (IFACE CLIENT ID) BOUND)
+    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+
+(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
+    :VOID
+    ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+  (LET* ((CLIENT (GET-CLIENT CLIENT))
+         (DATA (POP-DATA DATA))
+         (GLOBAL (GETHASH DATA *GLOBAL-TRACKER*)))
+    (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER)
+             (MEM-REF VERSION :UINT) (MEM-REF ID :UINT))))
+
+(DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
+
 (DEFPACKAGE :WL/WL_REGISTRY
   (:USE :CL :WL :CFFI)
   (:NICKNAMES :WL-REGISTRY)
@@ -142,6 +167,34 @@ Clients can handle the 'done' event to get notified when
 (DEFVAR *INTERFACE* NIL)
 
 (DEFCSTRUCT INTERFACE)
+
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 1)
+          (:DOCUMENTATION "callback object
+
+Clients can handle the 'done' event to get notified when
+      the related request is done.
+
+      Note, because wl_callback objects are created from multiple independent
+      factory interfaces, the wl_callback interface is frozen at version 1.
+"))
+
+(DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
+  "Default bind implementation for the ,(name interface) global object.
+This can be overriden by inheritance in case if custom behaviour is required."
+  (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
+    (SETF (IFACE CLIENT ID) BOUND)
+    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+
+(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
+    :VOID
+    ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+  (LET* ((CLIENT (GET-CLIENT CLIENT))
+         (DATA (POP-DATA DATA))
+         (GLOBAL (GETHASH DATA *GLOBAL-TRACKER*)))
+    (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER)
+             (MEM-REF VERSION :UINT) (MEM-REF ID :UINT))))
+
+(DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
 (DEFPACKAGE :WL/WL_COMPOSITOR
   (:USE :CL :WL :CFFI)
@@ -259,6 +312,36 @@ The wl_shm_pool object encapsulates a piece of memory shared
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
     (FUNCALL 'RESIZE (IFACE CLIENT RESOURCE) CLIENT SIZE)))
 
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 1)
+          (:DOCUMENTATION "a shared memory pool
+
+The wl_shm_pool object encapsulates a piece of memory shared
+      between the compositor and client.  Through the wl_shm_pool
+      object, the client can allocate shared memory wl_buffer objects.
+      All objects created through the same pool share the same
+      underlying mapped memory. Reusing the mapped memory avoids the
+      setup/teardown overhead and is useful when interactively resizing
+      a surface or for many small buffers.
+"))
+
+(DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
+  "Default bind implementation for the ,(name interface) global object.
+This can be overriden by inheritance in case if custom behaviour is required."
+  (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
+    (SETF (IFACE CLIENT ID) BOUND)
+    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+
+(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
+    :VOID
+    ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+  (LET* ((CLIENT (GET-CLIENT CLIENT))
+         (DATA (POP-DATA DATA))
+         (GLOBAL (GETHASH DATA *GLOBAL-TRACKER*)))
+    (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER)
+             (MEM-REF VERSION :UINT) (MEM-REF ID :UINT))))
+
+(DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
+
 (DEFPACKAGE :WL/WL_SHM
   (:USE :CL :WL :CFFI)
   (:NICKNAMES :WL-SHM)
@@ -363,6 +446,42 @@ A buffer provides the content for a wl_surface. Buffers are
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
     (FUNCALL 'DESTROY (IFACE CLIENT RESOURCE) CLIENT)))
 
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 1)
+          (:DOCUMENTATION "content for a wl_surface
+
+A buffer provides the content for a wl_surface. Buffers are
+      created through factory interfaces such as wl_shm, wp_linux_buffer_params
+      (from the linux-dmabuf protocol extension) or similar. It has a width and
+      a height and can be attached to a wl_surface, but the mechanism by which a
+      client provides and updates the contents is defined by the buffer factory
+      interface.
+
+      If the buffer uses a format that has an alpha channel, the alpha channel
+      is assumed to be premultiplied in the color channels unless otherwise
+      specified.
+
+      Note, because wl_buffer objects are created from multiple independent
+      factory interfaces, the wl_buffer interface is frozen at version 1.
+"))
+
+(DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
+  "Default bind implementation for the ,(name interface) global object.
+This can be overriden by inheritance in case if custom behaviour is required."
+  (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
+    (SETF (IFACE CLIENT ID) BOUND)
+    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+
+(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
+    :VOID
+    ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+  (LET* ((CLIENT (GET-CLIENT CLIENT))
+         (DATA (POP-DATA DATA))
+         (GLOBAL (GETHASH DATA *GLOBAL-TRACKER*)))
+    (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER)
+             (MEM-REF VERSION :UINT) (MEM-REF ID :UINT))))
+
+(DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
+
 (DEFPACKAGE :WL/WL_DATA_OFFER
   (:USE :CL :WL :CFFI)
   (:NICKNAMES :WL-DATA-OFFER)
@@ -435,6 +554,35 @@ A wl_data_offer represents a piece of data offered for transfer
     (FUNCALL 'SET_ACTIONS (IFACE CLIENT RESOURCE) CLIENT DND_ACTIONS
              PREFERRED_ACTION)))
 
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 3)
+          (:DOCUMENTATION "offer to transfer data
+
+A wl_data_offer represents a piece of data offered for transfer
+      by another client (the source client).  It is used by the
+      copy-and-paste and drag-and-drop mechanisms.  The offer
+      describes the different mime types that the data can be
+      converted to and provides the mechanism for transferring the
+      data directly from the source client.
+"))
+
+(DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
+  "Default bind implementation for the ,(name interface) global object.
+This can be overriden by inheritance in case if custom behaviour is required."
+  (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
+    (SETF (IFACE CLIENT ID) BOUND)
+    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+
+(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
+    :VOID
+    ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+  (LET* ((CLIENT (GET-CLIENT CLIENT))
+         (DATA (POP-DATA DATA))
+         (GLOBAL (GETHASH DATA *GLOBAL-TRACKER*)))
+    (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER)
+             (MEM-REF VERSION :UINT) (MEM-REF ID :UINT))))
+
+(DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
+
 (DEFPACKAGE :WL/WL_DATA_SOURCE
   (:USE :CL :WL :CFFI)
   (:NICKNAMES :WL-DATA-SOURCE)
@@ -482,6 +630,33 @@ The wl_data_source object is the source side of a wl_data_offer.
     ((CLIENT :POINTER) (RESOURCE :POINTER) (DND_ACTIONS :UINT))
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
     (FUNCALL 'SET_ACTIONS (IFACE CLIENT RESOURCE) CLIENT DND_ACTIONS)))
+
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 3)
+          (:DOCUMENTATION "offer to transfer data
+
+The wl_data_source object is the source side of a wl_data_offer.
+      It is created by the source client in a data transfer and
+      provides a way to describe the offered data and a way to respond
+      to requests to transfer the data.
+"))
+
+(DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
+  "Default bind implementation for the ,(name interface) global object.
+This can be overriden by inheritance in case if custom behaviour is required."
+  (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
+    (SETF (IFACE CLIENT ID) BOUND)
+    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+
+(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
+    :VOID
+    ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+  (LET* ((CLIENT (GET-CLIENT CLIENT))
+         (DATA (POP-DATA DATA))
+         (GLOBAL (GETHASH DATA *GLOBAL-TRACKER*)))
+    (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER)
+             (MEM-REF VERSION :UINT) (MEM-REF ID :UINT))))
+
+(DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
 (DEFPACKAGE :WL/WL_DATA_DEVICE
   (:USE :CL :WL :CFFI)
@@ -673,6 +848,38 @@ This interface is implemented by servers that provide
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
     (FUNCALL 'GET_SHELL_SURFACE (IFACE CLIENT RESOURCE) CLIENT ID SURFACE)))
 
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 1)
+          (:DOCUMENTATION "create desktop-style surfaces
+
+This interface is implemented by servers that provide
+      desktop-style user interfaces.
+
+      It allows clients to associate a wl_shell_surface with
+      a basic surface.
+
+      Note! This protocol is deprecated and not intended for production use.
+      For desktop-style user interfaces, use xdg_shell. Compositors and clients
+      should not implement this interface.
+"))
+
+(DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
+  "Default bind implementation for the ,(name interface) global object.
+This can be overriden by inheritance in case if custom behaviour is required."
+  (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
+    (SETF (IFACE CLIENT ID) BOUND)
+    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+
+(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
+    :VOID
+    ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+  (LET* ((CLIENT (GET-CLIENT CLIENT))
+         (DATA (POP-DATA DATA))
+         (GLOBAL (GETHASH DATA *GLOBAL-TRACKER*)))
+    (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER)
+             (MEM-REF VERSION :UINT) (MEM-REF ID :UINT))))
+
+(DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
+
 (DEFPACKAGE :WL/WL_SHELL_SURFACE
   (:USE :CL :WL :CFFI)
   (:NICKNAMES :WL-SHELL-SURFACE)
@@ -798,6 +1005,40 @@ An interface that may be implemented by a wl_surface, for
     ((CLIENT :POINTER) (RESOURCE :POINTER) (CLASS_ (:POINTER :CHAR)))
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
     (FUNCALL 'SET_CLASS (IFACE CLIENT RESOURCE) CLIENT CLASS_)))
+
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 1)
+          (:DOCUMENTATION "desktop-style metadata interface
+
+An interface that may be implemented by a wl_surface, for
+      implementations that provide a desktop-style user interface.
+
+      It provides requests to treat surfaces like toplevel, fullscreen
+      or popup windows, move, resize or maximize them, associate
+      metadata like title and class, etc.
+
+      On the server side the object is automatically destroyed when
+      the related wl_surface is destroyed. On the client side,
+      wl_shell_surface_destroy() must be called before destroying
+      the wl_surface object.
+"))
+
+(DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
+  "Default bind implementation for the ,(name interface) global object.
+This can be overriden by inheritance in case if custom behaviour is required."
+  (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
+    (SETF (IFACE CLIENT ID) BOUND)
+    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+
+(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
+    :VOID
+    ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+  (LET* ((CLIENT (GET-CLIENT CLIENT))
+         (DATA (POP-DATA DATA))
+         (GLOBAL (GETHASH DATA *GLOBAL-TRACKER*)))
+    (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER)
+             (MEM-REF VERSION :UINT) (MEM-REF ID :UINT))))
+
+(DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
 (DEFPACKAGE :WL/WL_SURFACE
   (:USE :CL :WL :CFFI)
@@ -961,6 +1202,71 @@ A surface is a rectangular area that may be displayed on zero
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
     (FUNCALL 'OFFSET (IFACE CLIENT RESOURCE) CLIENT X Y)))
 
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 6)
+          (:DOCUMENTATION "an onscreen surface
+
+A surface is a rectangular area that may be displayed on zero
+      or more outputs, and shown any number of times at the compositor's
+      discretion. They can present wl_buffers, receive user input, and
+      define a local coordinate system.
+
+      The size of a surface (and relative positions on it) is described
+      in surface-local coordinates, which may differ from the buffer
+      coordinates of the pixel content, in case a buffer_transform
+      or a buffer_scale is used.
+
+      A surface without a \"role\" is fairly useless: a compositor does
+      not know where, when or how to present it. The role is the
+      purpose of a wl_surface. Examples of roles are a cursor for a
+      pointer (as set by wl_pointer.set_cursor), a drag icon
+      (wl_data_device.start_drag), a sub-surface
+      (wl_subcompositor.get_subsurface), and a window as defined by a
+      shell protocol (e.g. wl_shell.get_shell_surface).
+
+      A surface can have only one role at a time. Initially a
+      wl_surface does not have a role. Once a wl_surface is given a
+      role, it is set permanently for the whole lifetime of the
+      wl_surface object. Giving the current role again is allowed,
+      unless explicitly forbidden by the relevant interface
+      specification.
+
+      Surface roles are given by requests in other interfaces such as
+      wl_pointer.set_cursor. The request should explicitly mention
+      that this request gives a role to a wl_surface. Often, this
+      request also creates a new protocol object that represents the
+      role and adds additional functionality to wl_surface. When a
+      client wants to destroy a wl_surface, they must destroy this role
+      object before the wl_surface, otherwise a defunct_role_object error is
+      sent.
+
+      Destroying the role object does not remove the role from the
+      wl_surface, but it may stop the wl_surface from \"playing the role\".
+      For instance, if a wl_subsurface object is destroyed, the wl_surface
+      it was created for will be unmapped and forget its position and
+      z-order. It is allowed to create a wl_subsurface for the same
+      wl_surface again, but it is not allowed to use the wl_surface as
+      a cursor (cursor is a different role than sub-surface, and role
+      switching is not allowed).
+"))
+
+(DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
+  "Default bind implementation for the ,(name interface) global object.
+This can be overriden by inheritance in case if custom behaviour is required."
+  (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
+    (SETF (IFACE CLIENT ID) BOUND)
+    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+
+(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
+    :VOID
+    ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+  (LET* ((CLIENT (GET-CLIENT CLIENT))
+         (DATA (POP-DATA DATA))
+         (GLOBAL (GETHASH DATA *GLOBAL-TRACKER*)))
+    (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER)
+             (MEM-REF VERSION :UINT) (MEM-REF ID :UINT))))
+
+(DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
+
 (DEFPACKAGE :WL/WL_SEAT
   (:USE :CL :WL :CFFI)
   (:NICKNAMES :WL-SEAT)
@@ -1089,6 +1395,37 @@ The wl_pointer interface represents one or more input devices,
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
     (FUNCALL 'RELEASE (IFACE CLIENT RESOURCE) CLIENT)))
 
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 9)
+          (:DOCUMENTATION "pointer input device
+
+The wl_pointer interface represents one or more input devices,
+      such as mice, which control the pointer location and pointer_focus
+      of a seat.
+
+      The wl_pointer interface generates motion, enter and leave
+      events for the surfaces that the pointer is located over,
+      and button and axis events for button presses, button releases
+      and scrolling.
+"))
+
+(DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
+  "Default bind implementation for the ,(name interface) global object.
+This can be overriden by inheritance in case if custom behaviour is required."
+  (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
+    (SETF (IFACE CLIENT ID) BOUND)
+    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+
+(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
+    :VOID
+    ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+  (LET* ((CLIENT (GET-CLIENT CLIENT))
+         (DATA (POP-DATA DATA))
+         (GLOBAL (GETHASH DATA *GLOBAL-TRACKER*)))
+    (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER)
+             (MEM-REF VERSION :UINT) (MEM-REF ID :UINT))))
+
+(DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
+
 (DEFPACKAGE :WL/WL_KEYBOARD
   (:USE :CL :WL :CFFI)
   (:NICKNAMES :WL-KEYBOARD)
@@ -1115,6 +1452,31 @@ The wl_keyboard interface represents one or more keyboards
     ((CLIENT :POINTER) (RESOURCE :POINTER))
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
     (FUNCALL 'RELEASE (IFACE CLIENT RESOURCE) CLIENT)))
+
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 9)
+          (:DOCUMENTATION "keyboard input device
+
+The wl_keyboard interface represents one or more keyboards
+      associated with a seat.
+"))
+
+(DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
+  "Default bind implementation for the ,(name interface) global object.
+This can be overriden by inheritance in case if custom behaviour is required."
+  (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
+    (SETF (IFACE CLIENT ID) BOUND)
+    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+
+(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
+    :VOID
+    ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+  (LET* ((CLIENT (GET-CLIENT CLIENT))
+         (DATA (POP-DATA DATA))
+         (GLOBAL (GETHASH DATA *GLOBAL-TRACKER*)))
+    (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER)
+             (MEM-REF VERSION :UINT) (MEM-REF ID :UINT))))
+
+(DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
 (DEFPACKAGE :WL/WL_TOUCH
   (:USE :CL :WL :CFFI)
@@ -1148,6 +1510,37 @@ The wl_touch interface represents a touchscreen
     ((CLIENT :POINTER) (RESOURCE :POINTER))
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
     (FUNCALL 'RELEASE (IFACE CLIENT RESOURCE) CLIENT)))
+
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 9)
+          (:DOCUMENTATION "touchscreen input device
+
+The wl_touch interface represents a touchscreen
+      associated with a seat.
+
+      Touch interactions can consist of one or more contacts.
+      For each contact, a series of events is generated, starting
+      with a down event, followed by zero or more motion events,
+      and ending with an up event. Events relating to the same
+      contact point can be identified by the ID of the sequence.
+"))
+
+(DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
+  "Default bind implementation for the ,(name interface) global object.
+This can be overriden by inheritance in case if custom behaviour is required."
+  (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
+    (SETF (IFACE CLIENT ID) BOUND)
+    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+
+(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
+    :VOID
+    ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+  (LET* ((CLIENT (GET-CLIENT CLIENT))
+         (DATA (POP-DATA DATA))
+         (GLOBAL (GETHASH DATA *GLOBAL-TRACKER*)))
+    (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER)
+             (MEM-REF VERSION :UINT) (MEM-REF ID :UINT))))
+
+(DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
 (DEFPACKAGE :WL/WL_OUTPUT
   (:USE :CL :WL :CFFI)
@@ -1257,6 +1650,33 @@ A region object describes an area.
      (HEIGHT :INT))
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
     (FUNCALL 'SUBTRACT (IFACE CLIENT RESOURCE) CLIENT X Y WIDTH HEIGHT)))
+
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 1)
+          (:DOCUMENTATION "region interface
+
+A region object describes an area.
+
+      Region objects are used to describe the opaque and input
+      regions of a surface.
+"))
+
+(DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
+  "Default bind implementation for the ,(name interface) global object.
+This can be overriden by inheritance in case if custom behaviour is required."
+  (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
+    (SETF (IFACE CLIENT ID) BOUND)
+    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+
+(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
+    :VOID
+    ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+  (LET* ((CLIENT (GET-CLIENT CLIENT))
+         (DATA (POP-DATA DATA))
+         (GLOBAL (GETHASH DATA *GLOBAL-TRACKER*)))
+    (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER)
+             (MEM-REF VERSION :UINT) (MEM-REF ID :UINT))))
+
+(DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
 (DEFPACKAGE :WL/WL_SUBCOMPOSITOR
   (:USE :CL :WL :CFFI)
@@ -1472,4 +1892,74 @@ An additional interface to a wl_surface object, which has been
     ((CLIENT :POINTER) (RESOURCE :POINTER))
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
     (FUNCALL 'SET_DESYNC (IFACE CLIENT RESOURCE) CLIENT)))
+
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 1)
+          (:DOCUMENTATION "sub-surface interface to a wl_surface
+
+An additional interface to a wl_surface object, which has been
+      made a sub-surface. A sub-surface has one parent surface. A
+      sub-surface's size and position are not limited to that of the parent.
+      Particularly, a sub-surface is not automatically clipped to its
+      parent's area.
+
+      A sub-surface becomes mapped, when a non-NULL wl_buffer is applied
+      and the parent surface is mapped. The order of which one happens
+      first is irrelevant. A sub-surface is hidden if the parent becomes
+      hidden, or if a NULL wl_buffer is applied. These rules apply
+      recursively through the tree of surfaces.
+
+      The behaviour of a wl_surface.commit request on a sub-surface
+      depends on the sub-surface's mode. The possible modes are
+      synchronized and desynchronized, see methods
+      wl_subsurface.set_sync and wl_subsurface.set_desync. Synchronized
+      mode caches the wl_surface state to be applied when the parent's
+      state gets applied, and desynchronized mode applies the pending
+      wl_surface state directly. A sub-surface is initially in the
+      synchronized mode.
+
+      Sub-surfaces also have another kind of state, which is managed by
+      wl_subsurface requests, as opposed to wl_surface requests. This
+      state includes the sub-surface position relative to the parent
+      surface (wl_subsurface.set_position), and the stacking order of
+      the parent and its sub-surfaces (wl_subsurface.place_above and
+      .place_below). This state is applied when the parent surface's
+      wl_surface state is applied, regardless of the sub-surface's mode.
+      As the exception, set_sync and set_desync are effective immediately.
+
+      The main surface can be thought to be always in desynchronized mode,
+      since it does not have a parent in the sub-surfaces sense.
+
+      Even if a sub-surface is in desynchronized mode, it will behave as
+      in synchronized mode, if its parent surface behaves as in
+      synchronized mode. This rule is applied recursively throughout the
+      tree of surfaces. This means, that one can set a sub-surface into
+      synchronized mode, and then assume that all its child and grand-child
+      sub-surfaces are synchronized, too, without explicitly setting them.
+
+      Destroying a sub-surface takes effect immediately. If you need to
+      synchronize the removal of a sub-surface to the parent surface update,
+      unmap the sub-surface first by attaching a NULL wl_buffer, update parent,
+      and then destroy the sub-surface.
+
+      If the parent wl_surface object is destroyed, the sub-surface is
+      unmapped.
+"))
+
+(DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
+  "Default bind implementation for the ,(name interface) global object.
+This can be overriden by inheritance in case if custom behaviour is required."
+  (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
+    (SETF (IFACE CLIENT ID) BOUND)
+    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+
+(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
+    :VOID
+    ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+  (LET* ((CLIENT (GET-CLIENT CLIENT))
+         (DATA (POP-DATA DATA))
+         (GLOBAL (GETHASH DATA *GLOBAL-TRACKER*)))
+    (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER)
+             (MEM-REF VERSION :UINT) (MEM-REF ID :UINT))))
+
+(DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
