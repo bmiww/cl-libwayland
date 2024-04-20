@@ -137,10 +137,31 @@
 ;; │││├┤ │││
 ;; ┘└┘└─┘└┴┘
 
+(defvar *arg-type-map*
+  '("int" :int
+    "uint" :uint
+    "object" :uint
+    "new_id" :uint
+    ;; TODO: Check what exactly happens in libwayland with fixed nums. For now made it :float
+    "fixed" :float
+    "string" '(:pointer :char)
+    "array" :pointer
+    ;; TODO: Recheck the FD thing - this might not be a uint
+    "fd" :uint
+    ;; TODO: Most likely correct, but needs to be checked
+    "enum" :uint))
+
+
+(defun map-arg-type-to-c (arg)
+  (let ((c-type (getf-string-equal *arg-type-map* (arg-type arg))))
+    (unless c-type (error "Unknown arg type: ~a" (arg-type arg)))
+    c-type))
+(defun gen-request-c-arg (arg) `(,(symbolify (name arg)) ,(map-arg-type-to-c arg)))
+
 ;; TODO: Need to dynamically fill out arguments - instead of just the id thing
 (defun gen-request-callback (request)
   `(cl-async::define-c-callback ,(symbolify "~a-ffi" (name request)) :void
-       ((client :pointer) (resource :pointer) (id :uint))
+       ((client :pointer) (resource :pointer) ,@(mapcar 'gen-request-c-arg (args request)))
      (let ((client (get-client client))
 	   (resource (resource-get-id resource)))
        (funcall ',(symbolify (name request)) (iface client resource) client id))))
@@ -224,3 +245,9 @@ This can be overriden by inheritance in case if custom behaviour is required."
       (dolist (x sublist)
 	(push x result)))
     (nreverse result)))
+
+(defun getf-string-equal (plist indicator)
+  (loop
+     for (i v) on plist by #'cddr
+     when (string-equal i indicator)
+     return v))
