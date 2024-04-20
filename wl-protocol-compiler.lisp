@@ -143,14 +143,13 @@
 (defun gen-request-c-struct (request)
   `(,(symbolify (name request)) :pointer))
 
-(defun gen-bind-callback (interface namespace)
-  (let ((parent-name (symbolify ":~a/~a" namespace (name interface))))
+(defun gen-bind-callback ()
   `(defmethod bind ((compositor compositor) client data version id)
      "Default bind implementation for the ,(name interface) global object.
 This can be overriden by inheritance in case if custom behaviour is required."
-     (let ((global (make-instance ',(symbolify "~a::~a" parent-name (name interface)) (display client))))
-       (setf (iface client id) global)
-       (create-resource client ,(symbolify "~a::*interface*" parent-name) version id)))))
+     (let ((bound (make-instance ',(symbolify "dispatch") (display client))))
+       (setf (iface client id) bound)
+       (create-resource client ,(symbolify "*interface*") version id))))
 
 (defun gen-bind-c-callback ()
   `(cl-async::define-c-callback bind-ffi :void ((client :pointer) (data :pointer) (version :uint) (id :uint))
@@ -159,52 +158,33 @@ This can be overriden by inheritance in case if custom behaviour is required."
 	    (global (gethash data *global-tracker*)))
        (funcall 'bind global client (null-pointer) (mem-ref version :uint) (mem-ref id :uint)))))
 
-(defun gen-interface-global (interface namespace)
-  (print "GENNING GLOB")
-  (let ((pkg-name  (symbolify ":~a/~a.global" namespace (name interface)))
-	(classname (symbolify (name interface))))
-    (append
-     `((defpackage ,pkg-name
-	 (:use :cl :wl)
-	 (:export ,classname)))
-     `((in-package ,pkg-name))
-     `((defclass ,classname (wl:global) ()
-	 (:default-initargs :version ,(version interface))
-	 (:documentation ,(description interface))))
-     `(,(gen-bind-callback interface namespace))
-     `(,(gen-bind-c-callback))
-     `((defvar *bind* (callback ,(symbolify "~a-ffi" (name interface)))))
-     )))
-
-
-(defun gen-interface-regular (interface namespace)
-  (print "GENNING REG")
+(defun gen-interface (interface namespace)
   (let ((pkg-name  (symbolify ":~a/~a" namespace (name interface)))
-	(classname (symbolify (name interface))))
+	(global? (member (name interface) *global-interfaces* :test #'string=)))
     (append
      `((defpackage ,pkg-name
+	 (:shadowing-import-from #:wl #:global)
 	 (:use :cl :wl)
-	 (:export
-	  ,classname)))
+	 (:export dispatch global)))
      `((in-package ,pkg-name))
-     `((defclass ,classname (wl:object) ()
+     `((defclass dispatch (wl:object) ()
 	 (:default-initargs :version ,(version interface))
 	 (:documentation ,(description interface))))
      `((defvar *interface* nil))
      `((defcstruct interface
 	 ,@(mapcar 'gen-request-c-struct (requests interface))))
      (mapcar 'gen-request-generic (requests interface))
-     (mapcar 'gen-request-callback (requests interface)))))
+     (mapcar 'gen-request-callback (requests interface))
 
+     ;; NOTE: Global class when applicable
+     (when global?
+       `((defclass global (wl:global) ()
+	   (:default-initargs :version ,(version interface))
+	   (:documentation ,(description interface)))
+	 (defvar *bind* (callback ,(symbolify "~a-ffi" (name interface))))
+	 ,(gen-bind-callback)
+	 ,(gen-bind-c-callback))))))
 
-;; TODO: Generate initialize instance - depends also on the list of requests
-(defun gen-interface (interface namespace)
-  (let ((global? (member (name interface) *global-interfaces* :test #'string=)))
-    (if global?
-	(append
-	 (gen-interface-regular interface namespace)
-	 (gen-interface-global interface namespace))
-	(gen-interface-regular interface namespace))))
 
 (defun gen-code (protocol namespace)
   (apply #'append (mapcar (lambda (part) (gen-interface part namespace)) protocol)))
