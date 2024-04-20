@@ -1,0 +1,12 @@
+(ASDF/PARSE-DEFSYSTEM:DEFSYSTEM #:BM-CL-WAYLAND.XDG-SHELL
+  :SERIAL
+  T
+  :LICENSE
+  "GPLv3"
+  :VERSION
+  "0.0.1"
+  :DEPENDS-ON
+  (#:CFFI #:CL-ASYNC #:BM-CL-WAYLAND)
+  :COMPONENTS
+  ((:FILE "bm-cl-wayland.xdg-shell")))
+
