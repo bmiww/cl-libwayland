@@ -163,6 +163,8 @@ This can be overriden by inheritance in case if custom behaviour is required."
 				   (version global) (data-ptr next-data-id)
 				   *dispatch-bind*)))
        ;; TODO: Worst case scenario - i might need to set up the global data to pull here for
+       ;; TODO: OR: I could type out the display struct and try to grab the id from there
+       ;; TODO: OR: I could type out the global struct - and see if it has an id there
        (set-data next-data-id (setf (gethash (global-get-name global-ptr (null-pointer)) *global-tracker*) global))))))
 
 (defun gen-interface (interface namespace)
