@@ -25,7 +25,8 @@
   (func :pointer))
 
 (defcfun ("wl_global_get_name" global-get-name) :uint32
-  (global :pointer))
+  (global :pointer)
+  (client :pointer))
 
 (defcfun ("wl_client_get_credentials" client-get-credentials) :void
   (client :pointer)

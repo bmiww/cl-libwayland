@@ -159,10 +159,11 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (defun gen-global-init ()
   `((defmethod initialize-instance :after ((global global) &key)
      (let* ((next-data-id (reserve-data))
-	    (global (global-create (display global) *interface*
+	    (global-ptr (global-create (display global) *interface*
 				   (version global) (data-ptr next-data-id)
 				   *dispatch-bind*)))
-       (set-data next-data-id (setf (gethash (global-get-name global) *global-tracker*) global))))))
+       ;; TODO: Worst case scenario - i might need to set up the global data to pull here for
+       (set-data next-data-id (setf (gethash (global-get-name global-ptr (null-pointer)) *global-tracker*) global))))))
 
 (defun gen-interface (interface namespace)
   (let ((pkg-name  (symbolify ":~a/~a" namespace (name interface))))
