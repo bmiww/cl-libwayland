@@ -131,19 +131,39 @@
   `(,(symbolify (name request)) :pointer))
 
 (defun gen-bind-callback ()
-  `(defmethod dispatch-bind ((global global) client data version id)
+  `((defmethod dispatch-bind ((global global) client data version id)
      "Default bind implementation for the ,(name interface) global object.
 This can be overriden by inheritance in case if custom behaviour is required."
      (let ((bound (make-instance ',(symbolify "dispatch") :display (display client))))
        (setf (iface client id) bound)
-       (create-resource client ,(symbolify "*interface*") version id))))
+       (create-resource client ,(symbolify "*interface*") version id)))))
 
 (defun gen-bind-c-callback ()
-  `(cl-async::define-c-callback dispatch-bind-ffi :void ((client :pointer) (data :pointer) (version :uint) (id :uint))
+  `((cl-async::define-c-callback dispatch-bind-ffi :void ((client :pointer) (data :pointer) (version :uint) (id :uint))
      (let* ((client (get-client client))
 	    (data (pop-data data))
 	    (global (gethash data *global-tracker*)))
-       (funcall 'dispatch-bind global client (null-pointer) (mem-ref version :uint) (mem-ref id :uint)))))
+       (funcall 'dispatch-bind global client (null-pointer) (mem-ref version :uint) (mem-ref id :uint))))))
+
+(defun gen-c-slot-init (request)
+  `(setf
+    (foreign-slot-value interface '(:struct interface) (symbolify "'~a" (name request)))
+    (callback ,(symbolify "~a-ffi" (name request)))))
+
+(defun gen-dispatch-init (interface)
+  `((defmethod initialize-instance :after ((dispatch dispatch) &key)
+     (unless *interface*
+       (with-foreign-object (interface 'interface)
+	 ,@(mapcar 'gen-c-slot-init (requests interface))
+	 (setf *interface* interface))))))
+
+(defun gen-global-init ()
+  `((defmethod initialize-instance :after ((global global) &key)
+     (let* ((next-data-id (reserve-data))
+	    (global (global-create (display global) *interface*
+				   (version global) (data-ptr next-data-id)
+				   *dispatch-bind*)))
+       (set-data next-data-id (setf (gethash (global-get-name global) *global-tracker*) global))))))
 
 (defun gen-interface (interface namespace)
   (let ((pkg-name  (symbolify ":~a/~a" namespace (name interface))))
@@ -159,15 +179,17 @@ This can be overriden by inheritance in case if custom behaviour is required."
      `((defvar *interface* nil))
      `((defcstruct interface
 	 ,@(mapcar 'gen-request-c-struct (requests interface))))
+     (gen-dispatch-init interface)
      (mapcar 'gen-request-generic (requests interface))
      (mapcar 'gen-request-callback (requests interface))
 
      `((defclass global (wl::global) ()
 	 (:default-initargs :version ,(version interface))
-	 (:documentation ,(description interface)))
-       ,(gen-bind-callback)
-       ,(gen-bind-c-callback)
-       (defvar *dispatch-bind* (callback ,(symbolify "dispatch-bind-ffi")))))))
+	 (:documentation ,(description interface))))
+     (gen-bind-callback)
+     (gen-bind-c-callback)
+     `((defvar *dispatch-bind* (callback ,(symbolify "dispatch-bind-ffi"))))
+     (gen-global-init))))
 
 
 (defun gen-code (protocol namespace)

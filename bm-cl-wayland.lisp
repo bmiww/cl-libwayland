@@ -14,7 +14,8 @@
   (:use #:cl #:bm-cl-libwayland #:cffi)
   (:nicknames :wl)
   (:export display-create create-client *global-tracker* resource-get-id object get-client iface
-	   pop-data display create-resource))
+	   pop-data display create-resource reserve-data global-create version data-ptr set-data
+	   global-get-name))
 (in-package :bm-cl-wayland)
 
 (defclass object ()
@@ -52,6 +53,7 @@
   "This function should be called when a new client connects to the socket.
 This will in essence forward the client to the libwayland implementation
 and set up the client object in the lisp world for further referencing."
+  (print "HAPNPNPNPNP")
   (let* ((client (client-create display fd))
 	 (pid (client-get-credentials client)))
     (setf (gethash pid *client-tracker*) (make-instance 'client :display display))
