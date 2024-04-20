@@ -163,6 +163,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
     (append
      `((defpackage ,pkg-name
 	 (:use :cl :wl :cffi)
+	 (:nicknames ,(symbolify ":~a" (str:replace-all "_" "-" (name interface))))
 	 (:export dispatch global)))
      `((in-package ,pkg-name))
      `((defclass dispatch (wl:object) ()

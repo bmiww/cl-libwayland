@@ -1,5 +1,6 @@
 (DEFPACKAGE :WL/WL_DISPLAY
   (:USE :CL :WL :CFFI)
+  (:NICKNAMES :WL-DISPLAY)
   (:EXPORT DISPATCH GLOBAL))
 
 (IN-PACKAGE :WL/WL_DISPLAY)
@@ -35,6 +36,7 @@ The core global object.  This is a special singleton object.  It
 
 (DEFPACKAGE :WL/WL_REGISTRY
   (:USE :CL :WL :CFFI)
+  (:NICKNAMES :WL-REGISTRY)
   (:EXPORT DISPATCH GLOBAL))
 
 (IN-PACKAGE :WL/WL_REGISTRY)
@@ -122,6 +124,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
 (DEFPACKAGE :WL/WL_CALLBACK
   (:USE :CL :WL :CFFI)
+  (:NICKNAMES :WL-CALLBACK)
   (:EXPORT DISPATCH GLOBAL))
 
 (IN-PACKAGE :WL/WL_CALLBACK)
@@ -142,6 +145,7 @@ Clients can handle the 'done' event to get notified when
 
 (DEFPACKAGE :WL/WL_COMPOSITOR
   (:USE :CL :WL :CFFI)
+  (:NICKNAMES :WL-COMPOSITOR)
   (:EXPORT DISPATCH GLOBAL))
 
 (IN-PACKAGE :WL/WL_COMPOSITOR)
@@ -204,6 +208,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
 (DEFPACKAGE :WL/WL_SHM_POOL
   (:USE :CL :WL :CFFI)
+  (:NICKNAMES :WL-SHM-POOL)
   (:EXPORT DISPATCH GLOBAL))
 
 (IN-PACKAGE :WL/WL_SHM_POOL)
@@ -256,6 +261,7 @@ The wl_shm_pool object encapsulates a piece of memory shared
 
 (DEFPACKAGE :WL/WL_SHM
   (:USE :CL :WL :CFFI)
+  (:NICKNAMES :WL-SHM)
   (:EXPORT DISPATCH GLOBAL))
 
 (IN-PACKAGE :WL/WL_SHM)
@@ -321,6 +327,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
 (DEFPACKAGE :WL/WL_BUFFER
   (:USE :CL :WL :CFFI)
+  (:NICKNAMES :WL-BUFFER)
   (:EXPORT DISPATCH GLOBAL))
 
 (IN-PACKAGE :WL/WL_BUFFER)
@@ -358,6 +365,7 @@ A buffer provides the content for a wl_surface. Buffers are
 
 (DEFPACKAGE :WL/WL_DATA_OFFER
   (:USE :CL :WL :CFFI)
+  (:NICKNAMES :WL-DATA-OFFER)
   (:EXPORT DISPATCH GLOBAL))
 
 (IN-PACKAGE :WL/WL_DATA_OFFER)
@@ -429,6 +437,7 @@ A wl_data_offer represents a piece of data offered for transfer
 
 (DEFPACKAGE :WL/WL_DATA_SOURCE
   (:USE :CL :WL :CFFI)
+  (:NICKNAMES :WL-DATA-SOURCE)
   (:EXPORT DISPATCH GLOBAL))
 
 (IN-PACKAGE :WL/WL_DATA_SOURCE)
@@ -476,6 +485,7 @@ The wl_data_source object is the source side of a wl_data_offer.
 
 (DEFPACKAGE :WL/WL_DATA_DEVICE
   (:USE :CL :WL :CFFI)
+  (:NICKNAMES :WL-DATA-DEVICE)
   (:EXPORT DISPATCH GLOBAL))
 
 (IN-PACKAGE :WL/WL_DATA_DEVICE)
@@ -554,6 +564,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
 (DEFPACKAGE :WL/WL_DATA_DEVICE_MANAGER
   (:USE :CL :WL :CFFI)
+  (:NICKNAMES :WL-DATA-DEVICE-MANAGER)
   (:EXPORT DISPATCH GLOBAL))
 
 (IN-PACKAGE :WL/WL_DATA_DEVICE_MANAGER)
@@ -630,6 +641,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
 (DEFPACKAGE :WL/WL_SHELL
   (:USE :CL :WL :CFFI)
+  (:NICKNAMES :WL-SHELL)
   (:EXPORT DISPATCH GLOBAL))
 
 (IN-PACKAGE :WL/WL_SHELL)
@@ -663,6 +675,7 @@ This interface is implemented by servers that provide
 
 (DEFPACKAGE :WL/WL_SHELL_SURFACE
   (:USE :CL :WL :CFFI)
+  (:NICKNAMES :WL-SHELL-SURFACE)
   (:EXPORT DISPATCH GLOBAL))
 
 (IN-PACKAGE :WL/WL_SHELL_SURFACE)
@@ -788,6 +801,7 @@ An interface that may be implemented by a wl_surface, for
 
 (DEFPACKAGE :WL/WL_SURFACE
   (:USE :CL :WL :CFFI)
+  (:NICKNAMES :WL-SURFACE)
   (:EXPORT DISPATCH GLOBAL))
 
 (IN-PACKAGE :WL/WL_SURFACE)
@@ -949,6 +963,7 @@ A surface is a rectangular area that may be displayed on zero
 
 (DEFPACKAGE :WL/WL_SEAT
   (:USE :CL :WL :CFFI)
+  (:NICKNAMES :WL-SEAT)
   (:EXPORT DISPATCH GLOBAL))
 
 (IN-PACKAGE :WL/WL_SEAT)
@@ -1032,6 +1047,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
 (DEFPACKAGE :WL/WL_POINTER
   (:USE :CL :WL :CFFI)
+  (:NICKNAMES :WL-POINTER)
   (:EXPORT DISPATCH GLOBAL))
 
 (IN-PACKAGE :WL/WL_POINTER)
@@ -1075,6 +1091,7 @@ The wl_pointer interface represents one or more input devices,
 
 (DEFPACKAGE :WL/WL_KEYBOARD
   (:USE :CL :WL :CFFI)
+  (:NICKNAMES :WL-KEYBOARD)
   (:EXPORT DISPATCH GLOBAL))
 
 (IN-PACKAGE :WL/WL_KEYBOARD)
@@ -1101,6 +1118,7 @@ The wl_keyboard interface represents one or more keyboards
 
 (DEFPACKAGE :WL/WL_TOUCH
   (:USE :CL :WL :CFFI)
+  (:NICKNAMES :WL-TOUCH)
   (:EXPORT DISPATCH GLOBAL))
 
 (IN-PACKAGE :WL/WL_TOUCH)
@@ -1133,6 +1151,7 @@ The wl_touch interface represents a touchscreen
 
 (DEFPACKAGE :WL/WL_OUTPUT
   (:USE :CL :WL :CFFI)
+  (:NICKNAMES :WL-OUTPUT)
   (:EXPORT DISPATCH GLOBAL))
 
 (IN-PACKAGE :WL/WL_OUTPUT)
@@ -1192,6 +1211,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
 (DEFPACKAGE :WL/WL_REGION
   (:USE :CL :WL :CFFI)
+  (:NICKNAMES :WL-REGION)
   (:EXPORT DISPATCH GLOBAL))
 
 (IN-PACKAGE :WL/WL_REGION)
@@ -1240,6 +1260,7 @@ A region object describes an area.
 
 (DEFPACKAGE :WL/WL_SUBCOMPOSITOR
   (:USE :CL :WL :CFFI)
+  (:NICKNAMES :WL-SUBCOMPOSITOR)
   (:EXPORT DISPATCH GLOBAL))
 
 (IN-PACKAGE :WL/WL_SUBCOMPOSITOR)
@@ -1335,6 +1356,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
 (DEFPACKAGE :WL/WL_SUBSURFACE
   (:USE :CL :WL :CFFI)
+  (:NICKNAMES :WL-SUBSURFACE)
   (:EXPORT DISPATCH GLOBAL))
 
 (IN-PACKAGE :WL/WL_SUBSURFACE)
