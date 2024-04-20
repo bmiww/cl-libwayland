@@ -144,7 +144,7 @@
     "new_id" :uint
     ;; TODO: Check what exactly happens in libwayland with fixed nums. For now made it :float
     "fixed" :float
-    "string" '(:pointer :char)
+    "string" (:pointer :char)
     "array" :pointer
     ;; TODO: Recheck the FD thing - this might not be a uint
     "fd" :uint
