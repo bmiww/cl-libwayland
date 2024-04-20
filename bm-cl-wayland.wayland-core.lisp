@@ -105,7 +105,7 @@ The singleton global registry object.  The server has a number of
 (DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
   "Default bind implementation for the ,(name interface) global object.
 This can be overriden by inheritance in case if custom behaviour is required."
-  (LET ((BOUND (MAKE-INSTANCE 'DISPATCH (DISPLAY CLIENT))))
+  (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
     (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
 
@@ -187,7 +187,7 @@ A compositor.  This object is a singleton global.  The
 (DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
   "Default bind implementation for the ,(name interface) global object.
 This can be overriden by inheritance in case if custom behaviour is required."
-  (LET ((BOUND (MAKE-INSTANCE 'DISPATCH (DISPLAY CLIENT))))
+  (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
     (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
 
@@ -304,7 +304,7 @@ A singleton global object that provides support for shared
 (DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
   "Default bind implementation for the ,(name interface) global object.
 This can be overriden by inheritance in case if custom behaviour is required."
-  (LET ((BOUND (MAKE-INSTANCE 'DISPATCH (DISPLAY CLIENT))))
+  (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
     (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
 
@@ -537,7 +537,7 @@ There is one wl_data_device per seat which can be obtained
 (DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
   "Default bind implementation for the ,(name interface) global object.
 This can be overriden by inheritance in case if custom behaviour is required."
-  (LET ((BOUND (MAKE-INSTANCE 'DISPATCH (DISPLAY CLIENT))))
+  (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
     (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
 
@@ -613,7 +613,7 @@ The wl_data_device_manager is a singleton global object that
 (DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
   "Default bind implementation for the ,(name interface) global object.
 This can be overriden by inheritance in case if custom behaviour is required."
-  (LET ((BOUND (MAKE-INSTANCE 'DISPATCH (DISPLAY CLIENT))))
+  (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
     (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
 
@@ -1015,7 +1015,7 @@ A seat is a group of keyboards, pointer and touch devices. This
 (DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
   "Default bind implementation for the ,(name interface) global object.
 This can be overriden by inheritance in case if custom behaviour is required."
-  (LET ((BOUND (MAKE-INSTANCE 'DISPATCH (DISPLAY CLIENT))))
+  (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
     (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
 
@@ -1175,7 +1175,7 @@ An output describes part of the compositor geometry.  The
 (DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
   "Default bind implementation for the ,(name interface) global object.
 This can be overriden by inheritance in case if custom behaviour is required."
-  (LET ((BOUND (MAKE-INSTANCE 'DISPATCH (DISPLAY CLIENT))))
+  (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
     (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
 
@@ -1318,7 +1318,7 @@ The global interface exposing sub-surface compositing capabilities.
 (DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
   "Default bind implementation for the ,(name interface) global object.
 This can be overriden by inheritance in case if custom behaviour is required."
-  (LET ((BOUND (MAKE-INSTANCE 'DISPATCH (DISPLAY CLIENT))))
+  (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
     (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
 

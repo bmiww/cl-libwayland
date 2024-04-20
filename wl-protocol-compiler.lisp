@@ -182,7 +182,7 @@
   `(defmethod dispatch-bind ((global global) client data version id)
      "Default bind implementation for the ,(name interface) global object.
 This can be overriden by inheritance in case if custom behaviour is required."
-     (let ((bound (make-instance ',(symbolify "dispatch") (display client))))
+     (let ((bound (make-instance ',(symbolify "dispatch") :display (display client))))
        (setf (iface client id) bound)
        (create-resource client ,(symbolify "*interface*") version id))))
 
