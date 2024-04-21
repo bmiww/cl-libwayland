@@ -22,7 +22,8 @@
   ((display :initarg :display :reader display)
    (version :initarg :version :reader version)))
 
-(defvar *global-tracker* (make-hash-table :test 'equal))
+;; Uses integer value pointer addresses as keys
+(defvar *global-tracker* (make-hash-table :test 'eq))
 
 (defclass global (object) ())
 (defgeneric bind (client resource id))

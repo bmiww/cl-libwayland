@@ -141,8 +141,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (defun gen-bind-c-callback ()
   `((cl-async::define-c-callback dispatch-bind-ffi :void ((client :pointer) (data :pointer) (version :uint) (id :uint))
      (let* ((client (get-client client))
-	    (data (pop-data data))
-	    (global (gethash data *global-tracker*)))
+	    (global (pop-data data)))
        (funcall 'dispatch-bind global client (null-pointer) (mem-ref version :uint) (mem-ref id :uint))))))
 
 (defun gen-c-slot-init (request)
@@ -162,10 +161,9 @@ This can be overriden by inheritance in case if custom behaviour is required."
 	    (global-ptr (global-create (display global) *interface*
 				   (version global) (data-ptr next-data-id)
 				   *dispatch-bind*)))
-       ;; TODO: Worst case scenario - i might need to set up the global data to pull here for
-       ;; TODO: OR: I could type out the display struct and try to grab the id from there
-       ;; TODO: OR: I could type out the global struct - and see if it has an id there
-       (set-data next-data-id (setf (gethash (global-get-name global-ptr (null-pointer)) *global-tracker*) global))))))
+       ;; TODO: not sure i really need to keep track of the globals.
+       ;; The *global-tracker* set might be unnecessary
+       (set-data next-data-id (setf (gethash (pointer-address global-ptr) *global-tracker*) global))))))
 
 (defun gen-interface (interface namespace)
   (let ((pkg-name  (symbolify ":~a/~a" namespace (name interface))))

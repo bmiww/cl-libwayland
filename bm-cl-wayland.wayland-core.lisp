@@ -57,9 +57,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (GET-CLIENT CLIENT))
-         (DATA (POP-DATA DATA))
-         (GLOBAL (GETHASH DATA *GLOBAL-TRACKER*)))
+  (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER)
              (MEM-REF VERSION :UINT) (MEM-REF ID :UINT))))
 
@@ -71,9 +69,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
     (SET-DATA NEXT-DATA-ID
-     (SETF (GETHASH (GLOBAL-GET-NAME GLOBAL-PTR (NULL-POINTER))
-                    *GLOBAL-TRACKER*)
-             GLOBAL))))
+     (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR) *GLOBAL-TRACKER*) GLOBAL))))
 
 (DEFPACKAGE :WL/WL_REGISTRY
   (:USE :CL :WL :CFFI)
@@ -159,9 +155,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (GET-CLIENT CLIENT))
-         (DATA (POP-DATA DATA))
-         (GLOBAL (GETHASH DATA *GLOBAL-TRACKER*)))
+  (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER)
              (MEM-REF VERSION :UINT) (MEM-REF ID :UINT))))
 
@@ -173,9 +167,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
     (SET-DATA NEXT-DATA-ID
-     (SETF (GETHASH (GLOBAL-GET-NAME GLOBAL-PTR (NULL-POINTER))
-                    *GLOBAL-TRACKER*)
-             GLOBAL))))
+     (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR) *GLOBAL-TRACKER*) GLOBAL))))
 
 (DEFPACKAGE :WL/WL_CALLBACK
   (:USE :CL :WL :CFFI)
@@ -218,9 +210,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (GET-CLIENT CLIENT))
-         (DATA (POP-DATA DATA))
-         (GLOBAL (GETHASH DATA *GLOBAL-TRACKER*)))
+  (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER)
              (MEM-REF VERSION :UINT) (MEM-REF ID :UINT))))
 
@@ -232,9 +222,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
     (SET-DATA NEXT-DATA-ID
-     (SETF (GETHASH (GLOBAL-GET-NAME GLOBAL-PTR (NULL-POINTER))
-                    *GLOBAL-TRACKER*)
-             GLOBAL))))
+     (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR) *GLOBAL-TRACKER*) GLOBAL))))
 
 (DEFPACKAGE :WL/WL_COMPOSITOR
   (:USE :CL :WL :CFFI)
@@ -297,9 +285,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (GET-CLIENT CLIENT))
-         (DATA (POP-DATA DATA))
-         (GLOBAL (GETHASH DATA *GLOBAL-TRACKER*)))
+  (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER)
              (MEM-REF VERSION :UINT) (MEM-REF ID :UINT))))
 
@@ -311,9 +297,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
     (SET-DATA NEXT-DATA-ID
-     (SETF (GETHASH (GLOBAL-GET-NAME GLOBAL-PTR (NULL-POINTER))
-                    *GLOBAL-TRACKER*)
-             GLOBAL))))
+     (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR) *GLOBAL-TRACKER*) GLOBAL))))
 
 (DEFPACKAGE :WL/WL_SHM_POOL
   (:USE :CL :WL :CFFI)
@@ -398,9 +382,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (GET-CLIENT CLIENT))
-         (DATA (POP-DATA DATA))
-         (GLOBAL (GETHASH DATA *GLOBAL-TRACKER*)))
+  (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER)
              (MEM-REF VERSION :UINT) (MEM-REF ID :UINT))))
 
@@ -412,9 +394,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
     (SET-DATA NEXT-DATA-ID
-     (SETF (GETHASH (GLOBAL-GET-NAME GLOBAL-PTR (NULL-POINTER))
-                    *GLOBAL-TRACKER*)
-             GLOBAL))))
+     (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR) *GLOBAL-TRACKER*) GLOBAL))))
 
 (DEFPACKAGE :WL/WL_SHM
   (:USE :CL :WL :CFFI)
@@ -478,9 +458,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (GET-CLIENT CLIENT))
-         (DATA (POP-DATA DATA))
-         (GLOBAL (GETHASH DATA *GLOBAL-TRACKER*)))
+  (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER)
              (MEM-REF VERSION :UINT) (MEM-REF ID :UINT))))
 
@@ -492,9 +470,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
     (SET-DATA NEXT-DATA-ID
-     (SETF (GETHASH (GLOBAL-GET-NAME GLOBAL-PTR (NULL-POINTER))
-                    *GLOBAL-TRACKER*)
-             GLOBAL))))
+     (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR) *GLOBAL-TRACKER*) GLOBAL))))
 
 (DEFPACKAGE :WL/WL_BUFFER
   (:USE :CL :WL :CFFI)
@@ -566,9 +542,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (GET-CLIENT CLIENT))
-         (DATA (POP-DATA DATA))
-         (GLOBAL (GETHASH DATA *GLOBAL-TRACKER*)))
+  (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER)
              (MEM-REF VERSION :UINT) (MEM-REF ID :UINT))))
 
@@ -580,9 +554,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
     (SET-DATA NEXT-DATA-ID
-     (SETF (GETHASH (GLOBAL-GET-NAME GLOBAL-PTR (NULL-POINTER))
-                    *GLOBAL-TRACKER*)
-             GLOBAL))))
+     (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR) *GLOBAL-TRACKER*) GLOBAL))))
 
 (DEFPACKAGE :WL/WL_DATA_OFFER
   (:USE :CL :WL :CFFI)
@@ -689,9 +661,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (GET-CLIENT CLIENT))
-         (DATA (POP-DATA DATA))
-         (GLOBAL (GETHASH DATA *GLOBAL-TRACKER*)))
+  (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER)
              (MEM-REF VERSION :UINT) (MEM-REF ID :UINT))))
 
@@ -703,9 +673,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
     (SET-DATA NEXT-DATA-ID
-     (SETF (GETHASH (GLOBAL-GET-NAME GLOBAL-PTR (NULL-POINTER))
-                    *GLOBAL-TRACKER*)
-             GLOBAL))))
+     (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR) *GLOBAL-TRACKER*) GLOBAL))))
 
 (DEFPACKAGE :WL/WL_DATA_SOURCE
   (:USE :CL :WL :CFFI)
@@ -782,9 +750,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (GET-CLIENT CLIENT))
-         (DATA (POP-DATA DATA))
-         (GLOBAL (GETHASH DATA *GLOBAL-TRACKER*)))
+  (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER)
              (MEM-REF VERSION :UINT) (MEM-REF ID :UINT))))
 
@@ -796,9 +762,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
     (SET-DATA NEXT-DATA-ID
-     (SETF (GETHASH (GLOBAL-GET-NAME GLOBAL-PTR (NULL-POINTER))
-                    *GLOBAL-TRACKER*)
-             GLOBAL))))
+     (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR) *GLOBAL-TRACKER*) GLOBAL))))
 
 (DEFPACKAGE :WL/WL_DATA_DEVICE
   (:USE :CL :WL :CFFI)
@@ -879,9 +843,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (GET-CLIENT CLIENT))
-         (DATA (POP-DATA DATA))
-         (GLOBAL (GETHASH DATA *GLOBAL-TRACKER*)))
+  (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER)
              (MEM-REF VERSION :UINT) (MEM-REF ID :UINT))))
 
@@ -893,9 +855,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
     (SET-DATA NEXT-DATA-ID
-     (SETF (GETHASH (GLOBAL-GET-NAME GLOBAL-PTR (NULL-POINTER))
-                    *GLOBAL-TRACKER*)
-             GLOBAL))))
+     (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR) *GLOBAL-TRACKER*) GLOBAL))))
 
 (DEFPACKAGE :WL/WL_DATA_DEVICE_MANAGER
   (:USE :CL :WL :CFFI)
@@ -973,9 +933,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (GET-CLIENT CLIENT))
-         (DATA (POP-DATA DATA))
-         (GLOBAL (GETHASH DATA *GLOBAL-TRACKER*)))
+  (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER)
              (MEM-REF VERSION :UINT) (MEM-REF ID :UINT))))
 
@@ -987,9 +945,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
     (SET-DATA NEXT-DATA-ID
-     (SETF (GETHASH (GLOBAL-GET-NAME GLOBAL-PTR (NULL-POINTER))
-                    *GLOBAL-TRACKER*)
-             GLOBAL))))
+     (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR) *GLOBAL-TRACKER*) GLOBAL))))
 
 (DEFPACKAGE :WL/WL_SHELL
   (:USE :CL :WL :CFFI)
@@ -1053,9 +1009,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (GET-CLIENT CLIENT))
-         (DATA (POP-DATA DATA))
-         (GLOBAL (GETHASH DATA *GLOBAL-TRACKER*)))
+  (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER)
              (MEM-REF VERSION :UINT) (MEM-REF ID :UINT))))
 
@@ -1067,9 +1021,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
     (SET-DATA NEXT-DATA-ID
-     (SETF (GETHASH (GLOBAL-GET-NAME GLOBAL-PTR (NULL-POINTER))
-                    *GLOBAL-TRACKER*)
-             GLOBAL))))
+     (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR) *GLOBAL-TRACKER*) GLOBAL))))
 
 (DEFPACKAGE :WL/WL_SHELL_SURFACE
   (:USE :CL :WL :CFFI)
@@ -1245,9 +1197,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (GET-CLIENT CLIENT))
-         (DATA (POP-DATA DATA))
-         (GLOBAL (GETHASH DATA *GLOBAL-TRACKER*)))
+  (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER)
              (MEM-REF VERSION :UINT) (MEM-REF ID :UINT))))
 
@@ -1259,9 +1209,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
     (SET-DATA NEXT-DATA-ID
-     (SETF (GETHASH (GLOBAL-GET-NAME GLOBAL-PTR (NULL-POINTER))
-                    *GLOBAL-TRACKER*)
-             GLOBAL))))
+     (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR) *GLOBAL-TRACKER*) GLOBAL))))
 
 (DEFPACKAGE :WL/WL_SURFACE
   (:USE :CL :WL :CFFI)
@@ -1507,9 +1455,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (GET-CLIENT CLIENT))
-         (DATA (POP-DATA DATA))
-         (GLOBAL (GETHASH DATA *GLOBAL-TRACKER*)))
+  (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER)
              (MEM-REF VERSION :UINT) (MEM-REF ID :UINT))))
 
@@ -1521,9 +1467,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
     (SET-DATA NEXT-DATA-ID
-     (SETF (GETHASH (GLOBAL-GET-NAME GLOBAL-PTR (NULL-POINTER))
-                    *GLOBAL-TRACKER*)
-             GLOBAL))))
+     (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR) *GLOBAL-TRACKER*) GLOBAL))))
 
 (DEFPACKAGE :WL/WL_SEAT
   (:USE :CL :WL :CFFI)
@@ -1611,9 +1555,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (GET-CLIENT CLIENT))
-         (DATA (POP-DATA DATA))
-         (GLOBAL (GETHASH DATA *GLOBAL-TRACKER*)))
+  (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER)
              (MEM-REF VERSION :UINT) (MEM-REF ID :UINT))))
 
@@ -1625,9 +1567,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
     (SET-DATA NEXT-DATA-ID
-     (SETF (GETHASH (GLOBAL-GET-NAME GLOBAL-PTR (NULL-POINTER))
-                    *GLOBAL-TRACKER*)
-             GLOBAL))))
+     (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR) *GLOBAL-TRACKER*) GLOBAL))))
 
 (DEFPACKAGE :WL/WL_POINTER
   (:USE :CL :WL :CFFI)
@@ -1702,9 +1642,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (GET-CLIENT CLIENT))
-         (DATA (POP-DATA DATA))
-         (GLOBAL (GETHASH DATA *GLOBAL-TRACKER*)))
+  (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER)
              (MEM-REF VERSION :UINT) (MEM-REF ID :UINT))))
 
@@ -1716,9 +1654,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
     (SET-DATA NEXT-DATA-ID
-     (SETF (GETHASH (GLOBAL-GET-NAME GLOBAL-PTR (NULL-POINTER))
-                    *GLOBAL-TRACKER*)
-             GLOBAL))))
+     (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR) *GLOBAL-TRACKER*) GLOBAL))))
 
 (DEFPACKAGE :WL/WL_KEYBOARD
   (:USE :CL :WL :CFFI)
@@ -1768,9 +1704,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (GET-CLIENT CLIENT))
-         (DATA (POP-DATA DATA))
-         (GLOBAL (GETHASH DATA *GLOBAL-TRACKER*)))
+  (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER)
              (MEM-REF VERSION :UINT) (MEM-REF ID :UINT))))
 
@@ -1782,9 +1716,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
     (SET-DATA NEXT-DATA-ID
-     (SETF (GETHASH (GLOBAL-GET-NAME GLOBAL-PTR (NULL-POINTER))
-                    *GLOBAL-TRACKER*)
-             GLOBAL))))
+     (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR) *GLOBAL-TRACKER*) GLOBAL))))
 
 (DEFPACKAGE :WL/WL_TOUCH
   (:USE :CL :WL :CFFI)
@@ -1846,9 +1778,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (GET-CLIENT CLIENT))
-         (DATA (POP-DATA DATA))
-         (GLOBAL (GETHASH DATA *GLOBAL-TRACKER*)))
+  (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER)
              (MEM-REF VERSION :UINT) (MEM-REF ID :UINT))))
 
@@ -1860,9 +1790,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
     (SET-DATA NEXT-DATA-ID
-     (SETF (GETHASH (GLOBAL-GET-NAME GLOBAL-PTR (NULL-POINTER))
-                    *GLOBAL-TRACKER*)
-             GLOBAL))))
+     (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR) *GLOBAL-TRACKER*) GLOBAL))))
 
 (DEFPACKAGE :WL/WL_OUTPUT
   (:USE :CL :WL :CFFI)
@@ -1920,9 +1848,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (GET-CLIENT CLIENT))
-         (DATA (POP-DATA DATA))
-         (GLOBAL (GETHASH DATA *GLOBAL-TRACKER*)))
+  (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER)
              (MEM-REF VERSION :UINT) (MEM-REF ID :UINT))))
 
@@ -1934,9 +1860,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
     (SET-DATA NEXT-DATA-ID
-     (SETF (GETHASH (GLOBAL-GET-NAME GLOBAL-PTR (NULL-POINTER))
-                    *GLOBAL-TRACKER*)
-             GLOBAL))))
+     (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR) *GLOBAL-TRACKER*) GLOBAL))))
 
 (DEFPACKAGE :WL/WL_REGION
   (:USE :CL :WL :CFFI)
@@ -2014,9 +1938,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (GET-CLIENT CLIENT))
-         (DATA (POP-DATA DATA))
-         (GLOBAL (GETHASH DATA *GLOBAL-TRACKER*)))
+  (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER)
              (MEM-REF VERSION :UINT) (MEM-REF ID :UINT))))
 
@@ -2028,9 +1950,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
     (SET-DATA NEXT-DATA-ID
-     (SETF (GETHASH (GLOBAL-GET-NAME GLOBAL-PTR (NULL-POINTER))
-                    *GLOBAL-TRACKER*)
-             GLOBAL))))
+     (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR) *GLOBAL-TRACKER*) GLOBAL))))
 
 (DEFPACKAGE :WL/WL_SUBCOMPOSITOR
   (:USE :CL :WL :CFFI)
@@ -2126,9 +2046,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (GET-CLIENT CLIENT))
-         (DATA (POP-DATA DATA))
-         (GLOBAL (GETHASH DATA *GLOBAL-TRACKER*)))
+  (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER)
              (MEM-REF VERSION :UINT) (MEM-REF ID :UINT))))
 
@@ -2140,9 +2058,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
     (SET-DATA NEXT-DATA-ID
-     (SETF (GETHASH (GLOBAL-GET-NAME GLOBAL-PTR (NULL-POINTER))
-                    *GLOBAL-TRACKER*)
-             GLOBAL))))
+     (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR) *GLOBAL-TRACKER*) GLOBAL))))
 
 (DEFPACKAGE :WL/WL_SUBSURFACE
   (:USE :CL :WL :CFFI)
@@ -2339,9 +2255,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (GET-CLIENT CLIENT))
-         (DATA (POP-DATA DATA))
-         (GLOBAL (GETHASH DATA *GLOBAL-TRACKER*)))
+  (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER)
              (MEM-REF VERSION :UINT) (MEM-REF ID :UINT))))
 
@@ -2353,7 +2267,5 @@ This can be overriden by inheritance in case if custom behaviour is required."
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
     (SET-DATA NEXT-DATA-ID
-     (SETF (GETHASH (GLOBAL-GET-NAME GLOBAL-PTR (NULL-POINTER))
-                    *GLOBAL-TRACKER*)
-             GLOBAL))))
+     (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR) *GLOBAL-TRACKER*) GLOBAL))))
 
