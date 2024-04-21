@@ -6,8 +6,8 @@
 ;; ╚██████╗╚██████╔╝██║ ╚═╝ ██║██║     ██║███████╗███████╗██║  ██║
 ;;  ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚═╝     ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝
 ;; NOTE: Example invocations
-;; (generate-wayland-classes 'wayland-core "/usr/share/wayland/wayland.xml" :namespace "wl")
-;; (generate-wayland-classes 'xdg-shell "xmls/xdg-shell.xml" :namespace "xdg")
+;; (generate-wayland-classes 'wayland-core "/usr/share/wayland/wayland.xml")
+;; (generate-wayland-classes 'xdg-shell "xmls/xdg-shell.xml" :deps '("wayland-core"))
 
 (defpackage :bm-cl-wayland.compiler
   (:use :cl :xmls :bm-cl-wayland.parser))
@@ -173,7 +173,7 @@ This can be overriden by inheritance in case if custom behaviour is required." (
 			   collect (let ((arg (nth index (args method))))
 				     `(setf (mem-aref interface-array :pointer ,index)
 						   ,(if (interface arg)
-							(symbolify "wl/~a::*interface*" (interface arg))
+							(symbolify "~a::*interface*" (interface arg))
 							`(null-pointer)))))
 		     `((setf (foreign-slot-value messages '(:struct wl_message) 'wl-ffi::name)
 			     (foreign-string-alloc ,(name method))
@@ -205,11 +205,11 @@ This can be overriden by inheritance in case if custom behaviour is required." (
        ;; The *global-tracker* set might be unnecessary
        (set-data next-data-id (setf (gethash (pointer-address global-ptr) *global-tracker*) global))))))
 
-(defun pkg-name (interface namespace)
-  (symbolify ":~a/~a" namespace (name interface)))
+(defun pkg-name (interface )
+  (symbolify ":~a" (name interface)))
 
-(defun gen-interface (interface namespace)
-  (let ((pkg-name (pkg-name interface namespace)))
+(defun gen-interface (interface)
+  (let ((pkg-name (pkg-name interface)))
     (append
      `((in-package ,pkg-name))
      `((defclass dispatch (wl:object) ()
@@ -227,8 +227,8 @@ This can be overriden by inheritance in case if custom behaviour is required." (
      `((defvar *dispatch-bind* (callback ,(symbolify "dispatch-bind-ffi"))))
      (gen-global-init))))
 
-(defun gen-interface-preamble (interface namespace)
-  (let ((pkg-name (pkg-name interface namespace)))
+(defun gen-interface-preamble (interface)
+  (let ((pkg-name (pkg-name interface)))
     (append
      `((defpackage ,pkg-name
 	 (:use :cl :wl :cffi)
@@ -245,34 +245,36 @@ This can be overriden by inheritance in case if custom behaviour is required." (
 	 ,@(mapcar 'gen-request-c-struct (requests interface))))
      `((defvar *interface* (cffi:foreign-alloc '(:struct interface)))))))
 
-(defun gen-code (protocol namespace)
+(defun gen-code (protocol)
   (append
-   (apply #'append (mapcar (lambda (part) (gen-interface-preamble part namespace)) protocol))
-   (apply #'append (mapcar (lambda (part) (gen-interface part namespace)) protocol))))
+   (apply #'append (mapcar (lambda (part) (gen-interface-preamble part)) protocol))
+   (apply #'append (mapcar (lambda (part) (gen-interface part)) protocol))))
 
-(defun defpackages-during-compilation (interface namespace)
-  (let* ((package-name (symbolify "~a/~a" namespace (name interface)))
+(defun defpackages-during-compilation (name)
+  (let* ((package-name (symbolify "~a" name))
 	 (existing-pkg (find-package package-name)))
     (if existing-pkg
 	existing-pkg
 	(make-package package-name))))
 
-(defun gen-asd (package file)
+(defun gen-asd (package file deps)
   `((asdf:defsystem ,(symbolify "#:bm-cl-wayland.~a" package)
      :serial t
      :license "GPLv3"
      :version "0.0.1"
-     :depends-on (#:cffi #:cl-async #:bm-cl-wayland)
+     :depends-on (#:cffi #:cl-async #:bm-cl-wayland ,@(mapcar (lambda (dep) (symbolify "#:bm-cl-wayland.~a" dep)) deps))
      :components ((:file ,file)))))
 
-(defun generate-wayland-classes (package xml-file &key namespace)
+(defun generate-wayland-classes (package xml-file &key (deps nil))
+  (dolist (dep deps) (asdf:load-system (symbolify "#:bm-cl-wayland.~a" dep)))
   (let* ((xml (with-open-file (s xml-file :if-does-not-exist :error) (xmls:parse s)))
 	 (protocol (read-protocol xml))
 	 ;; NOTE: Required so that we can compile cross package dependencies
-	 (pkgs (mapcar (lambda (part) (defpackages-during-compilation part namespace)) protocol))
-	 (code (gen-code protocol namespace))
+	 (pkg-names (mapcar 'name protocol))
+	 (pkgs (mapcar 'defpackages-during-compilation pkg-names))
+	 (code (gen-code protocol))
 	 (file (format nil "bm-cl-wayland.~a" (string-downcase package)))
-	 (asd (gen-asd package file)))
+	 (asd (gen-asd package file deps)))
     (with-open-file (stream (format nil "~a.lisp" file) :direction :output :if-exists :supersede)
       (loop :for xep :in code
 	    :do (format stream "~s~%~%" xep)))

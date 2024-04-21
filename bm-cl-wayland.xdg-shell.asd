@@ -6,7 +6,7 @@
   :VERSION
   "0.0.1"
   :DEPENDS-ON
-  (#:CFFI #:CL-ASYNC #:BM-CL-WAYLAND)
+  (#:CFFI #:CL-ASYNC #:BM-CL-WAYLAND #:BM-CL-WAYLAND.WAYLAND-CORE)
   :COMPONENTS
   ((:FILE "bm-cl-wayland.xdg-shell")))
 
