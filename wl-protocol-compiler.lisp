@@ -172,23 +172,23 @@ This can be overriden by inheritance in case if custom behaviour is required." (
 
 
 (defun gen-interface-var-fill (interface)
-  `((setf (foreign-slot-value interface '(:struct interface) 'name) (foreign-string-alloc ,(name interface)))
-    (setf (foreign-slot-value interface '(:struct interface) 'version) ,(version interface))
-    (setf (foreign-slot-value interface '(:struct interface) 'request-count) ,(length (requests interface)))
-    (setf (foreign-slot-value interface '(:struct interface) 'requests) ,(symbolify "*requests*"))
-    (setf (foreign-slot-value interface '(:struct interface) 'event-count) ,(length (events interface)))
-    (setf (foreign-slot-value interface '(:struct interface) 'events) ,(symbolify "*events*"))
+  `((setf (foreign-slot-value *interface* '(:struct interface) 'name) (foreign-string-alloc ,(name interface)))
+    (setf (foreign-slot-value *interface* '(:struct interface) 'version) ,(version interface))
+    (setf (foreign-slot-value *interface* '(:struct interface) 'method_count) ,(length (requests interface)))
+    (setf (foreign-slot-value *interface* '(:struct interface) 'methods) ,(symbolify "*requests*"))
+    (setf (foreign-slot-value *interface* '(:struct interface) 'event_count) ,(length (events interface)))
+    (setf (foreign-slot-value *interface* '(:struct interface) 'events) ,(symbolify "*events*"))
     ,@(mapcar 'gen-c-slot-init (requests interface))))
 
 (defun gen-interface-c-structs (interface)
   (append
-   `((defvar *interface* (cffi:foreign-alloc '(:struct interface))))
    `((defvar *requests*
-       (let ((requests (cffi:foreign-alloc '(:struct wl_message) ,(length (requests interface)))))
+       (let ((requests (cffi:foreign-alloc '(:struct wl_message)
+					   :count ,(length (requests interface)))))
 	 ,@(mapcar
 	    (lambda (request)
 	      `(let ((interface-array (cffi:foreign-alloc '(:pointer (:pointer :void))
-							   ,(length (requests interface)))))
+							   :count ,(length (requests interface)))))
 		  ,@(append
 		     ;; Code to fill the interface array with references to interface definitions
 		     (loop for index below (length (args request))
@@ -197,14 +197,14 @@ This can be overriden by inheritance in case if custom behaviour is required." (
 						   ,(if (interface arg)
 							(symbolify "wl/~a::*interface*" (interface arg))
 							`(null-pointer)))))
-		     `((setf (foreign-slot-value requests '(:struct wl_message) 'name)
+		     `((setf (foreign-slot-value requests '(:struct wl_message) 'wl-ffi::name)
 			     (foreign-string-alloc ,(name request))
 
-			     (foreign-slot-value requests '(:struct wl_message) 'signature)
+			     (foreign-slot-value requests '(:struct wl_message) 'wl-ffi::signature)
 			     ;; TODO: Do signature - you already started in the parser
 			     (foreign-string-alloc ,(signature request))
 
-			     (foreign-slot-value requests '(:struct wl_message) 'types)
+			     (foreign-slot-value requests '(:struct wl_message) 'wl-ffi::types)
 			     ;; TODO: This should instead be a reference to an interface.
 			     ;; The interface in question could actually span different packages. So a pain in the neck.
 			     interface-array)))))
@@ -227,27 +227,18 @@ This can be overriden by inheritance in case if custom behaviour is required." (
        ;; The *global-tracker* set might be unnecessary
        (set-data next-data-id (setf (gethash (pointer-address global-ptr) *global-tracker*) global))))))
 
+(defun pkg-name (interface namespace)
+  (symbolify ":~a/~a" namespace (name interface)))
+
 (defun gen-interface (interface namespace)
-  (let ((pkg-name  (symbolify ":~a/~a" namespace (name interface))))
+  (let ((pkg-name (pkg-name interface namespace)))
     (append
-     `((defpackage ,pkg-name
-	 (:use :cl :wl :cffi)
-	 (:nicknames ,(symbolify ":~a" (str:replace-all "_" "-" (name interface))))
-	 (:export dispatch global)))
      `((in-package ,pkg-name))
      `((defclass dispatch (wl:object) ()
 	 (:default-initargs :version ,(version interface))
 	 (:documentation ,(description interface))))
      (mapcar 'gen-request-generic (requests interface))
      (mapcar 'gen-request-callback (requests interface))
-     `((defcstruct interface
-	 (name :string)
-	 (version :int)
-	 (method_count :int)
-	 (methods (:pointer (:struct wl_message)))
-	 (event_count :int)
-	 (events (:pointer (:struct wl_message)))
-	 ,@(mapcar 'gen-request-c-struct (requests interface))))
      (gen-interface-c-structs interface)
 
      `((defclass global (wl::global) ()
@@ -258,9 +249,35 @@ This can be overriden by inheritance in case if custom behaviour is required." (
      `((defvar *dispatch-bind* (callback ,(symbolify "dispatch-bind-ffi"))))
      (gen-global-init))))
 
-(defun gen-code (protocol namespace) (apply #'append (mapcar (lambda (part) (gen-interface part namespace)) protocol)))
+(defun gen-interface-preamble (interface namespace)
+  (let ((pkg-name (pkg-name interface namespace)))
+    (append
+     `((defpackage ,pkg-name
+	 (:use :cl :wl :cffi)
+	 (:nicknames ,(symbolify ":~a" (str:replace-all "_" "-" (name interface))))
+	 (:export dispatch global)))
+     `((in-package ,pkg-name))
+     `((defcstruct interface
+	 (name :string)
+	 (version :int)
+	 (method_count :int)
+	 (methods (:pointer (:struct wl_message)))
+	 (event_count :int)
+	 (events (:pointer (:struct wl_message)))
+	 ,@(mapcar 'gen-request-c-struct (requests interface))))
+     `((defvar *interface* (cffi:foreign-alloc '(:struct interface)))))))
+
+(defun gen-code (protocol namespace)
+  (append
+   (apply #'append (mapcar (lambda (part) (gen-interface-preamble part namespace)) protocol))
+   (apply #'append (mapcar (lambda (part) (gen-interface part namespace)) protocol))))
+
 (defun defpackages-during-compilation (interface namespace)
-  (make-package (symbolify "~a/~a" namespace (name interface))))
+  (let* ((package-name (symbolify "~a/~a" namespace (name interface)))
+	 (existing-pkg (find-package package-name)))
+    (if existing-pkg
+	existing-pkg
+	(make-package package-name))))
 
 (defun gen-asd (package file)
   `((asdf:defsystem ,(symbolify "#:bm-cl-wayland.~a" package)

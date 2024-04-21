@@ -9,11 +9,16 @@
   (:use :cl :cffi)
   (:nicknames :wl-ffi)
   (:export display-create global-create global-get-name resource-get-id resource-create
-	   client-create))
+	   client-create wl_message))
 
 (in-package :bm-cl-libwayland)
 (define-foreign-library wayland-server
   (t (:default "libwayland-server")))
+
+(defcstruct wl_message
+  (name :string)
+  (signature :string)
+  (types :pointer))
 
 (defcfun ("wl_display_create" display-create) :pointer)
 
