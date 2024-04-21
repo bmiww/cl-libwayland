@@ -147,29 +147,8 @@ This can be overriden by inheritance in case if custom behaviour is required." (
 
 (defun gen-c-slot-init (request)
   `(setf
-    (foreign-slot-value interface '(:struct interface) ,(symbolify "'~a" (name request)))
+    (foreign-slot-value *interface* '(:struct interface) ,(symbolify "'~a" (name request)))
     (callback ,(symbolify "~a-ffi" (name request)))))
-
-;; TODO: Interface is not the same as implementation.
-;; Afaik - implementation could possibly not extend interface but just have the function names
-;; TODO: Interface should be of format
-;; static const struct wl_message wl_output_requests[] = {
-	;; { "release", "3", wayland_types + 0 },
-;; };
-
-;; NOTE: Where ther third part is a pointer to an array with either null or pointers to interfaces
-;; Corresponding to the signature - if the signature were to have an object in the argument list
-;; null for signature arguments that are primitives
-
-;; static const struct wl_message wl_output_events[] = {
-	;; { "geometry", "iiiiissi", wayland_types + 0 },
-	;; { "mode", "uiii", wayland_types + 0 },
-	;; { "done", "2", wayland_types + 0 },
-	;; { "scale", "2i", wayland_types + 0 },
-	;; { "name", "4s", wayland_types + 0 },
-	;; { "description", "4s", wayland_types + 0 },
-;; };
-
 
 (defun gen-interface-var-fill (interface)
   `((setf (foreign-slot-value *interface* '(:struct interface) 'name) (foreign-string-alloc ,(name interface)))
@@ -180,41 +159,40 @@ This can be overriden by inheritance in case if custom behaviour is required." (
     (setf (foreign-slot-value *interface* '(:struct interface) 'events) ,(symbolify "*events*"))
     ,@(mapcar 'gen-c-slot-init (requests interface))))
 
-(defun gen-interface-c-structs (interface)
-  (append
-   `((defvar *requests*
-       (let ((requests (cffi:foreign-alloc '(:struct wl_message)
-					   :count ,(length (requests interface)))))
+(defun gen-c-struct-filler (var-name methods)
+  `((defvar ,var-name
+       (let ((messages (cffi:foreign-alloc '(:struct wl_message)
+					   :count ,(length methods))))
 	 ,@(mapcar
-	    (lambda (request)
+	    (lambda (method)
 	      `(let ((interface-array (cffi:foreign-alloc '(:pointer (:pointer :void))
-							   :count ,(length (requests interface)))))
+							   :count ,(length (args method)))))
 		  ,@(append
 		     ;; Code to fill the interface array with references to interface definitions
-		     (loop for index below (length (args request))
-			   collect (let ((arg (nth index (args request))))
+		     (loop for index below (length (args method))
+			   collect (let ((arg (nth index (args method))))
 				     `(setf (mem-aref interface-array :pointer ,index)
 						   ,(if (interface arg)
 							(symbolify "wl/~a::*interface*" (interface arg))
 							`(null-pointer)))))
-		     `((setf (foreign-slot-value requests '(:struct wl_message) 'wl-ffi::name)
-			     (foreign-string-alloc ,(name request))
+		     `((setf (foreign-slot-value messages '(:struct wl_message) 'wl-ffi::name)
+			     (foreign-string-alloc ,(name method))
 
-			     (foreign-slot-value requests '(:struct wl_message) 'wl-ffi::signature)
+			     (foreign-slot-value messages '(:struct wl_message) 'wl-ffi::signature)
 			     ;; TODO: Do signature - you already started in the parser
-			     (foreign-string-alloc ,(signature request))
+			     (foreign-string-alloc ,(signature method))
 
-			     (foreign-slot-value requests '(:struct wl_message) 'wl-ffi::types)
+			     (foreign-slot-value messages '(:struct wl_message) 'wl-ffi::types)
 			     ;; TODO: This should instead be a reference to an interface.
 			     ;; The interface in question could actually span different packages. So a pain in the neck.
 			     interface-array)))))
-	    (requests interface))
-	 requests)))
+	    methods)
+	 messages))))
 
-
-   ;; (mapcar 'gen-event-message-structs (events interface))
-   ;; TODO: This could be done in two steps. Defvar to allocate.
-   ;; Then after the *requests* and *events* structs are finished - fill out this darn thing.
+(defun gen-interface-c-structs (interface)
+  (append
+   (gen-c-struct-filler (symbolify "*requests*") (requests interface))
+   (gen-c-struct-filler (symbolify "*events*") (events interface))
    (gen-interface-var-fill interface)))
 
 (defun gen-global-init ()
