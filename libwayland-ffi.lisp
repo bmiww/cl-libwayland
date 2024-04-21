@@ -9,7 +9,8 @@
   (:use :cl :cffi)
   (:nicknames :wl-ffi)
   (:export display-create global-create global-get-name resource-get-id resource-create
-	   client-create wl_message display-add-socket-fd display-run))
+	   client-create wl_message display-add-socket-fd display-run display-get-event-loop event-loop-get-fd
+	   event-loop-dispatch display-flush-clients))
 
 (in-package :bm-cl-libwayland)
 (define-foreign-library wayland-server
@@ -27,6 +28,19 @@
 
 (defcfun ("wl_display_run" display-run) :void
   (display :pointer))
+
+(defcfun ("wl_display_get_event_loop" display-get-event-loop) :pointer
+  (display :pointer))
+
+(defcfun ("wl_display_flush_clients" display-flush-clients) :void
+  (display :pointer))
+
+(defcfun ("wl_event_loop_get_fd" event-loop-get-fd) :int
+  (loop :pointer))
+
+(defcfun ("wl_event_loop_dispatch" event-loop-dispatch) :int
+  (loop :pointer)
+  (timeout :int))
 
 (defcfun ("wl_global_create" global-create) :pointer
   (display :pointer)
