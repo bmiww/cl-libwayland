@@ -9,7 +9,7 @@
   (:use :cl :cffi)
   (:nicknames :wl-ffi)
   (:export display-create global-create global-get-name resource-get-id resource-create
-	   client-create wl_message display-add-socket-fd))
+	   client-create wl_message display-add-socket-fd display-run))
 
 (in-package :bm-cl-libwayland)
 (define-foreign-library wayland-server
@@ -24,6 +24,9 @@
 (defcfun ("wl_display_add_socket_fd" display-add-socket-fd) :int
   (display :pointer)
   (fd :int))
+
+(defcfun ("wl_display_run" display-run) :void
+  (display :pointer))
 
 (defcfun ("wl_global_create" global-create) :pointer
   (display :pointer)
