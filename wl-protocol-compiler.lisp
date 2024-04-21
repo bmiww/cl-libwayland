@@ -187,25 +187,27 @@ This can be overriden by inheritance in case if custom behaviour is required." (
        (let ((requests (cffi:foreign-alloc '(:struct wl_message) ,(length (requests interface)))))
 	 ,@(mapcar
 	    (lambda (request)
-	      (append
-	       `((let ((interface-array (cffi:foreign-alloc '(:pointer (:pointer :void)) ,(length (requests interface)))))
-		   ,@(loop for index below (length (args request))
+	      `(let ((interface-array (cffi:foreign-alloc '(:pointer (:pointer :void))
+							   ,(length (requests interface)))))
+		  ,@(append
+		     ;; Code to fill the interface array with references to interface definitions
+		     (loop for index below (length (args request))
 			   collect (let ((arg (nth index (args request))))
 				     `(setf (mem-aref interface-array :pointer ,index)
-					    ,(if (interface arg)
-						 `,(symbolify "wl/~a::*interface*" (interface arg))
-						 `(null-pointer))))))
-		 (setf (foreign-slot-value requests '(:struct wl_message) 'name)
-		       (foreign-string-alloc (name request))
+						   ,(if (interface arg)
+							(symbolify "wl/~a::*interface*" (interface arg))
+							`(null-pointer)))))
+		     `((setf (foreign-slot-value requests '(:struct wl_message) 'name)
+			     (foreign-string-alloc ,(name request))
 
-		       (foreign-slot-value requests '(:struct wl_message) 'signature)
-		       ;; TODO: Do signature - you already started in the parser
-		       (foreign-string-alloc ,(signature request))
+			     (foreign-slot-value requests '(:struct wl_message) 'signature)
+			     ;; TODO: Do signature - you already started in the parser
+			     (foreign-string-alloc ,(signature request))
 
-		       (foreign-slot-value requests '(:struct wl_message) 'types)
-		       ;; TODO: This should instead be a reference to an interface.
-		       ;; The interface in question could actually span different packages. So a pain in the neck.
-		       interface-array))))
+			     (foreign-slot-value requests '(:struct wl_message) 'types)
+			     ;; TODO: This should instead be a reference to an interface.
+			     ;; The interface in question could actually span different packages. So a pain in the neck.
+			     interface-array)))))
 	    (requests interface))
 	 requests)))
 
@@ -256,15 +258,9 @@ This can be overriden by inheritance in case if custom behaviour is required." (
      `((defvar *dispatch-bind* (callback ,(symbolify "dispatch-bind-ffi"))))
      (gen-global-init))))
 
-
+(defun gen-code (protocol namespace) (apply #'append (mapcar (lambda (part) (gen-interface part namespace)) protocol)))
 (defun defpackages-during-compilation (interface namespace)
-  (make-package (print (symbolify "~a/~a" namespace (name interface)))))
-
-(defun gen-code (protocol namespace)
-  (let ((pkgs (mapcar (lambda (part) (defpackages-during-compilation part namespace)) protocol))
-	(sexps (apply #'append (mapcar (lambda (part) (gen-interface part namespace)) protocol))))
-    (mapcar 'delete-package pkgs)
-    sexps))
+  (make-package (symbolify "~a/~a" namespace (name interface))))
 
 (defun gen-asd (package file)
   `((asdf:defsystem ,(symbolify "#:bm-cl-wayland.~a" package)
@@ -277,6 +273,8 @@ This can be overriden by inheritance in case if custom behaviour is required." (
 (defun generate-wayland-classes (package xml-file &key namespace)
   (let* ((xml (with-open-file (s xml-file :if-does-not-exist :error) (xmls:parse s)))
 	 (protocol (read-protocol xml))
+	 ;; NOTE: Required so that we can compile cross package dependencies
+	 (pkgs (mapcar (lambda (part) (defpackages-during-compilation part namespace)) protocol))
 	 (code (gen-code protocol namespace))
 	 (file (format nil "bm-cl-wayland.~a" (string-downcase package)))
 	 (asd (gen-asd package file)))
@@ -285,7 +283,9 @@ This can be overriden by inheritance in case if custom behaviour is required." (
 	    :do (format stream "~s~%~%" xep)))
     (with-open-file (stream (format nil "~a.asd" file) :direction :output :if-exists :supersede)
       (loop :for xep :in asd
-	    :do (format stream "~s~%~%" xep)))))
+	    :do (format stream "~s~%~%" xep)))
+    (mapcar 'delete-package pkgs)
+    t))
 
 ;; ┬ ┬┌┬┐┬┬
 ;; │ │ │ ││

@@ -79,11 +79,9 @@
 ;; └─┘└─┘┘└┘└─┘ ┴ ┴└─└─┘└─┘ ┴ └─┘┴└─└─┘
 
 (defun make-signature (message)
-  (print (with-output-to-string (string)
+  (with-output-to-string (string)
     (when (since message) (format string (since message)))
     (dolist (arg (args message))
-      (print (name arg))
-      (print (arg-type arg))
       (format string "~a~a"
 	      (if (nullable arg) "?" "")
 	      (alexandria:eswitch ((arg-type arg) :test 'string=)
@@ -95,7 +93,7 @@
 		("new_id" "n")
 		("array" "a")
 		("fd" "h")
-		("enum" "u")))))))
+		("enum" "u"))))))
 
 (defmethod initialize-instance :after ((event event) &key) (setf (signature event) (make-signature event)))
 (defmethod initialize-instance :after ((request request) &key) (setf (signature request) (make-signature request)))
