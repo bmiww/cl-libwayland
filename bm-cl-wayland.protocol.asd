@@ -14,6 +14,7 @@
   :depends-on (#:xmls
 	       #:str
 	       #:split-sequence
+	       #:alexandria
 	       #:bm-cl-wayland)
   :components ((:file "wl-protocol-parser")
 	       (:file "wl-protocol-compiler")))

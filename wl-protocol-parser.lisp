@@ -8,7 +8,7 @@
 (defpackage :bm-cl-wayland.parser
   (:use :cl :xmls :split-sequence)
   (:export name enum description arg-type args value entries enum-name bitfield-p requests events
-	   version enums read-protocol event))
+	   version enums read-protocol event interface signature))
 (in-package :bm-cl-wayland.parser)
 
 ;; ┌─┐┌┐┌┌┬┐┬─┐┬ ┬
@@ -51,12 +51,16 @@
 (defclass event ()
   ((name :initarg :name :accessor name)
    (description :initarg :description :accessor description)
-   (args :initarg :args :accessor args)))
+   (args :initarg :args :accessor args)
+   (signature :initarg :signature :accessor signature)
+   (since :initarg :since :accessor since)))
 
 (defclass request ()
   ((name :initarg :name :accessor name)
    (description :initarg :description :accessor description)
-   (args :initarg :args :accessor args)))
+   (args :initarg :args :accessor args)
+   (signature :initarg :signature :accessor signature)
+   (since :initarg :since :accessor since)))
 
 (defclass enum ()
   ((name :initarg :name :accessor name)
@@ -74,8 +78,32 @@
 ;; │  │ ││││└─┐ │ ├┬┘│ ││   │ │ │├┬┘└─┐
 ;; └─┘└─┘┘└┘└─┘ ┴ ┴└─└─┘└─┘ ┴ └─┘┴└─└─┘
 
-(defun make-request (xml) (make-instance 'request :name (name-of xml) :args (read-args xml) :description (get-description xml)))
-(defun make-event (xml) (make-instance 'event :name (name-of xml) :args (read-args xml) :description (get-description xml)))
+(defun make-signature (message)
+  (print (with-output-to-string (string)
+    (when (since message) (format string (since message)))
+    (dolist (arg (args message))
+      (print (name arg))
+      (print (arg-type arg))
+      (format string "~a~a"
+	      (if (nullable arg) "?" "")
+	      (alexandria:eswitch ((arg-type arg) :test 'string=)
+		("int" "i")
+		("uint" "u")
+		("fixed" "f")
+		("string" "s")
+		("object" "o")
+		("new_id" "n")
+		("array" "a")
+		("fd" "h")
+		("enum" "u")))))))
+
+(defmethod initialize-instance :after ((event event) &key) (setf (signature event) (make-signature event)))
+(defmethod initialize-instance :after ((request request) &key) (setf (signature request) (make-signature request)))
+
+(defun make-request (xml) (make-instance 'request :name (name-of xml) :args (read-args xml)
+				  :description (get-description xml) :since (since-of xml)))
+(defun make-event (xml) (make-instance 'event :name (name-of xml) :args (read-args xml)
+			      :description (get-description xml) :since (since-of xml)))
 
 (defun make-enum (interface-name xml)
   (make-instance 'enum :name (name-of xml) :interface-name interface-name
@@ -123,6 +151,10 @@
 
 (defun type-of-arg (object)
   (second (find-if (lambda (x) (and (listp x) (stringp (first x)) (string= (first x) "type")))
+		   (xmls:node-attrs object))))
+
+(defun since-of (object)
+  (second (find-if (lambda (x) (and (listp x) (stringp (first x)) (string= (first x) "since")))
 		   (xmls:node-attrs object))))
 
 (defun value-of (object)
