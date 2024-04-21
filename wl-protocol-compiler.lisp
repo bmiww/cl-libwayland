@@ -130,10 +130,11 @@
 (defun gen-request-c-struct (request)
   `(,(symbolify (name request)) :pointer))
 
-(defun gen-bind-callback ()
+(defun gen-bind-callback (interface)
   `((defmethod dispatch-bind ((global global) client data version id)
-     "Default bind implementation for the ,(name interface) global object.
-This can be overriden by inheritance in case if custom behaviour is required."
+      ,(format nil "Default bind implementation for the ~a global object.
+This can be overriden by inheritance in case if custom behaviour is required." (name interface))
+
      (let ((bound (make-instance ',(symbolify "dispatch") :display (display client))))
        (setf (iface client id) bound)
        (create-resource client ,(symbolify "*interface*") version id)))))
@@ -151,7 +152,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
 (defun gen-interface-struct-var (interface)
   `((defvar *interface*
-      (with-foreign-object (interface 'interface)
+      (let ((interface (cffi:foreign-alloc '(:struct interface))))
 	,@(mapcar 'gen-c-slot-init (requests interface))
 	interface))))
 
@@ -185,7 +186,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
      `((defclass global (wl::global) ()
 	 (:default-initargs :version ,(version interface))
 	 (:documentation ,(description interface))))
-     (gen-bind-callback)
+     (gen-bind-callback interface)
      (gen-bind-c-callback)
      `((defvar *dispatch-bind* (callback ,(symbolify "dispatch-bind-ffi"))))
      (gen-global-init))))

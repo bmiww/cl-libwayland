@@ -54,7 +54,6 @@
   "This function should be called when a new client connects to the socket.
 This will in essence forward the client to the libwayland implementation
 and set up the client object in the lisp world for further referencing."
-  (print "HAPNPNPNPNP")
   (let* ((client (client-create display fd))
 	 (pid (client-get-credentials client)))
     (setf (gethash pid *client-tracker*) (make-instance 'client :display display))
@@ -85,7 +84,7 @@ and set up the client object in the lisp world for further referencing."
     (foreign-free data-ptr)))
 
 (defun data-ptr (data)
-  (with-foreign-object (data-ptr :int)
+  (let ((data-ptr (foreign-alloc :int)))
     (setf (mem-ref data-ptr :int) data)
     data-ptr))
 
