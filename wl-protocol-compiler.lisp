@@ -137,7 +137,7 @@ This can be overriden by inheritance in case if custom behaviour is required." (
 
      (let ((bound (make-instance ',(symbolify "dispatch") :display (display client))))
        (setf (iface client id) bound)
-       (create-resource client ,(symbolify "*interface*") version id)))))
+       (create-resource (ptr client) ,(symbolify "*interface*") version id)))))
 
 (defun gen-bind-c-callback ()
   `((cl-async::define-c-callback dispatch-bind-ffi :void ((client :pointer) (data :pointer) (version :uint) (id :uint))

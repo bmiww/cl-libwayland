@@ -419,7 +419,7 @@ The core global object.  This is a special singleton object.  It
 This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
-    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+    (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -566,7 +566,7 @@ The singleton global registry object.  The server has a number of
 This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
-    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+    (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -644,7 +644,7 @@ Clients can handle the 'done' event to get notified when
 This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
-    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+    (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -754,7 +754,7 @@ A compositor.  This object is a singleton global.  The
 This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
-    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+    (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -902,7 +902,7 @@ The wl_shm_pool object encapsulates a piece of memory shared
 This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
-    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+    (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -1014,7 +1014,7 @@ A singleton global object that provides support for shared
 This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
-    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+    (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -1130,7 +1130,7 @@ A buffer provides the content for a wl_surface. Buffers are
 This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
-    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+    (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -1359,7 +1359,7 @@ A wl_data_offer represents a piece of data offered for transfer
 This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
-    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+    (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -1564,7 +1564,7 @@ The wl_data_source object is the source side of a wl_data_offer.
 This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
-    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+    (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -1783,7 +1783,7 @@ There is one wl_data_device per seat which can be obtained
 This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
-    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+    (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -1908,7 +1908,7 @@ The wl_data_device_manager is a singleton global object that
 This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
-    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+    (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -2008,7 +2008,7 @@ This interface is implemented by servers that provide
 This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
-    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+    (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -2381,7 +2381,7 @@ An interface that may be implemented by a wl_surface, for
 This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
-    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+    (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -2843,7 +2843,7 @@ A surface is a rectangular area that may be displayed on zero
 This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
-    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+    (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -3026,7 +3026,7 @@ A seat is a group of keyboards, pointer and touch devices. This
 This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
-    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+    (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -3296,7 +3296,7 @@ The wl_pointer interface represents one or more input devices,
 This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
-    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+    (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -3464,7 +3464,7 @@ The wl_keyboard interface represents one or more keyboards
 This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
-    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+    (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -3654,7 +3654,7 @@ The wl_touch interface represents a touchscreen
 This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
-    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+    (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -3826,7 +3826,7 @@ An output describes part of the compositor geometry.  The
 This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
-    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+    (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -3969,7 +3969,7 @@ A region object describes an area.
 This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
-    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+    (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -4113,7 +4113,7 @@ The global interface exposing sub-surface compositing capabilities.
 This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
-    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+    (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -4405,7 +4405,7 @@ An additional interface to a wl_surface object, which has been
 This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
-    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+    (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID

@@ -232,7 +232,7 @@ The xdg_wm_base interface is exposed as a global object enabling clients
 This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
-    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+    (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -576,7 +576,7 @@ The xdg_positioner provides a collection of rules for the placement of a
 This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
-    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+    (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -866,7 +866,7 @@ An interface that may be implemented by a wl_surface, for
 This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
-    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+    (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -1355,7 +1355,7 @@ This interface defines an xdg_surface role which allows a surface to,
 This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
-    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+    (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -1570,7 +1570,7 @@ A popup surface is a short-lived, temporary surface. It can be used to
 This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
-    (CREATE-RESOURCE CLIENT *INTERFACE* VERSION ID)))
+    (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID

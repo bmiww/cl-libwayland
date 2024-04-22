@@ -16,7 +16,7 @@
   (:export display-create create-client *global-tracker* resource-get-id object get-client iface
 	   pop-data display create-resource reserve-data global-create version data-ptr set-data
 	   global-get-name wl_message display-add-socket-fd display-run display-get-event-loop event-loop-get-fd
-	   event-loop-dispatch display-flush-clients))
+	   event-loop-dispatch display-flush-clients ptr))
 (in-package :bm-cl-wayland)
 
 (defclass object ()
@@ -36,7 +36,8 @@
 ;; └─┘┴─┘┴└─┘┘└┘ ┴
 (defclass client ()
   ((objects :initform (make-hash-table :test 'eq) :accessor objects)
-   (display :initarg :display :reader display)))
+   (display :initarg :display :reader display)
+   (ptr :initarg :ptr :reader ptr)))
 
 (defvar *client-tracker* (make-hash-table :test 'equal))
 
@@ -57,7 +58,7 @@ This will in essence forward the client to the libwayland implementation
 and set up the client object in the lisp world for further referencing."
   (let* ((client (client-create display fd))
 	 (pid (client-get-credentials client)))
-    (setf (gethash pid *client-tracker*) (make-instance 'client :display display))
+    (setf (gethash pid *client-tracker*) (make-instance 'client :display display :ptr client))
     client))
 
 (defmethod iface ((client client) interface)
