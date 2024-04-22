@@ -116,8 +116,10 @@
 (defun gen-request-callback (request)
   `(cl-async::define-c-callback ,(symbolify "~a-ffi" (name request)) :void
        ((client :pointer) (resource :pointer) ,@(mapcar 'gen-request-c-arg (args request)))
+     (debug-log! "Received request: ~a, " ,(name request))
      (let ((client (get-client client))
 	   (resource (resource-get-id resource)))
+       (debug-log! "For client: ~a~%" client)
        (funcall
 	',(symbolify (name request))
 	(iface client resource)
@@ -135,15 +137,17 @@
       ,(format nil "Default bind implementation for the ~a global object.
 This can be overriden by inheritance in case if custom behaviour is required." (name interface))
 
-     (let ((bound (make-instance ',(symbolify "dispatch") :display (display client))))
-       (setf (iface client id) bound)
-       (create-resource (ptr client) ,(symbolify "*interface*") version id)))))
+      (debug-log! "Binding ~a~%" ,(name interface))
+      (let ((bound (make-instance ',(symbolify "dispatch") :display (display client))))
+	(setf (iface client id) bound)
+	(create-resource (ptr client) ,(symbolify "*interface*") version id)))))
 
-(defun gen-bind-c-callback ()
+(defun gen-bind-c-callback (interface)
   `((cl-async::define-c-callback dispatch-bind-ffi :void ((client :pointer) (data :pointer) (version :uint) (id :uint))
-     (let* ((client (get-client client))
-	    (global (pop-data data)))
-       (funcall 'dispatch-bind global client (null-pointer) version id)))))
+      (debug-log! "C-Binding ~a~%" ,(name interface))
+      (let* ((client (get-client client))
+	     (global (pop-data data)))
+	(funcall 'dispatch-bind global client (null-pointer) version id)))))
 
 (defun gen-c-slot-init (request)
   `(setf
@@ -195,15 +199,16 @@ This can be overriden by inheritance in case if custom behaviour is required." (
    (gen-c-struct-filler (symbolify "*events*") (events interface))
    (gen-interface-var-fill interface)))
 
-(defun gen-global-init ()
+(defun gen-global-init (interface)
   `((defmethod initialize-instance :after ((global global) &key)
-     (let* ((next-data-id (reserve-data))
-	    (global-ptr (global-create (display global) *interface*
-				   (version global) (data-ptr next-data-id)
-				   *dispatch-bind*)))
-       ;; TODO: not sure i really need to keep track of the globals.
-       ;; The *global-tracker* set might be unnecessary
-       (set-data next-data-id (setf (gethash (pointer-address global-ptr) *global-tracker*) global))))))
+      (debug-log! "Initializing global object: ~a~%" ,(name interface))
+      (let* ((next-data-id (reserve-data))
+	     (global-ptr (global-create (display global) *interface*
+					(version global) (data-ptr next-data-id)
+					*dispatch-bind*)))
+	;; TODO: not sure i really need to keep track of the globals.
+	;; The *global-tracker* set might be unnecessary
+	(set-data next-data-id (setf (gethash (pointer-address global-ptr) *global-tracker*) global))))))
 
 (defun pkg-name (interface )
   (symbolify ":~a" (name interface)))
@@ -223,9 +228,9 @@ This can be overriden by inheritance in case if custom behaviour is required." (
 	 (:default-initargs :version ,(version interface))
 	 (:documentation ,(description interface))))
      (gen-bind-callback interface)
-     (gen-bind-c-callback)
+     (gen-bind-c-callback interface)
      `((defvar *dispatch-bind* (callback ,(symbolify "dispatch-bind-ffi"))))
-     (gen-global-init))))
+     (gen-global-init interface))))
 
 (defun gen-interface-preamble (interface)
   (let ((pkg-name (pkg-name interface)))

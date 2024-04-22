@@ -16,7 +16,7 @@
   (:export display-create create-client *global-tracker* resource-get-id object get-client iface
 	   pop-data display create-resource reserve-data global-create version data-ptr set-data
 	   global-get-name wl_message display-add-socket-fd display-run display-get-event-loop event-loop-get-fd
-	   event-loop-dispatch display-flush-clients ptr))
+	   event-loop-dispatch display-flush-clients ptr debug-log!))
 (in-package :bm-cl-wayland)
 
 (defclass object ()
@@ -91,3 +91,11 @@ and set up the client object in the lisp world for further referencing."
     data-ptr))
 
 (defun set-data (index data) (setf (gethash index *data-tracker*) data))
+
+
+;; ┬ ┬┌┬┐┬┬
+;; │ │ │ ││
+;; └─┘ ┴ ┴┴─┘
+
+(defvar *debug* t)
+(defmacro debug-log! (&rest args) (when *debug* `(format t ,@args)))

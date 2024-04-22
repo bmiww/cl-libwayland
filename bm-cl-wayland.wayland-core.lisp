@@ -321,13 +321,17 @@ The core global object.  This is a special singleton object.  It
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK SYNC-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (CALLBACK :UINT))
+  (DEBUG-LOG! "Received request: ~a, " "sync")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'SYNC (IFACE CLIENT RESOURCE) CLIENT CALLBACK)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK GET_REGISTRY-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (REGISTRY :UINT))
+  (DEBUG-LOG! "Received request: ~a, " "get_registry")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'GET_REGISTRY (IFACE CLIENT RESOURCE) CLIENT REGISTRY)))
 
 (DEFVAR *REQUESTS*
@@ -417,6 +421,7 @@ The core global object.  This is a special singleton object.  It
 (DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
   "Default bind implementation for the wl_display global object.
 This can be overriden by inheritance in case if custom behaviour is required."
+  (DEBUG-LOG! "Binding ~a~%" "wl_display")
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
     (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
@@ -424,12 +429,14 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+  (DEBUG-LOG! "C-Binding ~a~%" "wl_display")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((GLOBAL GLOBAL) &KEY)
+  (DEBUG-LOG! "Initializing global object: ~a~%" "wl_display")
   (LET* ((NEXT-DATA-ID (RESERVE-DATA))
          (GLOBAL-PTR
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
@@ -470,7 +477,9 @@ The singleton global registry object.  The server has a number of
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK BIND-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (NAME :UINT) (ID :UINT))
+  (DEBUG-LOG! "Received request: ~a, " "bind")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'BIND (IFACE CLIENT RESOURCE) CLIENT NAME ID)))
 
 (DEFVAR *REQUESTS*
@@ -564,6 +573,7 @@ The singleton global registry object.  The server has a number of
 (DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
   "Default bind implementation for the wl_registry global object.
 This can be overriden by inheritance in case if custom behaviour is required."
+  (DEBUG-LOG! "Binding ~a~%" "wl_registry")
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
     (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
@@ -571,12 +581,14 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+  (DEBUG-LOG! "C-Binding ~a~%" "wl_registry")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((GLOBAL GLOBAL) &KEY)
+  (DEBUG-LOG! "Initializing global object: ~a~%" "wl_registry")
   (LET* ((NEXT-DATA-ID (RESERVE-DATA))
          (GLOBAL-PTR
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
@@ -642,6 +654,7 @@ Clients can handle the 'done' event to get notified when
 (DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
   "Default bind implementation for the wl_callback global object.
 This can be overriden by inheritance in case if custom behaviour is required."
+  (DEBUG-LOG! "Binding ~a~%" "wl_callback")
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
     (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
@@ -649,12 +662,14 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+  (DEBUG-LOG! "C-Binding ~a~%" "wl_callback")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((GLOBAL GLOBAL) &KEY)
+  (DEBUG-LOG! "Initializing global object: ~a~%" "wl_callback")
   (LET* ((NEXT-DATA-ID (RESERVE-DATA))
          (GLOBAL-PTR
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
@@ -681,13 +696,17 @@ A compositor.  This object is a singleton global.  The
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK CREATE_SURFACE-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (ID :UINT))
+  (DEBUG-LOG! "Received request: ~a, " "create_surface")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'CREATE_SURFACE (IFACE CLIENT RESOURCE) CLIENT ID)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK CREATE_REGION-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (ID :UINT))
+  (DEBUG-LOG! "Received request: ~a, " "create_region")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'CREATE_REGION (IFACE CLIENT RESOURCE) CLIENT ID)))
 
 (DEFVAR *REQUESTS*
@@ -752,6 +771,7 @@ A compositor.  This object is a singleton global.  The
 (DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
   "Default bind implementation for the wl_compositor global object.
 This can be overriden by inheritance in case if custom behaviour is required."
+  (DEBUG-LOG! "Binding ~a~%" "wl_compositor")
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
     (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
@@ -759,12 +779,14 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+  (DEBUG-LOG! "C-Binding ~a~%" "wl_compositor")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((GLOBAL GLOBAL) &KEY)
+  (DEBUG-LOG! "Initializing global object: ~a~%" "wl_compositor")
   (LET* ((NEXT-DATA-ID (RESERVE-DATA))
          (GLOBAL-PTR
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
@@ -799,20 +821,26 @@ The wl_shm_pool object encapsulates a piece of memory shared
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (ID :UINT) (OFFSET :INT)
      (WIDTH :INT) (HEIGHT :INT) (STRIDE :INT) (FORMAT :UINT))
+  (DEBUG-LOG! "Received request: ~a, " "create_buffer")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'CREATE_BUFFER (IFACE CLIENT RESOURCE) CLIENT ID OFFSET WIDTH
              HEIGHT STRIDE FORMAT)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DESTROY-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER))
+  (DEBUG-LOG! "Received request: ~a, " "destroy")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'DESTROY (IFACE CLIENT RESOURCE) CLIENT)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK RESIZE-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (SIZE :INT))
+  (DEBUG-LOG! "Received request: ~a, " "resize")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'RESIZE (IFACE CLIENT RESOURCE) CLIENT SIZE)))
 
 (DEFVAR *REQUESTS*
@@ -900,6 +928,7 @@ The wl_shm_pool object encapsulates a piece of memory shared
 (DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
   "Default bind implementation for the wl_shm_pool global object.
 This can be overriden by inheritance in case if custom behaviour is required."
+  (DEBUG-LOG! "Binding ~a~%" "wl_shm_pool")
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
     (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
@@ -907,12 +936,14 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+  (DEBUG-LOG! "C-Binding ~a~%" "wl_shm_pool")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((GLOBAL GLOBAL) &KEY)
+  (DEBUG-LOG! "Initializing global object: ~a~%" "wl_shm_pool")
   (LET* ((NEXT-DATA-ID (RESERVE-DATA))
          (GLOBAL-PTR
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
@@ -942,7 +973,9 @@ A singleton global object that provides support for shared
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK CREATE_POOL-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (ID :UINT) (FD :UINT) (SIZE :INT))
+  (DEBUG-LOG! "Received request: ~a, " "create_pool")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'CREATE_POOL (IFACE CLIENT RESOURCE) CLIENT ID FD SIZE)))
 
 (DEFVAR *REQUESTS*
@@ -1012,6 +1045,7 @@ A singleton global object that provides support for shared
 (DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
   "Default bind implementation for the wl_shm global object.
 This can be overriden by inheritance in case if custom behaviour is required."
+  (DEBUG-LOG! "Binding ~a~%" "wl_shm")
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
     (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
@@ -1019,12 +1053,14 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+  (DEBUG-LOG! "C-Binding ~a~%" "wl_shm")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((GLOBAL GLOBAL) &KEY)
+  (DEBUG-LOG! "Initializing global object: ~a~%" "wl_shm")
   (LET* ((NEXT-DATA-ID (RESERVE-DATA))
          (GLOBAL-PTR
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
@@ -1058,7 +1094,9 @@ A buffer provides the content for a wl_surface. Buffers are
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DESTROY-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER))
+  (DEBUG-LOG! "Received request: ~a, " "destroy")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'DESTROY (IFACE CLIENT RESOURCE) CLIENT)))
 
 (DEFVAR *REQUESTS*
@@ -1128,6 +1166,7 @@ A buffer provides the content for a wl_surface. Buffers are
 (DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
   "Default bind implementation for the wl_buffer global object.
 This can be overriden by inheritance in case if custom behaviour is required."
+  (DEBUG-LOG! "Binding ~a~%" "wl_buffer")
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
     (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
@@ -1135,12 +1174,14 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+  (DEBUG-LOG! "C-Binding ~a~%" "wl_buffer")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((GLOBAL GLOBAL) &KEY)
+  (DEBUG-LOG! "Initializing global object: ~a~%" "wl_buffer")
   (LET* ((NEXT-DATA-ID (RESERVE-DATA))
          (GLOBAL-PTR
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
@@ -1180,33 +1221,43 @@ A wl_data_offer represents a piece of data offered for transfer
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (SERIAL :UINT)
      (MIME_TYPE (:POINTER :CHAR)))
+  (DEBUG-LOG! "Received request: ~a, " "accept")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'ACCEPT (IFACE CLIENT RESOURCE) CLIENT SERIAL MIME_TYPE)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK RECEIVE-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (MIME_TYPE (:POINTER :CHAR))
      (FD :UINT))
+  (DEBUG-LOG! "Received request: ~a, " "receive")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'RECEIVE (IFACE CLIENT RESOURCE) CLIENT MIME_TYPE FD)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DESTROY-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER))
+  (DEBUG-LOG! "Received request: ~a, " "destroy")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'DESTROY (IFACE CLIENT RESOURCE) CLIENT)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK FINISH-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER))
+  (DEBUG-LOG! "Received request: ~a, " "finish")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'FINISH (IFACE CLIENT RESOURCE) CLIENT)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK SET_ACTIONS-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (DND_ACTIONS :UINT)
      (PREFERRED_ACTION :UINT))
+  (DEBUG-LOG! "Received request: ~a, " "set_actions")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'SET_ACTIONS (IFACE CLIENT RESOURCE) CLIENT DND_ACTIONS
              PREFERRED_ACTION)))
 
@@ -1357,6 +1408,7 @@ A wl_data_offer represents a piece of data offered for transfer
 (DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
   "Default bind implementation for the wl_data_offer global object.
 This can be overriden by inheritance in case if custom behaviour is required."
+  (DEBUG-LOG! "Binding ~a~%" "wl_data_offer")
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
     (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
@@ -1364,12 +1416,14 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+  (DEBUG-LOG! "C-Binding ~a~%" "wl_data_offer")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((GLOBAL GLOBAL) &KEY)
+  (DEBUG-LOG! "Initializing global object: ~a~%" "wl_data_offer")
   (LET* ((NEXT-DATA-ID (RESERVE-DATA))
          (GLOBAL-PTR
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
@@ -1400,19 +1454,25 @@ The wl_data_source object is the source side of a wl_data_offer.
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK OFFER-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (MIME_TYPE (:POINTER :CHAR)))
+  (DEBUG-LOG! "Received request: ~a, " "offer")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'OFFER (IFACE CLIENT RESOURCE) CLIENT MIME_TYPE)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DESTROY-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER))
+  (DEBUG-LOG! "Received request: ~a, " "destroy")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'DESTROY (IFACE CLIENT RESOURCE) CLIENT)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK SET_ACTIONS-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (DND_ACTIONS :UINT))
+  (DEBUG-LOG! "Received request: ~a, " "set_actions")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'SET_ACTIONS (IFACE CLIENT RESOURCE) CLIENT DND_ACTIONS)))
 
 (DEFVAR *REQUESTS*
@@ -1562,6 +1622,7 @@ The wl_data_source object is the source side of a wl_data_offer.
 (DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
   "Default bind implementation for the wl_data_source global object.
 This can be overriden by inheritance in case if custom behaviour is required."
+  (DEBUG-LOG! "Binding ~a~%" "wl_data_source")
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
     (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
@@ -1569,12 +1630,14 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+  (DEBUG-LOG! "C-Binding ~a~%" "wl_data_source")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((GLOBAL GLOBAL) &KEY)
+  (DEBUG-LOG! "Initializing global object: ~a~%" "wl_data_source")
   (LET* ((NEXT-DATA-ID (RESERVE-DATA))
          (GLOBAL-PTR
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
@@ -1607,20 +1670,26 @@ There is one wl_data_device per seat which can be obtained
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (SOURCE :UINT) (ORIGIN :UINT)
      (ICON :UINT) (SERIAL :UINT))
+  (DEBUG-LOG! "Received request: ~a, " "start_drag")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'START_DRAG (IFACE CLIENT RESOURCE) CLIENT SOURCE ORIGIN ICON
              SERIAL)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK SET_SELECTION-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (SOURCE :UINT) (SERIAL :UINT))
+  (DEBUG-LOG! "Received request: ~a, " "set_selection")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'SET_SELECTION (IFACE CLIENT RESOURCE) CLIENT SOURCE SERIAL)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK RELEASE-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER))
+  (DEBUG-LOG! "Received request: ~a, " "release")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'RELEASE (IFACE CLIENT RESOURCE) CLIENT)))
 
 (DEFVAR *REQUESTS*
@@ -1781,6 +1850,7 @@ There is one wl_data_device per seat which can be obtained
 (DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
   "Default bind implementation for the wl_data_device global object.
 This can be overriden by inheritance in case if custom behaviour is required."
+  (DEBUG-LOG! "Binding ~a~%" "wl_data_device")
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
     (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
@@ -1788,12 +1858,14 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+  (DEBUG-LOG! "C-Binding ~a~%" "wl_data_device")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((GLOBAL GLOBAL) &KEY)
+  (DEBUG-LOG! "Initializing global object: ~a~%" "wl_data_device")
   (LET* ((NEXT-DATA-ID (RESERVE-DATA))
          (GLOBAL-PTR
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
@@ -1827,13 +1899,17 @@ The wl_data_device_manager is a singleton global object that
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK CREATE_DATA_SOURCE-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (ID :UINT))
+  (DEBUG-LOG! "Received request: ~a, " "create_data_source")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'CREATE_DATA_SOURCE (IFACE CLIENT RESOURCE) CLIENT ID)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK GET_DATA_DEVICE-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (ID :UINT) (SEAT :UINT))
+  (DEBUG-LOG! "Received request: ~a, " "get_data_device")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'GET_DATA_DEVICE (IFACE CLIENT RESOURCE) CLIENT ID SEAT)))
 
 (DEFVAR *REQUESTS*
@@ -1906,6 +1982,7 @@ The wl_data_device_manager is a singleton global object that
 (DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
   "Default bind implementation for the wl_data_device_manager global object.
 This can be overriden by inheritance in case if custom behaviour is required."
+  (DEBUG-LOG! "Binding ~a~%" "wl_data_device_manager")
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
     (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
@@ -1913,12 +1990,14 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+  (DEBUG-LOG! "C-Binding ~a~%" "wl_data_device_manager")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((GLOBAL GLOBAL) &KEY)
+  (DEBUG-LOG! "Initializing global object: ~a~%" "wl_data_device_manager")
   (LET* ((NEXT-DATA-ID (RESERVE-DATA))
          (GLOBAL-PTR
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
@@ -1948,7 +2027,9 @@ This interface is implemented by servers that provide
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK GET_SHELL_SURFACE-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (ID :UINT) (SURFACE :UINT))
+  (DEBUG-LOG! "Received request: ~a, " "get_shell_surface")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'GET_SHELL_SURFACE (IFACE CLIENT RESOURCE) CLIENT ID SURFACE)))
 
 (DEFVAR *REQUESTS*
@@ -2006,6 +2087,7 @@ This interface is implemented by servers that provide
 (DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
   "Default bind implementation for the wl_shell global object.
 This can be overriden by inheritance in case if custom behaviour is required."
+  (DEBUG-LOG! "Binding ~a~%" "wl_shell")
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
     (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
@@ -2013,12 +2095,14 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+  (DEBUG-LOG! "C-Binding ~a~%" "wl_shell")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((GLOBAL GLOBAL) &KEY)
+  (DEBUG-LOG! "Initializing global object: ~a~%" "wl_shell")
   (LET* ((NEXT-DATA-ID (RESERVE-DATA))
          (GLOBAL-PTR
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
@@ -2077,40 +2161,52 @@ An interface that may be implemented by a wl_surface, for
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK PONG-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (SERIAL :UINT))
+  (DEBUG-LOG! "Received request: ~a, " "pong")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'PONG (IFACE CLIENT RESOURCE) CLIENT SERIAL)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK MOVE-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (SEAT :UINT) (SERIAL :UINT))
+  (DEBUG-LOG! "Received request: ~a, " "move")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'MOVE (IFACE CLIENT RESOURCE) CLIENT SEAT SERIAL)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK RESIZE-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (SEAT :UINT) (SERIAL :UINT)
      (EDGES :UINT))
+  (DEBUG-LOG! "Received request: ~a, " "resize")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'RESIZE (IFACE CLIENT RESOURCE) CLIENT SEAT SERIAL EDGES)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK SET_TOPLEVEL-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER))
+  (DEBUG-LOG! "Received request: ~a, " "set_toplevel")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'SET_TOPLEVEL (IFACE CLIENT RESOURCE) CLIENT)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK SET_TRANSIENT-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (PARENT :UINT) (X :INT) (Y :INT)
      (FLAGS :UINT))
+  (DEBUG-LOG! "Received request: ~a, " "set_transient")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'SET_TRANSIENT (IFACE CLIENT RESOURCE) CLIENT PARENT X Y FLAGS)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK SET_FULLSCREEN-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (METHOD :UINT) (FRAMERATE :UINT)
      (OUTPUT :UINT))
+  (DEBUG-LOG! "Received request: ~a, " "set_fullscreen")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'SET_FULLSCREEN (IFACE CLIENT RESOURCE) CLIENT METHOD FRAMERATE
              OUTPUT)))
 
@@ -2118,26 +2214,34 @@ An interface that may be implemented by a wl_surface, for
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (SEAT :UINT) (SERIAL :UINT)
      (PARENT :UINT) (X :INT) (Y :INT) (FLAGS :UINT))
+  (DEBUG-LOG! "Received request: ~a, " "set_popup")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'SET_POPUP (IFACE CLIENT RESOURCE) CLIENT SEAT SERIAL PARENT X Y
              FLAGS)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK SET_MAXIMIZED-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (OUTPUT :UINT))
+  (DEBUG-LOG! "Received request: ~a, " "set_maximized")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'SET_MAXIMIZED (IFACE CLIENT RESOURCE) CLIENT OUTPUT)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK SET_TITLE-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (TITLE (:POINTER :CHAR)))
+  (DEBUG-LOG! "Received request: ~a, " "set_title")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'SET_TITLE (IFACE CLIENT RESOURCE) CLIENT TITLE)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK SET_CLASS-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (CLASS_ (:POINTER :CHAR)))
+  (DEBUG-LOG! "Received request: ~a, " "set_class")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'SET_CLASS (IFACE CLIENT RESOURCE) CLIENT CLASS_)))
 
 (DEFVAR *REQUESTS*
@@ -2379,6 +2483,7 @@ An interface that may be implemented by a wl_surface, for
 (DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
   "Default bind implementation for the wl_shell_surface global object.
 This can be overriden by inheritance in case if custom behaviour is required."
+  (DEBUG-LOG! "Binding ~a~%" "wl_shell_surface")
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
     (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
@@ -2386,12 +2491,14 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+  (DEBUG-LOG! "C-Binding ~a~%" "wl_shell_surface")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((GLOBAL GLOBAL) &KEY)
+  (DEBUG-LOG! "Initializing global object: ~a~%" "wl_shell_surface")
   (LET* ((NEXT-DATA-ID (RESERVE-DATA))
          (GLOBAL-PTR
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
@@ -2484,69 +2591,91 @@ A surface is a rectangular area that may be displayed on zero
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DESTROY-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER))
+  (DEBUG-LOG! "Received request: ~a, " "destroy")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'DESTROY (IFACE CLIENT RESOURCE) CLIENT)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK ATTACH-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (BUFFER :UINT) (X :INT) (Y :INT))
+  (DEBUG-LOG! "Received request: ~a, " "attach")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'ATTACH (IFACE CLIENT RESOURCE) CLIENT BUFFER X Y)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DAMAGE-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (X :INT) (Y :INT) (WIDTH :INT)
      (HEIGHT :INT))
+  (DEBUG-LOG! "Received request: ~a, " "damage")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'DAMAGE (IFACE CLIENT RESOURCE) CLIENT X Y WIDTH HEIGHT)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK FRAME-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (CALLBACK :UINT))
+  (DEBUG-LOG! "Received request: ~a, " "frame")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'FRAME (IFACE CLIENT RESOURCE) CLIENT CALLBACK)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK SET_OPAQUE_REGION-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (REGION :UINT))
+  (DEBUG-LOG! "Received request: ~a, " "set_opaque_region")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'SET_OPAQUE_REGION (IFACE CLIENT RESOURCE) CLIENT REGION)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK SET_INPUT_REGION-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (REGION :UINT))
+  (DEBUG-LOG! "Received request: ~a, " "set_input_region")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'SET_INPUT_REGION (IFACE CLIENT RESOURCE) CLIENT REGION)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK COMMIT-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER))
+  (DEBUG-LOG! "Received request: ~a, " "commit")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'COMMIT (IFACE CLIENT RESOURCE) CLIENT)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK SET_BUFFER_TRANSFORM-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (TRANSFORM :UINT))
+  (DEBUG-LOG! "Received request: ~a, " "set_buffer_transform")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'SET_BUFFER_TRANSFORM (IFACE CLIENT RESOURCE) CLIENT TRANSFORM)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK SET_BUFFER_SCALE-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (SCALE :INT))
+  (DEBUG-LOG! "Received request: ~a, " "set_buffer_scale")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'SET_BUFFER_SCALE (IFACE CLIENT RESOURCE) CLIENT SCALE)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DAMAGE_BUFFER-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (X :INT) (Y :INT) (WIDTH :INT)
      (HEIGHT :INT))
+  (DEBUG-LOG! "Received request: ~a, " "damage_buffer")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'DAMAGE_BUFFER (IFACE CLIENT RESOURCE) CLIENT X Y WIDTH HEIGHT)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK OFFSET-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (X :INT) (Y :INT))
+  (DEBUG-LOG! "Received request: ~a, " "offset")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'OFFSET (IFACE CLIENT RESOURCE) CLIENT X Y)))
 
 (DEFVAR *REQUESTS*
@@ -2841,6 +2970,7 @@ A surface is a rectangular area that may be displayed on zero
 (DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
   "Default bind implementation for the wl_surface global object.
 This can be overriden by inheritance in case if custom behaviour is required."
+  (DEBUG-LOG! "Binding ~a~%" "wl_surface")
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
     (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
@@ -2848,12 +2978,14 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+  (DEBUG-LOG! "C-Binding ~a~%" "wl_surface")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((GLOBAL GLOBAL) &KEY)
+  (DEBUG-LOG! "Initializing global object: ~a~%" "wl_surface")
   (LET* ((NEXT-DATA-ID (RESERVE-DATA))
          (GLOBAL-PTR
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
@@ -2887,25 +3019,33 @@ A seat is a group of keyboards, pointer and touch devices. This
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK GET_POINTER-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (ID :UINT))
+  (DEBUG-LOG! "Received request: ~a, " "get_pointer")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'GET_POINTER (IFACE CLIENT RESOURCE) CLIENT ID)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK GET_KEYBOARD-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (ID :UINT))
+  (DEBUG-LOG! "Received request: ~a, " "get_keyboard")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'GET_KEYBOARD (IFACE CLIENT RESOURCE) CLIENT ID)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK GET_TOUCH-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (ID :UINT))
+  (DEBUG-LOG! "Received request: ~a, " "get_touch")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'GET_TOUCH (IFACE CLIENT RESOURCE) CLIENT ID)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK RELEASE-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER))
+  (DEBUG-LOG! "Received request: ~a, " "release")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'RELEASE (IFACE CLIENT RESOURCE) CLIENT)))
 
 (DEFVAR *REQUESTS*
@@ -3024,6 +3164,7 @@ A seat is a group of keyboards, pointer and touch devices. This
 (DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
   "Default bind implementation for the wl_seat global object.
 This can be overriden by inheritance in case if custom behaviour is required."
+  (DEBUG-LOG! "Binding ~a~%" "wl_seat")
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
     (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
@@ -3031,12 +3172,14 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+  (DEBUG-LOG! "C-Binding ~a~%" "wl_seat")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((GLOBAL GLOBAL) &KEY)
+  (DEBUG-LOG! "Initializing global object: ~a~%" "wl_seat")
   (LET* ((NEXT-DATA-ID (RESERVE-DATA))
          (GLOBAL-PTR
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
@@ -3069,14 +3212,18 @@ The wl_pointer interface represents one or more input devices,
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (SERIAL :UINT) (SURFACE :UINT)
      (HOTSPOT_X :INT) (HOTSPOT_Y :INT))
+  (DEBUG-LOG! "Received request: ~a, " "set_cursor")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'SET_CURSOR (IFACE CLIENT RESOURCE) CLIENT SERIAL SURFACE
              HOTSPOT_X HOTSPOT_Y)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK RELEASE-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER))
+  (DEBUG-LOG! "Received request: ~a, " "release")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'RELEASE (IFACE CLIENT RESOURCE) CLIENT)))
 
 (DEFVAR *REQUESTS*
@@ -3294,6 +3441,7 @@ The wl_pointer interface represents one or more input devices,
 (DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
   "Default bind implementation for the wl_pointer global object.
 This can be overriden by inheritance in case if custom behaviour is required."
+  (DEBUG-LOG! "Binding ~a~%" "wl_pointer")
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
     (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
@@ -3301,12 +3449,14 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+  (DEBUG-LOG! "C-Binding ~a~%" "wl_pointer")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((GLOBAL GLOBAL) &KEY)
+  (DEBUG-LOG! "Initializing global object: ~a~%" "wl_pointer")
   (LET* ((NEXT-DATA-ID (RESERVE-DATA))
          (GLOBAL-PTR
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
@@ -3329,7 +3479,9 @@ The wl_keyboard interface represents one or more keyboards
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK RELEASE-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER))
+  (DEBUG-LOG! "Received request: ~a, " "release")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'RELEASE (IFACE CLIENT RESOURCE) CLIENT)))
 
 (DEFVAR *REQUESTS*
@@ -3462,6 +3614,7 @@ The wl_keyboard interface represents one or more keyboards
 (DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
   "Default bind implementation for the wl_keyboard global object.
 This can be overriden by inheritance in case if custom behaviour is required."
+  (DEBUG-LOG! "Binding ~a~%" "wl_keyboard")
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
     (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
@@ -3469,12 +3622,14 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+  (DEBUG-LOG! "C-Binding ~a~%" "wl_keyboard")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((GLOBAL GLOBAL) &KEY)
+  (DEBUG-LOG! "Initializing global object: ~a~%" "wl_keyboard")
   (LET* ((NEXT-DATA-ID (RESERVE-DATA))
          (GLOBAL-PTR
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
@@ -3503,7 +3658,9 @@ The wl_touch interface represents a touchscreen
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK RELEASE-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER))
+  (DEBUG-LOG! "Received request: ~a, " "release")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'RELEASE (IFACE CLIENT RESOURCE) CLIENT)))
 
 (DEFVAR *REQUESTS*
@@ -3652,6 +3809,7 @@ The wl_touch interface represents a touchscreen
 (DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
   "Default bind implementation for the wl_touch global object.
 This can be overriden by inheritance in case if custom behaviour is required."
+  (DEBUG-LOG! "Binding ~a~%" "wl_touch")
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
     (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
@@ -3659,12 +3817,14 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+  (DEBUG-LOG! "C-Binding ~a~%" "wl_touch")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((GLOBAL GLOBAL) &KEY)
+  (DEBUG-LOG! "Initializing global object: ~a~%" "wl_touch")
   (LET* ((NEXT-DATA-ID (RESERVE-DATA))
          (GLOBAL-PTR
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
@@ -3691,7 +3851,9 @@ An output describes part of the compositor geometry.  The
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK RELEASE-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER))
+  (DEBUG-LOG! "Received request: ~a, " "release")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'RELEASE (IFACE CLIENT RESOURCE) CLIENT)))
 
 (DEFVAR *REQUESTS*
@@ -3824,6 +3986,7 @@ An output describes part of the compositor geometry.  The
 (DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
   "Default bind implementation for the wl_output global object.
 This can be overriden by inheritance in case if custom behaviour is required."
+  (DEBUG-LOG! "Binding ~a~%" "wl_output")
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
     (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
@@ -3831,12 +3994,14 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+  (DEBUG-LOG! "C-Binding ~a~%" "wl_output")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((GLOBAL GLOBAL) &KEY)
+  (DEBUG-LOG! "Initializing global object: ~a~%" "wl_output")
   (LET* ((NEXT-DATA-ID (RESERVE-DATA))
          (GLOBAL-PTR
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
@@ -3867,21 +4032,27 @@ A region object describes an area.
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DESTROY-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER))
+  (DEBUG-LOG! "Received request: ~a, " "destroy")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'DESTROY (IFACE CLIENT RESOURCE) CLIENT)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK ADD-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (X :INT) (Y :INT) (WIDTH :INT)
      (HEIGHT :INT))
+  (DEBUG-LOG! "Received request: ~a, " "add")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'ADD (IFACE CLIENT RESOURCE) CLIENT X Y WIDTH HEIGHT)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK SUBTRACT-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (X :INT) (Y :INT) (WIDTH :INT)
      (HEIGHT :INT))
+  (DEBUG-LOG! "Received request: ~a, " "subtract")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'SUBTRACT (IFACE CLIENT RESOURCE) CLIENT X Y WIDTH HEIGHT)))
 
 (DEFVAR *REQUESTS*
@@ -3967,6 +4138,7 @@ A region object describes an area.
 (DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
   "Default bind implementation for the wl_region global object.
 This can be overriden by inheritance in case if custom behaviour is required."
+  (DEBUG-LOG! "Binding ~a~%" "wl_region")
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
     (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
@@ -3974,12 +4146,14 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+  (DEBUG-LOG! "C-Binding ~a~%" "wl_region")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((GLOBAL GLOBAL) &KEY)
+  (DEBUG-LOG! "Initializing global object: ~a~%" "wl_region")
   (LET* ((NEXT-DATA-ID (RESERVE-DATA))
          (GLOBAL-PTR
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
@@ -4022,14 +4196,18 @@ The global interface exposing sub-surface compositing capabilities.
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DESTROY-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER))
+  (DEBUG-LOG! "Received request: ~a, " "destroy")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'DESTROY (IFACE CLIENT RESOURCE) CLIENT)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK GET_SUBSURFACE-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (ID :UINT) (SURFACE :UINT)
      (PARENT :UINT))
+  (DEBUG-LOG! "Received request: ~a, " "get_subsurface")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'GET_SUBSURFACE (IFACE CLIENT RESOURCE) CLIENT ID SURFACE PARENT)))
 
 (DEFVAR *REQUESTS*
@@ -4111,6 +4289,7 @@ The global interface exposing sub-surface compositing capabilities.
 (DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
   "Default bind implementation for the wl_subcompositor global object.
 This can be overriden by inheritance in case if custom behaviour is required."
+  (DEBUG-LOG! "Binding ~a~%" "wl_subcompositor")
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
     (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
@@ -4118,12 +4297,14 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+  (DEBUG-LOG! "C-Binding ~a~%" "wl_subcompositor")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((GLOBAL GLOBAL) &KEY)
+  (DEBUG-LOG! "Initializing global object: ~a~%" "wl_subcompositor")
   (LET* ((NEXT-DATA-ID (RESERVE-DATA))
          (GLOBAL-PTR
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
@@ -4206,37 +4387,49 @@ An additional interface to a wl_surface object, which has been
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DESTROY-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER))
+  (DEBUG-LOG! "Received request: ~a, " "destroy")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'DESTROY (IFACE CLIENT RESOURCE) CLIENT)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK SET_POSITION-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (X :INT) (Y :INT))
+  (DEBUG-LOG! "Received request: ~a, " "set_position")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'SET_POSITION (IFACE CLIENT RESOURCE) CLIENT X Y)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK PLACE_ABOVE-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (SIBLING :UINT))
+  (DEBUG-LOG! "Received request: ~a, " "place_above")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'PLACE_ABOVE (IFACE CLIENT RESOURCE) CLIENT SIBLING)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK PLACE_BELOW-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER) (SIBLING :UINT))
+  (DEBUG-LOG! "Received request: ~a, " "place_below")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'PLACE_BELOW (IFACE CLIENT RESOURCE) CLIENT SIBLING)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK SET_SYNC-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER))
+  (DEBUG-LOG! "Received request: ~a, " "set_sync")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'SET_SYNC (IFACE CLIENT RESOURCE) CLIENT)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK SET_DESYNC-FFI
     :VOID
     ((CLIENT :POINTER) (RESOURCE :POINTER))
+  (DEBUG-LOG! "Received request: ~a, " "set_desync")
   (LET ((CLIENT (GET-CLIENT CLIENT)) (RESOURCE (RESOURCE-GET-ID RESOURCE)))
+    (DEBUG-LOG! "For client: ~a~%" CLIENT)
     (FUNCALL 'SET_DESYNC (IFACE CLIENT RESOURCE) CLIENT)))
 
 (DEFVAR *REQUESTS*
@@ -4403,6 +4596,7 @@ An additional interface to a wl_surface object, which has been
 (DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
   "Default bind implementation for the wl_subsurface global object.
 This can be overriden by inheritance in case if custom behaviour is required."
+  (DEBUG-LOG! "Binding ~a~%" "wl_subsurface")
   (LET ((BOUND (MAKE-INSTANCE 'DISPATCH :DISPLAY (DISPLAY CLIENT))))
     (SETF (IFACE CLIENT ID) BOUND)
     (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID)))
@@ -4410,12 +4604,14 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+  (DEBUG-LOG! "C-Binding ~a~%" "wl_subsurface")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (POP-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((GLOBAL GLOBAL) &KEY)
+  (DEBUG-LOG! "Initializing global object: ~a~%" "wl_subsurface")
   (LET* ((NEXT-DATA-ID (RESERVE-DATA))
          (GLOBAL-PTR
           (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
