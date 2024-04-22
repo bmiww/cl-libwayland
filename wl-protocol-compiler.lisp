@@ -143,7 +143,7 @@ This can be overriden by inheritance in case if custom behaviour is required." (
   `((cl-async::define-c-callback dispatch-bind-ffi :void ((client :pointer) (data :pointer) (version :uint) (id :uint))
      (let* ((client (get-client client))
 	    (global (pop-data data)))
-       (funcall 'dispatch-bind global client (null-pointer) (mem-ref version :uint) (mem-ref id :uint))))))
+       (funcall 'dispatch-bind global client (null-pointer) version id)))))
 
 (defun gen-c-slot-init (request)
   `(setf
