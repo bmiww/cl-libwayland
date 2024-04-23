@@ -103,29 +103,7 @@
     ;; TODO: Most likely correct, but needs to be checked
     "enum" :uint))
 
-(defun map-arg-type-to-c (arg)
-  (let ((c-type (getf-string-equal *arg-type-map* (arg-type arg))))
-    (unless c-type (error "Unknown arg type: ~a" (arg-type arg)))
-    c-type))
-(defun gen-request-c-arg (arg) `(,(symbolify (name arg)) ,(map-arg-type-to-c arg)))
 (defun gen-generic-arg (arg) (symbolify (name arg)))
-
-(defun gen-request-c-funcall-arg (arg) (symbolify (name arg)))
-
-;; TODO: Need to dynamically fill out arguments - instead of just the id thing
-(defun gen-request-callback (request)
-  `(cl-async::define-c-callback ,(symbolify "~a-ffi" (name request)) :void
-       ((client :pointer) (resource :pointer) ,@(mapcar 'gen-request-c-arg (args request)))
-     (debug-log! "Received request: ~a, " ,(name request))
-     (let ((client (get-client client))
-	   (resource (resource-get-id resource)))
-       (debug-log! "For client: ~a~%" client)
-       (funcall
-	',(symbolify (name request))
-	(iface client resource)
-	client
-	,@(mapcar 'gen-request-c-funcall-arg (args request))))))
-
 (defun gen-request-generic (request)
   `(defgeneric ,(symbolify (name request)) (resource client ,@(mapcar 'gen-generic-arg (args request)))))
 
@@ -138,10 +116,11 @@
 This can be overriden by inheritance in case if custom behaviour is required." (name interface))
 
       (debug-log! "Binding ~a~%" ,(name interface))
-      (let ((bound (make-instance ',(symbolify "dispatch") :display (display client))))
+      (let ((bound (make-instance (dispatch-impl global) :display (display client) :client client)))
 	(setf (iface client id) bound)
-	(let ((resource (create-resource (ptr client) ,(symbolify "*interface*") version id)))
-	  (resource-set-implementation resource ,(symbolify "*interface*") (null-pointer) (null-pointer)))))))
+	(let ((resource (create-resource (ptr client) ,(symbolify "*interface*") version id))
+	      (next-data-id (reserve-data bound)))
+	  (resource-set-dispatcher resource ,(symbolify "*dispatcher*") (null-pointer) (data-ptr next-data-id) (null-pointer)))))))
 
 (defun gen-bind-c-callback (interface)
   `((cl-async::define-c-callback dispatch-bind-ffi :void ((client :pointer) (data :pointer) (version :uint) (id :uint))
@@ -150,19 +129,13 @@ This can be overriden by inheritance in case if custom behaviour is required." (
 	     (global (pop-data data)))
 	(funcall 'dispatch-bind global client (null-pointer) version id)))))
 
-(defun gen-c-slot-init (request)
-  `(setf
-    (foreign-slot-value *interface* '(:struct interface) ,(symbolify "'~a" (name request)))
-    (callback ,(symbolify "~a-ffi" (name request)))))
-
 (defun gen-interface-var-fill (interface)
-  `((setf (foreign-slot-value *interface* '(:struct interface) 'name) (foreign-string-alloc ,(name interface)))
-    (setf (foreign-slot-value *interface* '(:struct interface) 'version) ,(version interface))
-    (setf (foreign-slot-value *interface* '(:struct interface) 'method_count) ,(length (requests interface)))
-    (setf (foreign-slot-value *interface* '(:struct interface) 'methods) ,(symbolify "*requests*"))
-    (setf (foreign-slot-value *interface* '(:struct interface) 'event_count) ,(length (events interface)))
-    (setf (foreign-slot-value *interface* '(:struct interface) 'events) ,(symbolify "*events*"))
-    ,@(mapcar 'gen-c-slot-init (requests interface))))
+  `((setf (foreign-slot-value *interface* '(:struct interface) 'name) (foreign-string-alloc ,(name interface))
+	  (foreign-slot-value *interface* '(:struct interface) 'version) ,(version interface)
+	  (foreign-slot-value *interface* '(:struct interface) 'method_count) ,(length (requests interface))
+	  (foreign-slot-value *interface* '(:struct interface) 'methods) ,(symbolify "*requests*")
+	  (foreign-slot-value *interface* '(:struct interface) 'event_count) ,(length (events interface))
+	  (foreign-slot-value *interface* '(:struct interface) 'events) ,(symbolify "*events*"))))
 
 (defun gen-c-struct-filler (var-name methods)
   `((defvar ,var-name
@@ -194,6 +167,22 @@ This can be overriden by inheritance in case if custom behaviour is required." (
 	    methods)
 	 messages))))
 
+;; NOTE: An implementation of this in the python lib
+;; https://github.com/flacjacket/pywayland/blob/4febe9b7c22b61ace7902109904f2a298c510169/pywayland/dispatcher.py#L28
+(defun gen-dispatcher-callback (interface)
+  `((defmethod dispatcher ((dispatch dispatch) target opcode message args)
+      (debug-log! "Dispatching ~a~%" ,(name interface))
+      (debug-log! "With arguments target: ~a, opcode: ~a, message: ~a, args: ~a~%" target opcode message args)
+      (error "DISPATCHER NOT IMPLEMENTED"))))
+
+(defun gen-dispatcher-c-callback (interface)
+  `((cl-async::define-c-callback dispatcher-ffi :void
+	((data :pointer) (target :pointer) (opcode :uint) (message :pointer) (args :pointer))
+      (let ((resource (pop-data data)))
+	(dispatcher resource target opcode message args)
+	(error "C DISPATCHER MAYBE NOT IMPLEMENTED")))))
+
+
 (defun gen-interface-c-structs (interface)
   (append
    (gen-c-struct-filler (symbolify "*requests*") (requests interface))
@@ -222,8 +211,10 @@ This can be overriden by inheritance in case if custom behaviour is required." (
 	 (:default-initargs :version ,(version interface))
 	 (:documentation ,(description interface))))
      (mapcar 'gen-request-generic (requests interface))
-     (mapcar 'gen-request-callback (requests interface))
      (gen-interface-c-structs interface)
+     (gen-dispatcher-callback interface)
+     (gen-dispatcher-c-callback interface)
+     `((defvar *dispatcher* (callback ,(symbolify "dispatcher-ffi"))))
 
      `((defclass global (wl::global) ()
 	 (:default-initargs :version ,(version interface))

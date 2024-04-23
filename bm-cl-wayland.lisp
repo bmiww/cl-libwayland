@@ -16,7 +16,7 @@
   (:export display-create create-client *global-tracker* resource-get-id object get-client iface
 	   pop-data display create-resource reserve-data global-create version data-ptr set-data
 	   global-get-name wl_message display-add-socket-fd display-run display-get-event-loop event-loop-get-fd
-	   event-loop-dispatch display-flush-clients ptr debug-log! resource-set-implementation))
+	   event-loop-dispatch display-flush-clients ptr debug-log! resource-set-dispatcher dispatch-impl))
 (in-package :bm-cl-wayland)
 
 (defclass object ()
@@ -26,7 +26,8 @@
 ;; Uses integer value pointer addresses as keys
 (defvar *global-tracker* (make-hash-table :test 'eq))
 
-(defclass global (object) ())
+(defclass global (object)
+  ((dispatch-impl :initarg :dispatch-impl :reader dispatch-impl)))
 (defgeneric bind (client resource id))
 
 (defun create-resource (client interface version id) (resource-create client interface version id))
@@ -37,6 +38,7 @@
 (defclass client ()
   ((objects :initform (make-hash-table :test 'eq) :accessor objects)
    (display :initarg :display :reader display)
+   (client :initarg :client :reader client)
    (ptr :initarg :ptr :reader ptr)))
 
 (defvar *client-tracker* (make-hash-table :test 'equal))
@@ -78,7 +80,11 @@ and set up the client object in the lisp world for further referencing."
 ;; TODO: This could technically run out - so reserve data should possibly check for C uint32 limits
 (defvar *data-counter* 0)
 
-(defun reserve-data () (incf *data-counter*))
+(defun reserve-data (&optional data)
+  (let ((new-data-id (incf *data-counter*)))
+    (when data (setf (gethash new-data-id *data-tracker*) data))
+    new-data-id))
+
 (defun get-data (data-ptr) (gethash (mem-ref data-ptr :int) *data-tracker*))
 (defun pop-data (data-ptr)
   (prog1 (get-data data-ptr)
