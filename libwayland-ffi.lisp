@@ -10,7 +10,7 @@
   (:nicknames :wl-ffi)
   (:export display-create global-create global-get-name resource-get-id resource-create
 	   client-create wl_message display-add-socket-fd display-run display-get-event-loop event-loop-get-fd
-	   event-loop-dispatch display-flush-clients))
+	   event-loop-dispatch display-flush-clients resource-set-implementation))
 
 (in-package :bm-cl-libwayland)
 (define-foreign-library wayland-server
@@ -72,3 +72,9 @@
 
 (defcfun ("wl_resource_get_id" resource-get-id) :uint32
   (resource :pointer))
+
+(defcfun ("wl_resource_set_implementation" resource-set-implementation) :void
+  (resource :pointer)
+  (implementation :pointer)
+  (data :pointer)
+  (destroy :pointer))

@@ -16,7 +16,7 @@
   (:export display-create create-client *global-tracker* resource-get-id object get-client iface
 	   pop-data display create-resource reserve-data global-create version data-ptr set-data
 	   global-get-name wl_message display-add-socket-fd display-run display-get-event-loop event-loop-get-fd
-	   event-loop-dispatch display-flush-clients ptr debug-log!))
+	   event-loop-dispatch display-flush-clients ptr debug-log! resource-set-implementation))
 (in-package :bm-cl-wayland)
 
 (defclass object ()

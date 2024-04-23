@@ -140,7 +140,8 @@ This can be overriden by inheritance in case if custom behaviour is required." (
       (debug-log! "Binding ~a~%" ,(name interface))
       (let ((bound (make-instance ',(symbolify "dispatch") :display (display client))))
 	(setf (iface client id) bound)
-	(create-resource (ptr client) ,(symbolify "*interface*") version id)))))
+	(let ((resource (create-resource (ptr client) ,(symbolify "*interface*") version id)))
+	  (resource-set-implementation resource ,(symbolify "*interface*") (null-pointer) (null-pointer)))))))
 
 (defun gen-bind-c-callback (interface)
   `((cl-async::define-c-callback dispatch-bind-ffi :void ((client :pointer) (data :pointer) (version :uint) (id :uint))
