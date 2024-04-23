@@ -400,7 +400,8 @@ The core global object.  This is a special singleton object.  It
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
-(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 1)
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
+          (:DEFAULT-INITARGS :VERSION 1 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "core global object
 
 The core global object.  This is a special singleton object.  It
@@ -539,7 +540,8 @@ The singleton global registry object.  The server has a number of
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
-(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 1)
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
+          (:DEFAULT-INITARGS :VERSION 1 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "global registry object
 
 The singleton global registry object.  The server has a number of
@@ -651,7 +653,8 @@ Clients can handle the 'done' event to get notified when
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
-(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 1)
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
+          (:DEFAULT-INITARGS :VERSION 1 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "callback object
 
 Clients can handle the 'done' event to get notified when
@@ -764,7 +767,8 @@ A compositor.  This object is a singleton global.  The
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
-(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 6)
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
+          (:DEFAULT-INITARGS :VERSION 6 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "the compositor singleton
 
 A compositor.  This object is a singleton global.  The
@@ -898,7 +902,8 @@ The wl_shm_pool object encapsulates a piece of memory shared
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
-(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 1)
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
+          (:DEFAULT-INITARGS :VERSION 1 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "a shared memory pool
 
 The wl_shm_pool object encapsulates a piece of memory shared
@@ -1018,7 +1023,8 @@ A singleton global object that provides support for shared
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
-(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 1)
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
+          (:DEFAULT-INITARGS :VERSION 1 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "shared memory support
 
 A singleton global object that provides support for shared
@@ -1140,7 +1146,8 @@ A buffer provides the content for a wl_surface. Buffers are
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
-(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 1)
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
+          (:DEFAULT-INITARGS :VERSION 1 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "content for a wl_surface
 
 A buffer provides the content for a wl_surface. Buffers are
@@ -1346,7 +1353,8 @@ A wl_data_offer represents a piece of data offered for transfer
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
-(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 3)
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
+          (:DEFAULT-INITARGS :VERSION 3 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "offer to transfer data
 
 A wl_data_offer represents a piece of data offered for transfer
@@ -1545,7 +1553,8 @@ The wl_data_source object is the source side of a wl_data_offer.
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
-(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 3)
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
+          (:DEFAULT-INITARGS :VERSION 3 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "offer to transfer data
 
 The wl_data_source object is the source side of a wl_data_offer.
@@ -1753,7 +1762,8 @@ There is one wl_data_device per seat which can be obtained
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
-(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 3)
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
+          (:DEFAULT-INITARGS :VERSION 3 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "data transfer device
 
 There is one wl_data_device per seat which can be obtained
@@ -1874,7 +1884,8 @@ The wl_data_device_manager is a singleton global object that
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
-(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 3)
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
+          (:DEFAULT-INITARGS :VERSION 3 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "data transfer interface
 
 The wl_data_device_manager is a singleton global object that
@@ -1985,7 +1996,8 @@ This interface is implemented by servers that provide
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
-(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 1)
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
+          (:DEFAULT-INITARGS :VERSION 1 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "create desktop-style surfaces
 
 This interface is implemented by servers that provide
@@ -2279,7 +2291,8 @@ An interface that may be implemented by a wl_surface, for
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
-(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 1)
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
+          (:DEFAULT-INITARGS :VERSION 1 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "desktop-style metadata interface
 
 An interface that may be implemented by a wl_surface, for
@@ -2627,7 +2640,8 @@ A surface is a rectangular area that may be displayed on zero
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
-(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 6)
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
+          (:DEFAULT-INITARGS :VERSION 6 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "an onscreen surface
 
 A surface is a rectangular area that may be displayed on zero
@@ -2831,7 +2845,8 @@ A seat is a group of keyboards, pointer and touch devices. This
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
-(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 9)
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
+          (:DEFAULT-INITARGS :VERSION 9 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "group of input devices
 
 A seat is a group of keyboards, pointer and touch devices. This
@@ -3096,7 +3111,8 @@ The wl_pointer interface represents one or more input devices,
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
-(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 9)
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
+          (:DEFAULT-INITARGS :VERSION 9 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "pointer input device
 
 The wl_pointer interface represents one or more input devices,
@@ -3280,7 +3296,8 @@ The wl_keyboard interface represents one or more keyboards
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
-(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 9)
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
+          (:DEFAULT-INITARGS :VERSION 9 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "keyboard input device
 
 The wl_keyboard interface represents one or more keyboards
@@ -3474,7 +3491,8 @@ The wl_touch interface represents a touchscreen
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
-(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 9)
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
+          (:DEFAULT-INITARGS :VERSION 9 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "touchscreen input device
 
 The wl_touch interface represents a touchscreen
@@ -3658,7 +3676,8 @@ An output describes part of the compositor geometry.  The
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
-(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 4)
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
+          (:DEFAULT-INITARGS :VERSION 4 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "compositor output region
 
 An output describes part of the compositor geometry.  The
@@ -3793,7 +3812,8 @@ A region object describes an area.
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
-(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 1)
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
+          (:DEFAULT-INITARGS :VERSION 1 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "region interface
 
 A region object describes an area.
@@ -3922,7 +3942,8 @@ The global interface exposing sub-surface compositing capabilities.
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
-(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 1)
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
+          (:DEFAULT-INITARGS :VERSION 1 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "sub-surface compositing
 
 The global interface exposing sub-surface compositing capabilities.
@@ -4151,7 +4172,8 @@ An additional interface to a wl_surface object, which has been
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
-(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 1)
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
+          (:DEFAULT-INITARGS :VERSION 1 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "sub-surface interface to a wl_surface
 
 An additional interface to a wl_surface object, which has been

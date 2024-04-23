@@ -141,7 +141,7 @@ This can be overriden by inheritance in case if custom behaviour is required." (
      `((defvar *dispatcher* (callback ,(symbolify "dispatcher-ffi"))))
 
      `((defclass global (wl::global) ()
-	 (:default-initargs :version ,(version interface))
+	 (:default-initargs :version ,(version interface) :dispatch-impl 'dispatch)
 	 (:documentation ,(description interface))))
      (gen-bind-callback interface)
      (gen-bind-c-callback interface)

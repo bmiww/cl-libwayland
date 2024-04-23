@@ -21,6 +21,7 @@
 
 (defclass object ()
   ((display :initarg :display :reader display)
+   (client :initarg :client :reader client)
    (version :initarg :version :reader version)))
 
 ;; Uses integer value pointer addresses as keys
@@ -38,7 +39,6 @@
 (defclass client ()
   ((objects :initform (make-hash-table :test 'eq) :accessor objects)
    (display :initarg :display :reader display)
-   (client :initarg :client :reader client)
    (ptr :initarg :ptr :reader ptr)))
 
 (defvar *client-tracker* (make-hash-table :test 'equal))

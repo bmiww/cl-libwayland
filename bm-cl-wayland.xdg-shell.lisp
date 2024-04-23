@@ -192,7 +192,8 @@ The xdg_wm_base interface is exposed as a global object enabling clients
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
-(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 6)
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
+          (:DEFAULT-INITARGS :VERSION 6 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "create desktop-style surfaces
 
 The xdg_wm_base interface is exposed as a global object enabling clients
@@ -445,7 +446,8 @@ The xdg_positioner provides a collection of rules for the placement of a
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
-(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 6)
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
+          (:DEFAULT-INITARGS :VERSION 6 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "child surface positioner
 
 The xdg_positioner provides a collection of rules for the placement of a
@@ -677,7 +679,8 @@ An interface that may be implemented by a wl_surface, for
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
-(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 6)
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
+          (:DEFAULT-INITARGS :VERSION 6 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "desktop user interface surface base interface
 
 An interface that may be implemented by a wl_surface, for
@@ -1083,7 +1086,8 @@ This interface defines an xdg_surface role which allows a surface to,
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
-(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 6)
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
+          (:DEFAULT-INITARGS :VERSION 6 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "toplevel surface
 
 This interface defines an xdg_surface role which allows a surface to,
@@ -1287,7 +1291,8 @@ A popup surface is a short-lived, temporary surface. It can be used to
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
-(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL (:DEFAULT-INITARGS :VERSION 6)
+(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
+          (:DEFAULT-INITARGS :VERSION 6 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "short-lived, popup surfaces for menus
 
 A popup surface is a short-lived, temporary surface. It can be used to
