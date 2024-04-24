@@ -8,6 +8,7 @@
 ;; NOTE: Example invocations
 ;; (generate-wayland-classes 'wayland-core "/usr/share/wayland/wayland.xml")
 ;; (generate-wayland-classes 'xdg-shell "xmls/xdg-shell.xml" :deps '("wayland-core"))
+;; TODO: Get rid of the cl-async dependency. defccallback is the only thing we use from it.
 
 (defpackage :bm-cl-wayland.compiler
   (:use :cl :xmls :bm-cl-wayland.parser))
@@ -27,23 +28,31 @@
     ;; TODO: Most likely correct, but needs to be checked
     "enum" :uint))
 
+(defun gen-request-c-struct (request) `(,(symbolify (name request)) :pointer))
 (defun gen-generic-arg (arg) (symbolify (name arg)))
 (defun gen-request-generic (request)
   `(defgeneric ,(symbolify (dash-name request)) (resource ,@(mapcar 'gen-generic-arg (args request)))))
 
-(defun gen-request-c-struct (request)
-  `(,(symbolify (name request)) :pointer))
+(defun gen-dispatch-init ()
+  `((defmethod initialize-instance :after ((instance dispatch) &key)
+     ;; Bound is instance
+     ;; Maybe we can move the hash-table insertion to the constructor here
+     (let* ((resource (create-resource (ptr (client instance)) ,(symbolify "*interface*")
+				       (version instance) (id instance))))
+       (setf (gethash (pointer-address resource) *resource-tracker*) instance)
+       (resource-set-dispatcher resource ,(symbolify "*dispatcher*") (null-pointer) (null-pointer) (null-pointer))))))
+
 
 (defun gen-bind-callback (interface)
   `((defmethod dispatch-bind ((global global) client data version id)
       ,(format nil "Default bind implementation for the ~a global object.
 This can be overriden by inheritance in case if custom behaviour is required." (name interface))
-
       (debug-log! "Binding ~a~%" ,(name interface))
-      (let ((bound (make-instance (dispatch-impl global) :display (display client) :client client)))
+      (let ((bound (make-instance (dispatch-impl global) :display (display client) :client client :id id)))
 	(setf (iface client id) bound)
-	(let* ((resource (create-resource (ptr client) ,(symbolify "*interface*") version id bound)))
-	  (resource-set-dispatcher resource ,(symbolify "*dispatcher*") (null-pointer) (null-pointer) (null-pointer)))))))
+	(unless (eq version (version bound))
+	  (error (format nil "Version mismatch for: ~a, requested: ~a, we have: ~a"
+			 ,(name interface) version (version bound))))))))
 
 (defun gen-bind-c-callback (interface)
   `((cl-async::define-c-callback dispatch-bind-ffi :void ((client :pointer) (data :pointer) (version :uint) (id :uint))
@@ -173,6 +182,7 @@ argument feed."
      (gen-interface-c-structs interface)
      (gen-dispatcher-c-callback interface)
      `((defvar *dispatcher* (callback ,(symbolify "dispatcher-ffi"))))
+     (gen-dispatch-init)
 
      `((defclass global (wl::global) ()
 	 (:default-initargs :version ,(version interface) :dispatch-impl 'dispatch)

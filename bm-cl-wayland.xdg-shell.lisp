@@ -242,6 +242,14 @@ The xdg_wm_base interface is exposed as a global object enabling clients
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
+(DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
+  (LET* ((RESOURCE
+          (CREATE-RESOURCE (PTR (CLIENT INSTANCE)) *INTERFACE*
+           (VERSION INSTANCE) (ID INSTANCE))))
+    (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
+    (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
+     (NULL-POINTER) (NULL-POINTER))))
+
 (DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 6 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "create desktop-style surfaces
@@ -259,12 +267,12 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (DEBUG-LOG! "Binding ~a~%" "xdg_wm_base")
   (LET ((BOUND
          (MAKE-INSTANCE (DISPATCH-IMPL GLOBAL) :DISPLAY (DISPLAY CLIENT)
-                        :CLIENT CLIENT)))
+                        :CLIENT CLIENT :ID ID)))
     (SETF (IFACE CLIENT ID) BOUND)
-    (LET* ((RESOURCE
-            (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID BOUND)))
-      (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
-       (NULL-POINTER) (NULL-POINTER)))))
+    (UNLESS (EQ VERSION (VERSION BOUND))
+      (ERROR
+       (FORMAT NIL "Version mismatch for: ~a, requested: ~a, we have: ~a"
+               "xdg_wm_base" VERSION (VERSION BOUND))))))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -552,6 +560,14 @@ The xdg_positioner provides a collection of rules for the placement of a
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
+(DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
+  (LET* ((RESOURCE
+          (CREATE-RESOURCE (PTR (CLIENT INSTANCE)) *INTERFACE*
+           (VERSION INSTANCE) (ID INSTANCE))))
+    (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
+    (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
+     (NULL-POINTER) (NULL-POINTER))))
+
 (DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 6 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "child surface positioner
@@ -583,12 +599,12 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (DEBUG-LOG! "Binding ~a~%" "xdg_positioner")
   (LET ((BOUND
          (MAKE-INSTANCE (DISPATCH-IMPL GLOBAL) :DISPLAY (DISPLAY CLIENT)
-                        :CLIENT CLIENT)))
+                        :CLIENT CLIENT :ID ID)))
     (SETF (IFACE CLIENT ID) BOUND)
-    (LET* ((RESOURCE
-            (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID BOUND)))
-      (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
-       (NULL-POINTER) (NULL-POINTER)))))
+    (UNLESS (EQ VERSION (VERSION BOUND))
+      (ERROR
+       (FORMAT NIL "Version mismatch for: ~a, requested: ~a, we have: ~a"
+               "xdg_positioner" VERSION (VERSION BOUND))))))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -824,6 +840,14 @@ An interface that may be implemented by a wl_surface, for
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
+(DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
+  (LET* ((RESOURCE
+          (CREATE-RESOURCE (PTR (CLIENT INSTANCE)) *INTERFACE*
+           (VERSION INSTANCE) (ID INSTANCE))))
+    (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
+    (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
+     (NULL-POINTER) (NULL-POINTER))))
+
 (DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 6 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "desktop user interface surface base interface
@@ -883,12 +907,12 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (DEBUG-LOG! "Binding ~a~%" "xdg_surface")
   (LET ((BOUND
          (MAKE-INSTANCE (DISPATCH-IMPL GLOBAL) :DISPLAY (DISPLAY CLIENT)
-                        :CLIENT CLIENT)))
+                        :CLIENT CLIENT :ID ID)))
     (SETF (IFACE CLIENT ID) BOUND)
-    (LET* ((RESOURCE
-            (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID BOUND)))
-      (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
-       (NULL-POINTER) (NULL-POINTER)))))
+    (UNLESS (EQ VERSION (VERSION BOUND))
+      (ERROR
+       (FORMAT NIL "Version mismatch for: ~a, requested: ~a, we have: ~a"
+               "xdg_surface" VERSION (VERSION BOUND))))))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -1319,6 +1343,14 @@ This interface defines an xdg_surface role which allows a surface to,
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
+(DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
+  (LET* ((RESOURCE
+          (CREATE-RESOURCE (PTR (CLIENT INSTANCE)) *INTERFACE*
+           (VERSION INSTANCE) (ID INSTANCE))))
+    (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
+    (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
+     (NULL-POINTER) (NULL-POINTER))))
+
 (DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 6 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "toplevel surface
@@ -1352,12 +1384,12 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (DEBUG-LOG! "Binding ~a~%" "xdg_toplevel")
   (LET ((BOUND
          (MAKE-INSTANCE (DISPATCH-IMPL GLOBAL) :DISPLAY (DISPLAY CLIENT)
-                        :CLIENT CLIENT)))
+                        :CLIENT CLIENT :ID ID)))
     (SETF (IFACE CLIENT ID) BOUND)
-    (LET* ((RESOURCE
-            (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID BOUND)))
-      (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
-       (NULL-POINTER) (NULL-POINTER)))))
+    (UNLESS (EQ VERSION (VERSION BOUND))
+      (ERROR
+       (FORMAT NIL "Version mismatch for: ~a, requested: ~a, we have: ~a"
+               "xdg_toplevel" VERSION (VERSION BOUND))))))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -1543,6 +1575,14 @@ A popup surface is a short-lived, temporary surface. It can be used to
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
+(DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
+  (LET* ((RESOURCE
+          (CREATE-RESOURCE (PTR (CLIENT INSTANCE)) *INTERFACE*
+           (VERSION INSTANCE) (ID INSTANCE))))
+    (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
+    (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
+     (NULL-POINTER) (NULL-POINTER))))
+
 (DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 6 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "short-lived, popup surfaces for menus
@@ -1579,12 +1619,12 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (DEBUG-LOG! "Binding ~a~%" "xdg_popup")
   (LET ((BOUND
          (MAKE-INSTANCE (DISPATCH-IMPL GLOBAL) :DISPLAY (DISPLAY CLIENT)
-                        :CLIENT CLIENT)))
+                        :CLIENT CLIENT :ID ID)))
     (SETF (IFACE CLIENT ID) BOUND)
-    (LET* ((RESOURCE
-            (CREATE-RESOURCE (PTR CLIENT) *INTERFACE* VERSION ID BOUND)))
-      (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
-       (NULL-POINTER) (NULL-POINTER)))))
+    (UNLESS (EQ VERSION (VERSION BOUND))
+      (ERROR
+       (FORMAT NIL "Version mismatch for: ~a, requested: ~a, we have: ~a"
+               "xdg_popup" VERSION (VERSION BOUND))))))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID

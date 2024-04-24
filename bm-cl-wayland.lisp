@@ -17,13 +17,14 @@
 	   get-data pop-data display create-resource reserve-data global-create version data-ptr set-data
 	   global-get-name wl_message display-add-socket-fd display-run display-get-event-loop event-loop-get-fd
 	   event-loop-dispatch display-flush-clients ptr debug-log! resource-set-dispatcher dispatch-impl
-	   wl_resource *resource-tracker* wl_argument))
+	   wl_resource *resource-tracker* wl_argument id client))
 (in-package :bm-cl-wayland)
 
 (defclass object ()
   ((display :initarg :display :reader display)
    (client :initarg :client :reader client)
-   (version :initarg :version :reader version)))
+   (version :initarg :version :reader version)
+   (id :initarg :id :reader id)))
 
 ;; Uses integer value pointer addresses as keys
 (defvar *global-tracker* (make-hash-table :test 'eq))
@@ -33,11 +34,7 @@
 (defgeneric bind (client resource id))
 
 (defvar *resource-tracker* (make-hash-table :test 'eq))
-(defun create-resource (client interface version id class)
-  (let* ((resource-ptr (resource-create client interface version id))
-	 (resource (pointer-address resource-ptr)))
-    (setf (gethash resource *resource-tracker*) class)
-    resource-ptr))
+(defun create-resource (client interface version id) (resource-create client interface version id))
 
 ;; ┌─┐┬  ┬┌─┐┌┐┌┌┬┐
 ;; │  │  │├┤ │││ │
