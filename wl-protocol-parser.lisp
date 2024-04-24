@@ -8,7 +8,7 @@
 (defpackage :bm-cl-wayland.parser
   (:use :cl :xmls :split-sequence)
   (:export name enum description arg-type args value entries enum-name bitfield-p requests events
-	   version enums read-protocol event interface signature))
+	   version enums read-protocol event interface signature arg-type-char))
 (in-package :bm-cl-wayland.parser)
 
 ;; ┌─┐┌┐┌┌┬┐┬─┐┬ ┬
@@ -78,13 +78,8 @@
 ;; │  │ ││││└─┐ │ ├┬┘│ ││   │ │ │├┬┘└─┐
 ;; └─┘└─┘┘└┘└─┘ ┴ ┴└─└─┘└─┘ ┴ └─┘┴└─└─┘
 
-(defun make-signature (message)
-  (with-output-to-string (string)
-    (when (since message) (format string (since message)))
-    (dolist (arg (args message))
-      (format string "~a~a"
-	      (if (nullable arg) "?" "")
-	      (alexandria:eswitch ((arg-type arg) :test 'string=)
+(defun arg-type-char (arg)
+  (alexandria:eswitch ((arg-type arg) :test 'string=)
 		("int" "i")
 		("uint" "u")
 		("fixed" "f")
@@ -93,7 +88,15 @@
 		("new_id" "n")
 		("array" "a")
 		("fd" "h")
-		("enum" "u"))))))
+		("enum" "u")))
+
+(defun make-signature (message)
+  (with-output-to-string (string)
+    (when (since message) (format string (since message)))
+    (dolist (arg (args message))
+      (format string "~a~a"
+	      (if (nullable arg) "?" "")
+	      (arg-type-char arg)))))
 
 (defmethod initialize-instance :after ((event event) &key) (setf (signature event) (make-signature event)))
 (defmethod initialize-instance :after ((request request) &key) (setf (signature request) (make-signature request)))

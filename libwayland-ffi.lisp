@@ -10,12 +10,16 @@
   (:nicknames :wl-ffi)
   (:export display-create global-create global-get-name resource-get-id resource-create
 	   client-create wl_message display-add-socket-fd display-run display-get-event-loop event-loop-get-fd
-	   event-loop-dispatch display-flush-clients resource-set-dispatcher wl_resource))
+	   event-loop-dispatch display-flush-clients resource-set-dispatcher wl_resource
+	   wl_argument))
 
 (in-package :bm-cl-libwayland)
 (define-foreign-library wayland-server
   (t (:default "libwayland-server")))
 
+;; ┌─┐┌┬┐┬─┐┬ ┬┌─┐┌┬┐┌─┐
+;; └─┐ │ ├┬┘│ ││   │ └─┐
+;; └─┘ ┴ ┴└─└─┘└─┘ ┴ └─┘
 (defcstruct wl_message
   (name :string)
   (signature :string)
@@ -32,7 +36,19 @@
   (dispatcher :pointer)
   (destroy_signal :pointer))
 
+(defcunion wl_argument
+  (i :int)     ;; integer
+  (u :uint)    ;; unsigned integer
+  (f :float)   ;; float maybe fixed -check and update this comment and type :)
+  (s :string)  ;; string
+  (o :pointer) ;; object - usually reference to some wl_resource
+  (n :uint)    ;; new_id
+  (a :pointer) ;; array
+  (h :int))    ;; file descriptor
 
+;; ┌─┐┬ ┬┌┐┌┌─┐┌─┐
+;; ├┤ │ │││││  └─┐
+;; └  └─┘┘└┘└─┘└─┘
 (defcfun ("wl_display_create" display-create) :pointer)
 (defcfun ("wl_display_add_socket_fd" display-add-socket-fd) :int
   (display :pointer)

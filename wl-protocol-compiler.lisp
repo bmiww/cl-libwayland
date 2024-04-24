@@ -90,28 +90,56 @@ This can be overriden by inheritance in case if custom behaviour is required." (
 	    methods)
 	 messages))))
 
+;; TODO: This is a bit annoying - since it loosly refers to the args symbol
+(defun gen-c-arg-selector (arg)
+  `(foreign-slot-value
+    args '(:union wl-ffi:wl_argument)
+    ,(symbolify "'wl-ffi::~a" (arg-type-char arg))))
+
+;; TODO: The values functions are a bit dumb. They act just as rudimentary id function
+;; But could be completely omitted if i wasn't too lazy to figure out a different way of doing this
+(defun gen-c-arg-mapping (arg)
+  (let ((selector (gen-c-arg-selector arg)))
+    (alexandria:eswitch ((arg-type arg) :test 'string=)
+      ("int" `(values ,selector))
+      ("uint" `(values ,selector))
+      ("new_id" `(values ,selector))
+      ("fixed" `(values ,selector))
+      ("fd" `(values ,selector))
+      ("string" `(values ,selector))
+      ("enum" `(error "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+      ("object" `(gethash (pointer-address ,selector) *resource-tracker*))
+      ;; TODO: You don't know yet how to handle the darn arrays - so just error out here :)
+      ("array" `(error "WL C ARRAY PARSING NOT IMPLEMENTED")))))
+
+;; TODO: This is a bit annoying - since it loosly refers to the symbol "resource"
+(defun gen-matcher (opcode request)
+  "A case form to match an opcode to a method to be called upon a resource and it's
+argument feed."
+  `(,opcode (funcall ',(symbolify (dash-name request)) resource ,@(mapcar 'gen-c-arg-mapping (args request)))))
+
 ;; NOTE: An implementation of this in the python lib
 ;; https://github.com/flacjacket/pywayland/blob/4febe9b7c22b61ace7902109904f2a298c510169/pywayland/dispatcher.py#L28
 ;; NOTE: And on wayland side
 ;; https://gitlab.freedesktop.org/wayland/wayland/-/blob/main/src/wayland-util.h#L690
-;; TODO: The dispatcher method might not really be needed
-;; Just do all the method calls from the c callback
-(defun gen-dispatcher-callback (interface)
-  `((defmethod dispatcher ((dispatch dispatch) opcode message args)
-      (debug-log! "Dispatching ~a~%" ,(name interface))
-      (debug-log! "With arguments opcode: ~a, message: ~a, args: ~a~%" opcode message args)
-      (error "DISPATCHER NOT IMPLEMENTED"))))
-
 ;; TODO: The target here could also be wl_proxy - but this seems to be only client side stuff
 (defun gen-dispatcher-c-callback (interface)
-  `((cl-async::define-c-callback dispatcher-ffi :void
-	((data :pointer) (target :pointer) (opcode :uint) (message :pointer) (args :pointer))
-      (declare (ignore data))
-      (let ((resource (gethash (pointer-address target) *resource-tracker*)))
-	;; TODO: From here - we don't really need the opcode and message
-	;; We could instead generate the opcode specific method calls
-	;; With all the arguments already lispified
-	(dispatcher resource opcode message args)))))
+  (let* ((arg-usage 0)
+	 (matchers (loop for index below (length (requests interface))
+			 for request = (nth index (requests interface))
+			 do (incf arg-usage (length (args request)))
+			 collect (gen-matcher index request)))
+	 (ignore-list (if (requests interface)
+			  (if (= 0 arg-usage) '(args) nil)
+			  '(args target opcode))))
+
+    `((cl-async::define-c-callback dispatcher-ffi :void
+	  ((data :pointer) (target :pointer) (opcode :uint) (message :pointer) (args :pointer))
+	(declare (ignore data message ,@ignore-list))
+	,(if (requests interface)
+	     `(let ((resource (gethash (pointer-address target) *resource-tracker*)))
+		(ecase opcode ,@matchers))
+	     `(error (format nil "A dispatcher wiwthout requests has been called for interface: ~a~%" ,(name interface))))))))
 
 
 (defun gen-interface-c-structs (interface)
@@ -143,7 +171,6 @@ This can be overriden by inheritance in case if custom behaviour is required." (
 	 (:documentation ,(description interface))))
      (mapcar 'gen-request-generic (requests interface))
      (gen-interface-c-structs interface)
-     (gen-dispatcher-callback interface)
      (gen-dispatcher-c-callback interface)
      `((defvar *dispatcher* (callback ,(symbolify "dispatcher-ffi"))))
 
