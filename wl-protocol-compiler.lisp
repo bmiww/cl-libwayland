@@ -42,15 +42,14 @@ This can be overriden by inheritance in case if custom behaviour is required." (
       (debug-log! "Binding ~a~%" ,(name interface))
       (let ((bound (make-instance (dispatch-impl global) :display (display client) :client client)))
 	(setf (iface client id) bound)
-	(let ((resource (create-resource (ptr client) ,(symbolify "*interface*") version id))
-	      (next-data-id (reserve-data bound)))
-	  (resource-set-dispatcher resource ,(symbolify "*dispatcher*") (null-pointer) (data-ptr next-data-id) (null-pointer)))))))
+	(let* ((resource (create-resource (ptr client) ,(symbolify "*interface*") version id bound)))
+	  (resource-set-dispatcher resource ,(symbolify "*dispatcher*") (null-pointer) (null-pointer) (null-pointer)))))))
 
 (defun gen-bind-c-callback (interface)
   `((cl-async::define-c-callback dispatch-bind-ffi :void ((client :pointer) (data :pointer) (version :uint) (id :uint))
       (debug-log! "C-Binding ~a~%" ,(name interface))
       (let* ((client (get-client client))
-	     (global (pop-data data)))
+	     (global (get-data data)))
 	(funcall 'dispatch-bind global client (null-pointer) version id)))))
 
 (defun gen-interface-var-fill (interface)
@@ -93,18 +92,26 @@ This can be overriden by inheritance in case if custom behaviour is required." (
 
 ;; NOTE: An implementation of this in the python lib
 ;; https://github.com/flacjacket/pywayland/blob/4febe9b7c22b61ace7902109904f2a298c510169/pywayland/dispatcher.py#L28
+;; NOTE: And on wayland side
+;; https://gitlab.freedesktop.org/wayland/wayland/-/blob/main/src/wayland-util.h#L690
+;; TODO: The dispatcher method might not really be needed
+;; Just do all the method calls from the c callback
 (defun gen-dispatcher-callback (interface)
-  `((defmethod dispatcher ((dispatch dispatch) target opcode message args)
+  `((defmethod dispatcher ((dispatch dispatch) opcode message args)
       (debug-log! "Dispatching ~a~%" ,(name interface))
       (debug-log! "With arguments target: ~a, opcode: ~a, message: ~a, args: ~a~%" target opcode message args)
       (error "DISPATCHER NOT IMPLEMENTED"))))
 
+;; TODO: The target here could also be wl_proxy - but this seems to be only client side stuff
 (defun gen-dispatcher-c-callback (interface)
   `((cl-async::define-c-callback dispatcher-ffi :void
 	((data :pointer) (target :pointer) (opcode :uint) (message :pointer) (args :pointer))
-      (let ((resource (pop-data data)))
-	(dispatcher resource target opcode message args)
-	(error "C DISPATCHER MAYBE NOT IMPLEMENTED")))))
+      (declare (ignore data))
+      (let ((resource (gethash (pointer-address target) *resource-tracker*)))
+	;; TODO: From here - we don't really need the opcode and message
+	;; We could instead generate the opcode specific method calls
+	;; With all the arguments already lispified
+	(dispatcher resource opcode message args)))))
 
 
 (defun gen-interface-c-structs (interface)

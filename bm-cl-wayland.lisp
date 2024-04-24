@@ -14,9 +14,10 @@
   (:use #:cl #:bm-cl-libwayland #:cffi)
   (:nicknames :wl)
   (:export display-create create-client *global-tracker* resource-get-id object get-client iface
-	   pop-data display create-resource reserve-data global-create version data-ptr set-data
+	   get-data pop-data display create-resource reserve-data global-create version data-ptr set-data
 	   global-get-name wl_message display-add-socket-fd display-run display-get-event-loop event-loop-get-fd
-	   event-loop-dispatch display-flush-clients ptr debug-log! resource-set-dispatcher dispatch-impl))
+	   event-loop-dispatch display-flush-clients ptr debug-log! resource-set-dispatcher dispatch-impl
+	   wl_resource *resource-tracker*))
 (in-package :bm-cl-wayland)
 
 (defclass object ()
@@ -31,7 +32,12 @@
   ((dispatch-impl :initarg :dispatch-impl :reader dispatch-impl)))
 (defgeneric bind (client resource id))
 
-(defun create-resource (client interface version id) (resource-create client interface version id))
+(defvar *resource-tracker* (make-hash-table :test 'eq))
+(defun create-resource (client interface version id class)
+  (let* ((resource-ptr (resource-create client interface version id))
+	 (resource (pointer-address resource-ptr)))
+    (setf (gethash resource *resource-tracker*) class)
+    resource-ptr))
 
 ;; ┌─┐┬  ┬┌─┐┌┐┌┌┬┐
 ;; │  │  │├┤ │││ │

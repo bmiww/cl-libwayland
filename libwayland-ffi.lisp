@@ -10,7 +10,7 @@
   (:nicknames :wl-ffi)
   (:export display-create global-create global-get-name resource-get-id resource-create
 	   client-create wl_message display-add-socket-fd display-run display-get-event-loop event-loop-get-fd
-	   event-loop-dispatch display-flush-clients resource-set-dispatcher))
+	   event-loop-dispatch display-flush-clients resource-set-dispatcher wl_resource))
 
 (in-package :bm-cl-libwayland)
 (define-foreign-library wayland-server
@@ -20,6 +20,18 @@
   (name :string)
   (signature :string)
   (types :pointer))
+
+(defcstruct wl_resource
+  (object :pointer)
+  (destroy :pointer)
+  (link :pointer)
+  (deprecated_destroy_signal :pointer)
+  (client :pointer)
+  (data :pointer)
+  (version :int)
+  (dispatcher :pointer)
+  (destroy_signal :pointer))
+
 
 (defcfun ("wl_display_create" display-create) :pointer)
 (defcfun ("wl_display_add_socket_fd" display-add-socket-fd) :int
