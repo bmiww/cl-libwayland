@@ -29,7 +29,7 @@
 
 (defun gen-generic-arg (arg) (symbolify (name arg)))
 (defun gen-request-generic (request)
-  `(defgeneric ,(symbolify (name request)) (resource client ,@(mapcar 'gen-generic-arg (args request)))))
+  `(defgeneric ,(symbolify (dash-name request)) (resource ,@(mapcar 'gen-generic-arg (args request)))))
 
 (defun gen-request-c-struct (request)
   `(,(symbolify (name request)) :pointer))
@@ -99,7 +99,7 @@ This can be overriden by inheritance in case if custom behaviour is required." (
 (defun gen-dispatcher-callback (interface)
   `((defmethod dispatcher ((dispatch dispatch) opcode message args)
       (debug-log! "Dispatching ~a~%" ,(name interface))
-      (debug-log! "With arguments target: ~a, opcode: ~a, message: ~a, args: ~a~%" target opcode message args)
+      (debug-log! "With arguments opcode: ~a, message: ~a, args: ~a~%" opcode message args)
       (error "DISPATCHER NOT IMPLEMENTED"))))
 
 ;; TODO: The target here could also be wl_proxy - but this seems to be only client side stuff
@@ -131,7 +131,7 @@ This can be overriden by inheritance in case if custom behaviour is required." (
 	;; The *global-tracker* set might be unnecessary
 	(set-data next-data-id (setf (gethash (pointer-address global-ptr) *global-tracker*) global))))))
 
-(defun pkg-name (interface )
+(defun pkg-name (interface)
   (symbolify ":~a" (name interface)))
 
 (defun gen-interface (interface)
@@ -155,13 +155,17 @@ This can be overriden by inheritance in case if custom behaviour is required." (
      `((defvar *dispatch-bind* (callback ,(symbolify "dispatch-bind-ffi"))))
      (gen-global-init interface))))
 
+;; NOTE: Thing could be an interface/request/event/arg
+(defun dash-name (thing) (str:replace-all "_" "-" (name thing)))
+
 (defun gen-interface-preamble (interface)
   (let ((pkg-name (pkg-name interface)))
     (append
      `((defpackage ,pkg-name
 	 (:use :cl :wl :cffi)
-	 (:nicknames ,(symbolify ":~a" (str:replace-all "_" "-" (name interface))))
-	 (:export dispatch global)))
+	 (:nicknames ,(symbolify ":~a" (dash-name interface)))
+	 (:export dispatch global
+		  ,@(mapcar 'symbolify (mapcar 'dash-name (requests interface))))))
      `((in-package ,pkg-name))
      `((defcstruct interface
 	 (name :string)
