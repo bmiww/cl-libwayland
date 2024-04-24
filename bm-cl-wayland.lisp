@@ -5,7 +5,6 @@
 ;; ██║███╗██║██╔══██║  ╚██╔╝  ██║     ██╔══██║██║╚██╗██║██║  ██║
 ;; ╚███╔███╔╝██║  ██║   ██║   ███████╗██║  ██║██║ ╚████║██████╔╝
 ;;  ╚══╝╚══╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═════╝
-;; TODO: You might need to keep a list of all the interfaces that are actually globals.......
 ;; NOTE: Maybe one day try to refer to the darn book: https://github.com/rcalixte/wayland-book
 ;; NOTE: SWC compositor reference: https://github.com/michaelforney/swc
 ;; TODO: create another package entry file - which exports the functions that could be used by the end user
@@ -17,7 +16,7 @@
 	   get-data pop-data display create-resource reserve-data global-create version data-ptr set-data
 	   global-get-name wl_message display-add-socket-fd display-run display-get-event-loop event-loop-get-fd
 	   event-loop-dispatch display-flush-clients ptr debug-log! resource-set-dispatcher dispatch-impl
-	   wl_resource *resource-tracker* wl_argument id client))
+	   wl_resource *resource-tracker* wl_argument id client mk-if))
 (in-package :bm-cl-wayland)
 
 (defclass object ()
@@ -25,6 +24,10 @@
    (client :initarg :client :reader client)
    (version :initarg :version :reader version)
    (id :initarg :id :reader id)))
+
+(defmethod mk-if (class (object object) id &rest args)
+  "Convenience method to create a new interface using the context of the creating object as reference"
+  (apply #'make-instance class :display (display object) :client (client object) :id id args))
 
 ;; Uses integer value pointer addresses as keys
 (defvar *global-tracker* (make-hash-table :test 'eq))
