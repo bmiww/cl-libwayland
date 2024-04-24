@@ -459,11 +459,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (DISPATCH-IMPL GLOBAL) :DISPLAY (DISPLAY CLIENT)
                         :CLIENT CLIENT :ID ID)))
-    (SETF (IFACE CLIENT ID) BOUND)
-    (UNLESS (EQ VERSION (VERSION BOUND))
-      (ERROR
-       (FORMAT NIL "Version mismatch for: ~a, requested: ~a, we have: ~a"
-               "wl_display" VERSION (VERSION BOUND))))))
+    (SETF (IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -628,11 +624,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (DISPATCH-IMPL GLOBAL) :DISPLAY (DISPLAY CLIENT)
                         :CLIENT CLIENT :ID ID)))
-    (SETF (IFACE CLIENT ID) BOUND)
-    (UNLESS (EQ VERSION (VERSION BOUND))
-      (ERROR
-       (FORMAT NIL "Version mismatch for: ~a, requested: ~a, we have: ~a"
-               "wl_registry" VERSION (VERSION BOUND))))))
+    (SETF (IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -730,11 +722,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (DISPATCH-IMPL GLOBAL) :DISPLAY (DISPLAY CLIENT)
                         :CLIENT CLIENT :ID ID)))
-    (SETF (IFACE CLIENT ID) BOUND)
-    (UNLESS (EQ VERSION (VERSION BOUND))
-      (ERROR
-       (FORMAT NIL "Version mismatch for: ~a, requested: ~a, we have: ~a"
-               "wl_callback" VERSION (VERSION BOUND))))))
+    (SETF (IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -856,11 +844,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (DISPATCH-IMPL GLOBAL) :DISPLAY (DISPLAY CLIENT)
                         :CLIENT CLIENT :ID ID)))
-    (SETF (IFACE CLIENT ID) BOUND)
-    (UNLESS (EQ VERSION (VERSION BOUND))
-      (ERROR
-       (FORMAT NIL "Version mismatch for: ~a, requested: ~a, we have: ~a"
-               "wl_compositor" VERSION (VERSION BOUND))))))
+    (SETF (IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -1023,11 +1007,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (DISPATCH-IMPL GLOBAL) :DISPLAY (DISPLAY CLIENT)
                         :CLIENT CLIENT :ID ID)))
-    (SETF (IFACE CLIENT ID) BOUND)
-    (UNLESS (EQ VERSION (VERSION BOUND))
-      (ERROR
-       (FORMAT NIL "Version mismatch for: ~a, requested: ~a, we have: ~a"
-               "wl_shm_pool" VERSION (VERSION BOUND))))))
+    (SETF (IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -1160,11 +1140,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (DISPATCH-IMPL GLOBAL) :DISPLAY (DISPLAY CLIENT)
                         :CLIENT CLIENT :ID ID)))
-    (SETF (IFACE CLIENT ID) BOUND)
-    (UNLESS (EQ VERSION (VERSION BOUND))
-      (ERROR
-       (FORMAT NIL "Version mismatch for: ~a, requested: ~a, we have: ~a"
-               "wl_shm" VERSION (VERSION BOUND))))))
+    (SETF (IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -1289,11 +1265,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (DISPATCH-IMPL GLOBAL) :DISPLAY (DISPLAY CLIENT)
                         :CLIENT CLIENT :ID ID)))
-    (SETF (IFACE CLIENT ID) BOUND)
-    (UNLESS (EQ VERSION (VERSION BOUND))
-      (ERROR
-       (FORMAT NIL "Version mismatch for: ~a, requested: ~a, we have: ~a"
-               "wl_buffer" VERSION (VERSION BOUND))))))
+    (SETF (IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -1517,11 +1489,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (DISPATCH-IMPL GLOBAL) :DISPLAY (DISPLAY CLIENT)
                         :CLIENT CLIENT :ID ID)))
-    (SETF (IFACE CLIENT ID) BOUND)
-    (UNLESS (EQ VERSION (VERSION BOUND))
-      (ERROR
-       (FORMAT NIL "Version mismatch for: ~a, requested: ~a, we have: ~a"
-               "wl_data_offer" VERSION (VERSION BOUND))))))
+    (SETF (IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -1728,11 +1696,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (DISPATCH-IMPL GLOBAL) :DISPLAY (DISPLAY CLIENT)
                         :CLIENT CLIENT :ID ID)))
-    (SETF (IFACE CLIENT ID) BOUND)
-    (UNLESS (EQ VERSION (VERSION BOUND))
-      (ERROR
-       (FORMAT NIL "Version mismatch for: ~a, requested: ~a, we have: ~a"
-               "wl_data_source" VERSION (VERSION BOUND))))))
+    (SETF (IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -1977,11 +1941,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (DISPATCH-IMPL GLOBAL) :DISPLAY (DISPLAY CLIENT)
                         :CLIENT CLIENT :ID ID)))
-    (SETF (IFACE CLIENT ID) BOUND)
-    (UNLESS (EQ VERSION (VERSION BOUND))
-      (ERROR
-       (FORMAT NIL "Version mismatch for: ~a, requested: ~a, we have: ~a"
-               "wl_data_device" VERSION (VERSION BOUND))))))
+    (SETF (IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -2123,11 +2083,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (DISPATCH-IMPL GLOBAL) :DISPLAY (DISPLAY CLIENT)
                         :CLIENT CLIENT :ID ID)))
-    (SETF (IFACE CLIENT ID) BOUND)
-    (UNLESS (EQ VERSION (VERSION BOUND))
-      (ERROR
-       (FORMAT NIL "Version mismatch for: ~a, requested: ~a, we have: ~a"
-               "wl_data_device_manager" VERSION (VERSION BOUND))))))
+    (SETF (IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -2247,11 +2203,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (DISPATCH-IMPL GLOBAL) :DISPLAY (DISPLAY CLIENT)
                         :CLIENT CLIENT :ID ID)))
-    (SETF (IFACE CLIENT ID) BOUND)
-    (UNLESS (EQ VERSION (VERSION BOUND))
-      (ERROR
-       (FORMAT NIL "Version mismatch for: ~a, requested: ~a, we have: ~a"
-               "wl_shell" VERSION (VERSION BOUND))))))
+    (SETF (IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -2652,11 +2604,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (DISPATCH-IMPL GLOBAL) :DISPLAY (DISPLAY CLIENT)
                         :CLIENT CLIENT :ID ID)))
-    (SETF (IFACE CLIENT ID) BOUND)
-    (UNLESS (EQ VERSION (VERSION BOUND))
-      (ERROR
-       (FORMAT NIL "Version mismatch for: ~a, requested: ~a, we have: ~a"
-               "wl_shell_surface" VERSION (VERSION BOUND))))))
+    (SETF (IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -3122,11 +3070,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (DISPATCH-IMPL GLOBAL) :DISPLAY (DISPLAY CLIENT)
                         :CLIENT CLIENT :ID ID)))
-    (SETF (IFACE CLIENT ID) BOUND)
-    (UNLESS (EQ VERSION (VERSION BOUND))
-      (ERROR
-       (FORMAT NIL "Version mismatch for: ~a, requested: ~a, we have: ~a"
-               "wl_surface" VERSION (VERSION BOUND))))))
+    (SETF (IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -3310,11 +3254,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (DISPATCH-IMPL GLOBAL) :DISPLAY (DISPLAY CLIENT)
                         :CLIENT CLIENT :ID ID)))
-    (SETF (IFACE CLIENT ID) BOUND)
-    (UNLESS (EQ VERSION (VERSION BOUND))
-      (ERROR
-       (FORMAT NIL "Version mismatch for: ~a, requested: ~a, we have: ~a"
-               "wl_seat" VERSION (VERSION BOUND))))))
+    (SETF (IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -3601,11 +3541,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (DISPATCH-IMPL GLOBAL) :DISPLAY (DISPLAY CLIENT)
                         :CLIENT CLIENT :ID ID)))
-    (SETF (IFACE CLIENT ID) BOUND)
-    (UNLESS (EQ VERSION (VERSION BOUND))
-      (ERROR
-       (FORMAT NIL "Version mismatch for: ~a, requested: ~a, we have: ~a"
-               "wl_pointer" VERSION (VERSION BOUND))))))
+    (SETF (IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -3782,11 +3718,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (DISPATCH-IMPL GLOBAL) :DISPLAY (DISPLAY CLIENT)
                         :CLIENT CLIENT :ID ID)))
-    (SETF (IFACE CLIENT ID) BOUND)
-    (UNLESS (EQ VERSION (VERSION BOUND))
-      (ERROR
-       (FORMAT NIL "Version mismatch for: ~a, requested: ~a, we have: ~a"
-               "wl_keyboard" VERSION (VERSION BOUND))))))
+    (SETF (IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -3985,11 +3917,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (DISPATCH-IMPL GLOBAL) :DISPLAY (DISPLAY CLIENT)
                         :CLIENT CLIENT :ID ID)))
-    (SETF (IFACE CLIENT ID) BOUND)
-    (UNLESS (EQ VERSION (VERSION BOUND))
-      (ERROR
-       (FORMAT NIL "Version mismatch for: ~a, requested: ~a, we have: ~a"
-               "wl_touch" VERSION (VERSION BOUND))))))
+    (SETF (IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -4170,11 +4098,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (DISPATCH-IMPL GLOBAL) :DISPLAY (DISPLAY CLIENT)
                         :CLIENT CLIENT :ID ID)))
-    (SETF (IFACE CLIENT ID) BOUND)
-    (UNLESS (EQ VERSION (VERSION BOUND))
-      (ERROR
-       (FORMAT NIL "Version mismatch for: ~a, requested: ~a, we have: ~a"
-               "wl_output" VERSION (VERSION BOUND))))))
+    (SETF (IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -4337,11 +4261,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (DISPATCH-IMPL GLOBAL) :DISPLAY (DISPLAY CLIENT)
                         :CLIENT CLIENT :ID ID)))
-    (SETF (IFACE CLIENT ID) BOUND)
-    (UNLESS (EQ VERSION (VERSION BOUND))
-      (ERROR
-       (FORMAT NIL "Version mismatch for: ~a, requested: ~a, we have: ~a"
-               "wl_region" VERSION (VERSION BOUND))))))
+    (SETF (IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -4502,11 +4422,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (DISPATCH-IMPL GLOBAL) :DISPLAY (DISPLAY CLIENT)
                         :CLIENT CLIENT :ID ID)))
-    (SETF (IFACE CLIENT ID) BOUND)
-    (UNLESS (EQ VERSION (VERSION BOUND))
-      (ERROR
-       (FORMAT NIL "Version mismatch for: ~a, requested: ~a, we have: ~a"
-               "wl_subcompositor" VERSION (VERSION BOUND))))))
+    (SETF (IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -4790,11 +4706,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (DISPATCH-IMPL GLOBAL) :DISPLAY (DISPLAY CLIENT)
                         :CLIENT CLIENT :ID ID)))
-    (SETF (IFACE CLIENT ID) BOUND)
-    (UNLESS (EQ VERSION (VERSION BOUND))
-      (ERROR
-       (FORMAT NIL "Version mismatch for: ~a, requested: ~a, we have: ~a"
-               "wl_subsurface" VERSION (VERSION BOUND))))))
+    (SETF (IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID

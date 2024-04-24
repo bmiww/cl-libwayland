@@ -49,10 +49,7 @@
 This can be overriden by inheritance in case if custom behaviour is required." (name interface))
       (debug-log! "Binding ~a~%" ,(name interface))
       (let ((bound (make-instance (dispatch-impl global) :display (display client) :client client :id id)))
-	(setf (iface client id) bound)
-	(unless (eq version (version bound))
-	  (error (format nil "Version mismatch for: ~a, requested: ~a, we have: ~a"
-			 ,(name interface) version (version bound))))))))
+	(setf (iface client id) bound)))))
 
 (defun gen-bind-c-callback (interface)
   `((cl-async::define-c-callback dispatch-bind-ffi :void ((client :pointer) (data :pointer) (version :uint) (id :uint))
