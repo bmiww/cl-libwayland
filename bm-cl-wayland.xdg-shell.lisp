@@ -209,36 +209,42 @@ The xdg_wm_base interface is exposed as a global object enabling clients
       (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENTS) *EVENTS*)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :VOID
+    :INT
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
+  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "xdg_wm_base")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0 (FUNCALL 'DESTROY RESOURCE))
       (1
        (FUNCALL 'CREATE-POSITIONER RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'BM-CL-LIBWAYLAND::N))))
       (2
        (FUNCALL 'GET-XDG-SURFACE RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::N))
                 (GETHASH
                  (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE ARGS
+                  (FOREIGN-SLOT-VALUE
+                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                    '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                    'BM-CL-LIBWAYLAND::O))
                  *RESOURCE-TRACKER*)))
       (3
        (FUNCALL 'PONG RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'BM-CL-LIBWAYLAND::U)))))))
+                  'BM-CL-LIBWAYLAND::U))))))
+  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -485,35 +491,42 @@ The xdg_positioner provides a collection of rules for the placement of a
       (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENTS) *EVENTS*)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :VOID
+    :INT
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
+  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "xdg_positioner")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0 (FUNCALL 'DESTROY RESOURCE))
       (1
        (FUNCALL 'SET-SIZE RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'BM-CL-LIBWAYLAND::I))))
       (2
        (FUNCALL 'SET-ANCHOR-RECT RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 3)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'BM-CL-LIBWAYLAND::I))))
       (3
@@ -531,28 +544,34 @@ The xdg_positioner provides a collection of rules for the placement of a
       (6
        (FUNCALL 'SET-OFFSET RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'BM-CL-LIBWAYLAND::I))))
       (7 (FUNCALL 'SET-REACTIVE RESOURCE))
       (8
        (FUNCALL 'SET-PARENT-SIZE RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'BM-CL-LIBWAYLAND::I))))
       (9
        (FUNCALL 'SET-PARENT-CONFIGURE RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'BM-CL-LIBWAYLAND::U)))))))
+                  'BM-CL-LIBWAYLAND::U))))))
+  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -778,57 +797,68 @@ An interface that may be implemented by a wl_surface, for
       (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENTS) *EVENTS*)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :VOID
+    :INT
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
+  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "xdg_surface")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0 (FUNCALL 'DESTROY RESOURCE))
       (1
        (FUNCALL 'GET-TOPLEVEL RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'BM-CL-LIBWAYLAND::N))))
       (2
        (FUNCALL 'GET-POPUP RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::N))
                 (GETHASH
                  (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE ARGS
+                  (FOREIGN-SLOT-VALUE
+                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                    '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                    'BM-CL-LIBWAYLAND::O))
                  *RESOURCE-TRACKER*)
                 (GETHASH
                  (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE ARGS
+                  (FOREIGN-SLOT-VALUE
+                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
                    '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                    'BM-CL-LIBWAYLAND::O))
                  *RESOURCE-TRACKER*)))
       (3
        (FUNCALL 'SET-WINDOW-GEOMETRY RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 3)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'BM-CL-LIBWAYLAND::I))))
       (4
        (FUNCALL 'ACK-CONFIGURE RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'BM-CL-LIBWAYLAND::U)))))))
+                  'BM-CL-LIBWAYLAND::U))))))
+  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -1228,10 +1258,11 @@ This interface defines an xdg_surface role which allows a surface to,
       (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENTS) *EVENTS*)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :VOID
+    :INT
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
+  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "xdg_toplevel")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0 (FUNCALL 'DESTROY RESOURCE))
@@ -1239,81 +1270,96 @@ This interface defines an xdg_surface role which allows a surface to,
        (FUNCALL 'SET-PARENT RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE ARGS
+                  (FOREIGN-SLOT-VALUE
+                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                    '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                    'BM-CL-LIBWAYLAND::O))
                  *RESOURCE-TRACKER*)))
       (2
        (FUNCALL 'SET-TITLE RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'BM-CL-LIBWAYLAND::S))))
       (3
        (FUNCALL 'SET-APP-ID RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'BM-CL-LIBWAYLAND::S))))
       (4
        (FUNCALL 'SHOW-WINDOW-MENU RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE ARGS
+                  (FOREIGN-SLOT-VALUE
+                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                    '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                    'BM-CL-LIBWAYLAND::O))
                  *RESOURCE-TRACKER*)
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 3)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'BM-CL-LIBWAYLAND::I))))
       (5
        (FUNCALL 'MOVE RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE ARGS
+                  (FOREIGN-SLOT-VALUE
+                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                    '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                    'BM-CL-LIBWAYLAND::O))
                  *RESOURCE-TRACKER*)
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'BM-CL-LIBWAYLAND::U))))
       (6
        (FUNCALL 'RESIZE RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE ARGS
+                  (FOREIGN-SLOT-VALUE
+                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                    '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                    'BM-CL-LIBWAYLAND::O))
                  *RESOURCE-TRACKER*)
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U))
                 (ERROR
                  "WL C enum not yet implemented. You wanted to create a lisp list with keywords")))
       (7
        (FUNCALL 'SET-MAX-SIZE RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'BM-CL-LIBWAYLAND::I))))
       (8
        (FUNCALL 'SET-MIN-SIZE RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'BM-CL-LIBWAYLAND::I))))
       (9 (FUNCALL 'SET-MAXIMIZED RESOURCE))
@@ -1322,12 +1368,14 @@ This interface defines an xdg_surface role which allows a surface to,
        (FUNCALL 'SET-FULLSCREEN RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE ARGS
+                  (FOREIGN-SLOT-VALUE
+                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                    '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                    'BM-CL-LIBWAYLAND::O))
                  *RESOURCE-TRACKER*)))
       (12 (FUNCALL 'UNSET-FULLSCREEN RESOURCE))
-      (13 (FUNCALL 'SET-MINIMIZED RESOURCE)))))
+      (13 (FUNCALL 'SET-MINIMIZED RESOURCE))))
+  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -1525,10 +1573,11 @@ A popup surface is a short-lived, temporary surface. It can be used to
       (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENTS) *EVENTS*)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :VOID
+    :INT
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
+  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "xdg_popup")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0 (FUNCALL 'DESTROY RESOURCE))
@@ -1536,26 +1585,31 @@ A popup surface is a short-lived, temporary surface. It can be used to
        (FUNCALL 'GRAB RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE ARGS
+                  (FOREIGN-SLOT-VALUE
+                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                    '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                    'BM-CL-LIBWAYLAND::O))
                  *RESOURCE-TRACKER*)
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'BM-CL-LIBWAYLAND::U))))
       (2
        (FUNCALL 'REPOSITION RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE ARGS
+                  (FOREIGN-SLOT-VALUE
+                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                    '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                    'BM-CL-LIBWAYLAND::O))
                  *RESOURCE-TRACKER*)
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'BM-CL-LIBWAYLAND::U)))))))
+                  'BM-CL-LIBWAYLAND::U))))))
+  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 

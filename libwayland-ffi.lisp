@@ -16,6 +16,8 @@
 (in-package :bm-cl-libwayland)
 (define-foreign-library wayland-server
   (t (:default "libwayland-server")))
+;; (define-foreign-library wayland-server
+  ;; (t (:default "/home/toms/repos/cl/bm/bm-cl-wayland/headers/lib/libwayland-server.so")))
 
 ;; ┌─┐┌┬┐┬─┐┬ ┬┌─┐┌┬┐┌─┐
 ;; └─┐ │ ├┬┘│ ││   │ └─┐

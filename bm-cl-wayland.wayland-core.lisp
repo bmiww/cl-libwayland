@@ -415,24 +415,28 @@ The core global object.  This is a special singleton object.  It
       (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENTS) *EVENTS*)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :VOID
+    :INT
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
+  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_display")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
        (FUNCALL 'SYNC RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'BM-CL-LIBWAYLAND::N))))
       (1
        (FUNCALL 'GET-REGISTRY RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'BM-CL-LIBWAYLAND::N)))))))
+                  'BM-CL-LIBWAYLAND::N))))))
+  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -565,21 +569,25 @@ The singleton global registry object.  The server has a number of
       (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENTS) *EVENTS*)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :VOID
+    :INT
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
+  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_registry")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
        (FUNCALL 'BIND RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'BM-CL-LIBWAYLAND::N)))))))
+                  'BM-CL-LIBWAYLAND::N))))))
+  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -685,14 +693,16 @@ Clients can handle the 'done' event to get notified when
       (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENTS) *EVENTS*)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :VOID
+    :INT
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE ARGS TARGET OPCODE))
+  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_callback")
   (ERROR
    (FORMAT NIL
            "A dispatcher wiwthout requests has been called for interface: ~a~%"
-           "wl_callback")))
+           "wl_callback"))
+  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -799,24 +809,28 @@ A compositor.  This object is a singleton global.  The
       (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENTS) *EVENTS*)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :VOID
+    :INT
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
+  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_compositor")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
        (FUNCALL 'CREATE-SURFACE RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'BM-CL-LIBWAYLAND::N))))
       (1
        (FUNCALL 'CREATE-REGION RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'BM-CL-LIBWAYLAND::N)))))))
+                  'BM-CL-LIBWAYLAND::N))))))
+  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -944,28 +958,34 @@ The wl_shm_pool object encapsulates a piece of memory shared
       (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENTS) *EVENTS*)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :VOID
+    :INT
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
+  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_shm_pool")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
        (FUNCALL 'CREATE-BUFFER RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::N))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 3)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 4)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I))
                 (ERROR
                  "WL C enum not yet implemented. You wanted to create a lisp list with keywords")))
@@ -973,9 +993,11 @@ The wl_shm_pool object encapsulates a piece of memory shared
       (2
        (FUNCALL 'RESIZE RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'BM-CL-LIBWAYLAND::I)))))))
+                  'BM-CL-LIBWAYLAND::I))))))
+  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -1089,24 +1111,29 @@ A singleton global object that provides support for shared
       (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENTS) *EVENTS*)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :VOID
+    :INT
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
+  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_shm")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
        (FUNCALL 'CREATE-POOL RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::N))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::H))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'BM-CL-LIBWAYLAND::I)))))))
+                  'BM-CL-LIBWAYLAND::I))))))
+  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -1222,12 +1249,14 @@ A buffer provides the content for a wl_surface. Buffers are
       (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENTS) *EVENTS*)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :VOID
+    :INT
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE ARGS))
+  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_buffer")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
-    (ECASE OPCODE (0 (FUNCALL 'DESTROY RESOURCE)))))
+    (ECASE OPCODE (0 (FUNCALL 'DESTROY RESOURCE))))
+  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -1427,28 +1456,33 @@ A wl_data_offer represents a piece of data offered for transfer
       (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENTS) *EVENTS*)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :VOID
+    :INT
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
+  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_data_offer")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
        (FUNCALL 'ACCEPT RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'BM-CL-LIBWAYLAND::S))))
       (1
        (FUNCALL 'RECEIVE RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::S))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'BM-CL-LIBWAYLAND::H))))
       (2 (FUNCALL 'DESTROY RESOURCE))
@@ -1458,7 +1492,8 @@ A wl_data_offer represents a piece of data offered for transfer
                 (ERROR
                  "WL C enum not yet implemented. You wanted to create a lisp list with keywords")
                 (ERROR
-                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))))))
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords")))))
+  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -1651,23 +1686,26 @@ The wl_data_source object is the source side of a wl_data_offer.
       (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENTS) *EVENTS*)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :VOID
+    :INT
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
+  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_data_source")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
        (FUNCALL 'OFFER RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'BM-CL-LIBWAYLAND::S))))
       (1 (FUNCALL 'DESTROY RESOURCE))
       (2
        (FUNCALL 'SET-ACTIONS RESOURCE
                 (ERROR
-                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))))))
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords")))))
+  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -1869,49 +1907,57 @@ There is one wl_data_device per seat which can be obtained
       (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENTS) *EVENTS*)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :VOID
+    :INT
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
+  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_data_device")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
        (FUNCALL 'START-DRAG RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE ARGS
+                  (FOREIGN-SLOT-VALUE
+                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                    '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                    'BM-CL-LIBWAYLAND::O))
                  *RESOURCE-TRACKER*)
                 (GETHASH
                  (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE ARGS
+                  (FOREIGN-SLOT-VALUE
+                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                    '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                    'BM-CL-LIBWAYLAND::O))
                  *RESOURCE-TRACKER*)
                 (GETHASH
                  (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE ARGS
+                  (FOREIGN-SLOT-VALUE
+                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
                    '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                    'BM-CL-LIBWAYLAND::O))
                  *RESOURCE-TRACKER*)
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 3)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'BM-CL-LIBWAYLAND::U))))
       (1
        (FUNCALL 'SET-SELECTION RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE ARGS
+                  (FOREIGN-SLOT-VALUE
+                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                    '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                    'BM-CL-LIBWAYLAND::O))
                  *RESOURCE-TRACKER*)
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'BM-CL-LIBWAYLAND::U))))
-      (2 (FUNCALL 'RELEASE RESOURCE)))))
+      (2 (FUNCALL 'RELEASE RESOURCE))))
+  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -2026,29 +2072,34 @@ The wl_data_device_manager is a singleton global object that
       (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENTS) *EVENTS*)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :VOID
+    :INT
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
+  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_data_device_manager")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
        (FUNCALL 'CREATE-DATA-SOURCE RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'BM-CL-LIBWAYLAND::N))))
       (1
        (FUNCALL 'GET-DATA-DEVICE RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::N))
                 (GETHASH
                  (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE ARGS
+                  (FOREIGN-SLOT-VALUE
+                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                    '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                    'BM-CL-LIBWAYLAND::O))
-                 *RESOURCE-TRACKER*))))))
+                 *RESOURCE-TRACKER*)))))
+  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -2153,23 +2204,27 @@ This interface is implemented by servers that provide
       (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENTS) *EVENTS*)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :VOID
+    :INT
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
+  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_shell")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
        (FUNCALL 'GET-SHELL-SURFACE RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::N))
                 (GETHASH
                  (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE ARGS
+                  (FOREIGN-SLOT-VALUE
+                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                    '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                    'BM-CL-LIBWAYLAND::O))
-                 *RESOURCE-TRACKER*))))))
+                 *RESOURCE-TRACKER*)))))
+  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -2457,40 +2512,46 @@ An interface that may be implemented by a wl_surface, for
       (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENTS) *EVENTS*)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :VOID
+    :INT
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
+  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_shell_surface")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
        (FUNCALL 'PONG RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'BM-CL-LIBWAYLAND::U))))
       (1
        (FUNCALL 'MOVE RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE ARGS
+                  (FOREIGN-SLOT-VALUE
+                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                    '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                    'BM-CL-LIBWAYLAND::O))
                  *RESOURCE-TRACKER*)
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'BM-CL-LIBWAYLAND::U))))
       (2
        (FUNCALL 'RESIZE RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE ARGS
+                  (FOREIGN-SLOT-VALUE
+                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                    '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                    'BM-CL-LIBWAYLAND::O))
                  *RESOURCE-TRACKER*)
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U))
                 (ERROR
                  "WL C enum not yet implemented. You wanted to create a lisp list with keywords")))
@@ -2499,15 +2560,18 @@ An interface that may be implemented by a wl_surface, for
        (FUNCALL 'SET-TRANSIENT RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE ARGS
+                  (FOREIGN-SLOT-VALUE
+                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                    '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                    'BM-CL-LIBWAYLAND::O))
                  *RESOURCE-TRACKER*)
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I))
                 (ERROR
                  "WL C enum not yet implemented. You wanted to create a lisp list with keywords")))
@@ -2516,11 +2580,13 @@ An interface that may be implemented by a wl_surface, for
                 (ERROR
                  "WL C enum not yet implemented. You wanted to create a lisp list with keywords")
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U))
                 (GETHASH
                  (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE ARGS
+                  (FOREIGN-SLOT-VALUE
+                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
                    '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                    'BM-CL-LIBWAYLAND::O))
                  *RESOURCE-TRACKER*)))
@@ -2528,24 +2594,29 @@ An interface that may be implemented by a wl_surface, for
        (FUNCALL 'SET-POPUP RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE ARGS
+                  (FOREIGN-SLOT-VALUE
+                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                    '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                    'BM-CL-LIBWAYLAND::O))
                  *RESOURCE-TRACKER*)
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U))
                 (GETHASH
                  (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE ARGS
+                  (FOREIGN-SLOT-VALUE
+                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
                    '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                    'BM-CL-LIBWAYLAND::O))
                  *RESOURCE-TRACKER*)
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 3)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 4)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I))
                 (ERROR
                  "WL C enum not yet implemented. You wanted to create a lisp list with keywords")))
@@ -2553,22 +2624,26 @@ An interface that may be implemented by a wl_surface, for
        (FUNCALL 'SET-MAXIMIZED RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE ARGS
+                  (FOREIGN-SLOT-VALUE
+                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                    '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                    'BM-CL-LIBWAYLAND::O))
                  *RESOURCE-TRACKER*)))
       (8
        (FUNCALL 'SET-TITLE RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'BM-CL-LIBWAYLAND::S))))
       (9
        (FUNCALL 'SET-CLASS RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'BM-CL-LIBWAYLAND::S)))))))
+                  'BM-CL-LIBWAYLAND::S))))))
+  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -2910,10 +2985,11 @@ A surface is a rectangular area that may be displayed on zero
       (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENTS) *EVENTS*)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :VOID
+    :INT
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
+  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_surface")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0 (FUNCALL 'DESTROY RESOURCE))
@@ -2921,43 +2997,52 @@ A surface is a rectangular area that may be displayed on zero
        (FUNCALL 'ATTACH RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE ARGS
+                  (FOREIGN-SLOT-VALUE
+                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                    '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                    'BM-CL-LIBWAYLAND::O))
                  *RESOURCE-TRACKER*)
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'BM-CL-LIBWAYLAND::I))))
       (2
        (FUNCALL 'DAMAGE RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 3)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'BM-CL-LIBWAYLAND::I))))
       (3
        (FUNCALL 'FRAME RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'BM-CL-LIBWAYLAND::N))))
       (4
        (FUNCALL 'SET-OPAQUE-REGION RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE ARGS
+                  (FOREIGN-SLOT-VALUE
+                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                    '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                    'BM-CL-LIBWAYLAND::O))
                  *RESOURCE-TRACKER*)))
@@ -2965,7 +3050,8 @@ A surface is a rectangular area that may be displayed on zero
        (FUNCALL 'SET-INPUT-REGION RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE ARGS
+                  (FOREIGN-SLOT-VALUE
+                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                    '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                    'BM-CL-LIBWAYLAND::O))
                  *RESOURCE-TRACKER*)))
@@ -2977,33 +3063,41 @@ A surface is a rectangular area that may be displayed on zero
       (8
        (FUNCALL 'SET-BUFFER-SCALE RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'BM-CL-LIBWAYLAND::I))))
       (9
        (FUNCALL 'DAMAGE-BUFFER RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 3)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'BM-CL-LIBWAYLAND::I))))
       (10
        (FUNCALL 'OFFSET RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'BM-CL-LIBWAYLAND::I)))))))
+                  'BM-CL-LIBWAYLAND::I))))))
+  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -3201,31 +3295,36 @@ A seat is a group of keyboards, pointer and touch devices. This
       (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENTS) *EVENTS*)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :VOID
+    :INT
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
+  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_seat")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
        (FUNCALL 'GET-POINTER RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'BM-CL-LIBWAYLAND::N))))
       (1
        (FUNCALL 'GET-KEYBOARD RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'BM-CL-LIBWAYLAND::N))))
       (2
        (FUNCALL 'GET-TOUCH RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'BM-CL-LIBWAYLAND::N))))
-      (3 (FUNCALL 'RELEASE RESOURCE)))))
+      (3 (FUNCALL 'RELEASE RESOURCE))))
+  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -3484,31 +3583,37 @@ The wl_pointer interface represents one or more input devices,
       (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENTS) *EVENTS*)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :VOID
+    :INT
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
+  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_pointer")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
        (FUNCALL 'SET-CURSOR RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U))
                 (GETHASH
                  (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE ARGS
+                  (FOREIGN-SLOT-VALUE
+                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                    '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                    'BM-CL-LIBWAYLAND::O))
                  *RESOURCE-TRACKER*)
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 3)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'BM-CL-LIBWAYLAND::I))))
-      (1 (FUNCALL 'RELEASE RESOURCE)))))
+      (1 (FUNCALL 'RELEASE RESOURCE))))
+  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -3686,12 +3791,14 @@ The wl_keyboard interface represents one or more keyboards
       (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENTS) *EVENTS*)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :VOID
+    :INT
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE ARGS))
+  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_keyboard")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
-    (ECASE OPCODE (0 (FUNCALL 'RELEASE RESOURCE)))))
+    (ECASE OPCODE (0 (FUNCALL 'RELEASE RESOURCE))))
+  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -3879,12 +3986,14 @@ The wl_touch interface represents a touchscreen
       (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENTS) *EVENTS*)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :VOID
+    :INT
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE ARGS))
+  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_touch")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
-    (ECASE OPCODE (0 (FUNCALL 'RELEASE RESOURCE)))))
+    (ECASE OPCODE (0 (FUNCALL 'RELEASE RESOURCE))))
+  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -4062,12 +4171,14 @@ An output describes part of the compositor geometry.  The
       (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENTS) *EVENTS*)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :VOID
+    :INT
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE ARGS))
+  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_output")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
-    (ECASE OPCODE (0 (FUNCALL 'RELEASE RESOURCE)))))
+    (ECASE OPCODE (0 (FUNCALL 'RELEASE RESOURCE))))
+  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -4196,43 +4307,53 @@ A region object describes an area.
       (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENTS) *EVENTS*)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :VOID
+    :INT
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
+  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_region")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0 (FUNCALL 'DESTROY RESOURCE))
       (1
        (FUNCALL 'ADD RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 3)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'BM-CL-LIBWAYLAND::I))))
       (2
        (FUNCALL 'SUBTRACT RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 3)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'BM-CL-LIBWAYLAND::I)))))))
+                  'BM-CL-LIBWAYLAND::I))))))
+  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -4355,30 +4476,35 @@ The global interface exposing sub-surface compositing capabilities.
       (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENTS) *EVENTS*)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :VOID
+    :INT
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
+  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_subcompositor")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0 (FUNCALL 'DESTROY RESOURCE))
       (1
        (FUNCALL 'GET-SUBSURFACE RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::N))
                 (GETHASH
                  (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE ARGS
+                  (FOREIGN-SLOT-VALUE
+                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                    '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                    'BM-CL-LIBWAYLAND::O))
                  *RESOURCE-TRACKER*)
                 (GETHASH
                  (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE ARGS
+                  (FOREIGN-SLOT-VALUE
+                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
                    '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                    'BM-CL-LIBWAYLAND::O))
-                 *RESOURCE-TRACKER*))))))
+                 *RESOURCE-TRACKER*)))))
+  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -4601,27 +4727,31 @@ An additional interface to a wl_surface object, which has been
       (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENTS) *EVENTS*)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :VOID
+    :INT
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
+  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_subsurface")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0 (FUNCALL 'DESTROY RESOURCE))
       (1
        (FUNCALL 'SET-POSITION RESOURCE
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I))
                 (VALUES
-                 (FOREIGN-SLOT-VALUE ARGS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'BM-CL-LIBWAYLAND::I))))
       (2
        (FUNCALL 'PLACE-ABOVE RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE ARGS
+                  (FOREIGN-SLOT-VALUE
+                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                    '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                    'BM-CL-LIBWAYLAND::O))
                  *RESOURCE-TRACKER*)))
@@ -4629,12 +4759,14 @@ An additional interface to a wl_surface object, which has been
        (FUNCALL 'PLACE-BELOW RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE ARGS
+                  (FOREIGN-SLOT-VALUE
+                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                    '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                    'BM-CL-LIBWAYLAND::O))
                  *RESOURCE-TRACKER*)))
       (4 (FUNCALL 'SET-SYNC RESOURCE))
-      (5 (FUNCALL 'SET-DESYNC RESOURCE)))))
+      (5 (FUNCALL 'SET-DESYNC RESOURCE))))
+  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 

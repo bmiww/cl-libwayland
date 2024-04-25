@@ -97,15 +97,17 @@ This can be overriden by inheritance in case if custom behaviour is required." (
 	 messages))))
 
 ;; TODO: This is a bit annoying - since it loosly refers to the args symbol
-(defun gen-c-arg-selector (arg)
+(defun gen-c-arg-selector (arg index)
   `(foreign-slot-value
-    args '(:union wl-ffi:wl_argument)
+    (mem-aptr args '(:union wl-ffi:wl_argument) ,index)
+    ;; args
+    '(:union wl-ffi:wl_argument)
     ,(symbolify "'wl-ffi::~a" (arg-type-char arg))))
 
 ;; TODO: The values functions are a bit dumb. They act just as rudimentary id function
 ;; But could be completely omitted if i wasn't too lazy to figure out a different way of doing this
-(defun gen-c-arg-mapping (arg)
-  (let ((selector (gen-c-arg-selector arg)))
+(defun gen-c-arg-mapping (arg index)
+  (let ((selector (gen-c-arg-selector arg index)))
     (alexandria:eswitch ((arg-type arg) :test 'string=)
       ("int" `(values ,selector))
       ("uint" `(values ,selector))
@@ -122,7 +124,11 @@ This can be overriden by inheritance in case if custom behaviour is required." (
 (defun gen-matcher (opcode request)
   "A case form to match an opcode to a method to be called upon a resource and it's
 argument feed."
-  `(,opcode (funcall ',(symbolify (dash-name request)) resource ,@(mapcar 'gen-c-arg-mapping (args request)))))
+  `(,opcode (funcall ',(symbolify (dash-name request)) resource
+		     ,@(loop for index below (length (args request))
+			     for arg = (nth index (args request))
+			     collect (gen-c-arg-mapping arg index)))))
+
 
 ;; NOTE: An implementation of this in the python lib
 ;; https://github.com/flacjacket/pywayland/blob/4febe9b7c22b61ace7902109904f2a298c510169/pywayland/dispatcher.py#L28
@@ -139,13 +145,15 @@ argument feed."
 			  (if (= 0 arg-usage) '(args) nil)
 			  '(args target opcode))))
 
-    `((cl-async::define-c-callback dispatcher-ffi :void
+    `((cl-async::define-c-callback dispatcher-ffi :int
 	  ((data :pointer) (target :pointer) (opcode :uint) (message :pointer) (args :pointer))
 	(declare (ignore data message ,@ignore-list))
+	(debug-log! "Dispatcher invoked: ~a~%" ,(name interface))
 	,(if (requests interface)
 	     `(let ((resource (gethash (pointer-address target) *resource-tracker*)))
 		(ecase opcode ,@matchers))
-	     `(error (format nil "A dispatcher wiwthout requests has been called for interface: ~a~%" ,(name interface))))))))
+	     `(error (format nil "A dispatcher wiwthout requests has been called for interface: ~a~%" ,(name interface))))
+	0))))
 
 
 (defun gen-interface-c-structs (interface)
