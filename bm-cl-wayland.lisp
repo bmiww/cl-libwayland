@@ -23,7 +23,8 @@
   ((display :initarg :display :reader display)
    (client :initarg :client :reader client)
    (version :initarg :version :reader version)
-   (id :initarg :id :reader id)))
+   (id :initarg :id :reader id)
+   (ptr :initarg :ptr :accessor ptr)))
 
 (defmethod mk-if (class (object object) id &rest args)
   "Convenience method to create a new interface using the context of the creating object as reference"

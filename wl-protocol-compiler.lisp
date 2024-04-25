@@ -52,36 +52,39 @@ This can be overriden by inheritance in case if custom behaviour is required." (
 	(setf (iface client id) bound)))))
 
 (defun gen-bind-c-callback (interface)
-  `((cl-async::define-c-callback dispatch-bind-ffi :void ((client :pointer) (data :pointer) (version :uint) (id :uint))
-      (debug-log! "C-Binding ~a~%" ,(name interface))
-      (let* ((client (get-client client))
-	     (global (get-data data)))
-	(funcall 'dispatch-bind global client (null-pointer) version id)))))
+  `((eval-when (:compile-toplevel :load-toplevel :execute)
+      (cl-async::define-c-callback dispatch-bind-ffi :void ((client :pointer) (data :pointer) (version :uint) (id :uint))
+	(debug-log! "C-Binding ~a~%" ,(name interface))
+	(let* ((client (get-client client))
+	       (global (get-data data)))
+	  (funcall 'dispatch-bind global client (null-pointer) version id))))))
 
 (defun gen-interface-var-fill (interface)
-  `((setf (foreign-slot-value *interface* '(:struct interface) 'name) (foreign-string-alloc ,(name interface))
-	  (foreign-slot-value *interface* '(:struct interface) 'version) ,(version interface)
-	  (foreign-slot-value *interface* '(:struct interface) 'method_count) ,(length (requests interface))
-	  (foreign-slot-value *interface* '(:struct interface) 'methods) ,(symbolify "*requests*")
-	  (foreign-slot-value *interface* '(:struct interface) 'event_count) ,(length (events interface))
-	  (foreign-slot-value *interface* '(:struct interface) 'events) ,(symbolify "*events*"))))
+  `((eval-when (:load-toplevel :execute)
+      (setf (foreign-slot-value *interface* '(:struct interface) 'name) (foreign-string-alloc ,(name interface))
+	    (foreign-slot-value *interface* '(:struct interface) 'version) ,(version interface)
+	    (foreign-slot-value *interface* '(:struct interface) 'method_count) ,(length (requests interface))
+	    (foreign-slot-value *interface* '(:struct interface) 'methods) ,(symbolify "*requests*")
+	    (foreign-slot-value *interface* '(:struct interface) 'event_count) ,(length (events interface))
+	    (foreign-slot-value *interface* '(:struct interface) 'events) ,(symbolify "*events*")))))
 
 (defun gen-c-struct-filler (var-name methods)
-  `((defvar ,var-name
-       (let ((messages (cffi:foreign-alloc '(:struct wl_message)
-					   :count ,(length methods))))
-	 ,@(mapcar
-	    (lambda (method)
-	      `(let ((interface-array (cffi:foreign-alloc '(:pointer (:pointer :void))
+  `((eval-when (:load-toplevel :execute)
+      (defvar ,var-name
+	(let ((messages (cffi:foreign-alloc '(:struct wl_message)
+					    :count ,(length methods))))
+	  ,@(mapcar
+	     (lambda (method)
+	       `(let ((interface-array (cffi:foreign-alloc '(:pointer (:pointer :void))
 							   :count ,(length (args method)))))
 		  ,@(append
 		     ;; Code to fill the interface array with references to interface definitions
 		     (loop for index below (length (args method))
 			   collect (let ((arg (nth index (args method))))
 				     `(setf (mem-aref interface-array :pointer ,index)
-						   ,(if (interface arg)
-							(symbolify "~a::*interface*" (interface arg))
-							`(null-pointer)))))
+					    ,(if (interface arg)
+						 (symbolify "~a::*interface*" (interface arg))
+						 `(null-pointer)))))
 		     `((setf (foreign-slot-value messages '(:struct wl_message) 'wl-ffi::name)
 			     (foreign-string-alloc ,(name method))
 
@@ -93,8 +96,8 @@ This can be overriden by inheritance in case if custom behaviour is required." (
 			     ;; TODO: This should instead be a reference to an interface.
 			     ;; The interface in question could actually span different packages. So a pain in the neck.
 			     interface-array)))))
-	    methods)
-	 messages))))
+	     methods)
+	  messages)))))
 
 ;; TODO: This is a bit annoying - since it loosly refers to the args symbol
 (defun gen-c-arg-selector (arg index)
@@ -145,15 +148,16 @@ argument feed."
 			  (if (= 0 arg-usage) '(args) nil)
 			  '(args target opcode))))
 
-    `((cl-async::define-c-callback dispatcher-ffi :int
-	  ((data :pointer) (target :pointer) (opcode :uint) (message :pointer) (args :pointer))
-	(declare (ignore data message ,@ignore-list))
-	(debug-log! "Dispatcher invoked: ~a~%" ,(name interface))
-	,(if (requests interface)
-	     `(let ((resource (gethash (pointer-address target) *resource-tracker*)))
-		(ecase opcode ,@matchers))
-	     `(error (format nil "A dispatcher wiwthout requests has been called for interface: ~a~%" ,(name interface))))
-	0))))
+    `((eval-when (:compile-toplevel :load-toplevel :execute)
+	(cl-async::define-c-callback dispatcher-ffi :int
+	    ((data :pointer) (target :pointer) (opcode :uint) (message :pointer) (args :pointer))
+	  (declare (ignore data message ,@ignore-list))
+	  (debug-log! "Dispatcher invoked: ~a~%" ,(name interface))
+	  ,(if (requests interface)
+	       `(let ((resource (gethash (pointer-address target) *resource-tracker*)))
+		  (ecase opcode ,@matchers))
+	       `(error (format nil "A dispatcher wiwthout requests has been called for interface: ~a~%" ,(name interface))))
+	  0)))))
 
 
 (defun gen-interface-c-structs (interface)
@@ -169,6 +173,7 @@ argument feed."
 	     (global-ptr (global-create (display global) *interface*
 					(version global) (data-ptr next-data-id)
 					*dispatch-bind*)))
+	(setf (wl:ptr global) global-ptr)
 	;; TODO: not sure i really need to keep track of the globals.
 	;; The *global-tracker* set might be unnecessary
 	(set-data next-data-id (setf (gethash (pointer-address global-ptr) *global-tracker*) global))))))
@@ -186,7 +191,8 @@ argument feed."
      (mapcar 'gen-request-generic (requests interface))
      (gen-interface-c-structs interface)
      (gen-dispatcher-c-callback interface)
-     `((defvar *dispatcher* (callback ,(symbolify "dispatcher-ffi"))))
+     `((eval-when (:load-toplevel :execute)
+	 (defvar *dispatcher* (callback ,(symbolify "dispatcher-ffi")))))
      (gen-dispatch-init)
 
      `((defclass global (wl::global) ()
@@ -194,7 +200,8 @@ argument feed."
 	 (:documentation ,(description interface))))
      (gen-bind-callback interface)
      (gen-bind-c-callback interface)
-     `((defvar *dispatch-bind* (callback ,(symbolify "dispatch-bind-ffi"))))
+     `((eval-when (:load-toplevel :execute)
+	 (defvar *dispatch-bind* (callback ,(symbolify "dispatch-bind-ffi")))))
      (gen-global-init interface))))
 
 ;; NOTE: Thing could be an interface/request/event/arg
@@ -206,7 +213,7 @@ argument feed."
      `((defpackage ,pkg-name
 	 (:use :cl :wl :cffi)
 	 (:nicknames ,(symbolify ":~a" (dash-name interface)))
-	 (:export dispatch global
+	 (:export dispatch global dispatch-bind
 		  ,@(mapcar 'symbolify (mapcar 'dash-name (requests interface))))))
      `((in-package ,pkg-name))
      `((defcstruct interface
@@ -217,7 +224,8 @@ argument feed."
 	 (event_count :int)
 	 (events (:pointer (:struct wl_message)))
 	 ,@(mapcar 'gen-request-c-struct (requests interface))))
-     `((defvar *interface* (cffi:foreign-alloc '(:struct interface)))))))
+     `((eval-when (:load-toplevel :execute)
+	 (defvar *interface* (cffi:foreign-alloc '(:struct interface))))))))
 
 (defun gen-code (protocol)
   (append
