@@ -45,46 +45,56 @@ This can be overriden by inheritance in case if custom behaviour is required." (
 	       (global (get-data data)))
 	  (funcall 'dispatch-bind global client (null-pointer) version id)))))
 
-(defun gen-interface-var-fill (interface)
-  `((push
-     (lambda ()
-       (debug-log! "Filling if struct for ~a~%" ,(name interface))
-       (debug-log! "IF before: ~a --- ~a~%" *interface* (mem-aptr *interface* '(:struct interface) 1))
-       (setf *interface* (foreign-alloc '(:struct interface)))
-       (debug-log! "IF after: ~a~%" *interface*)
-       (setf (foreign-slot-value *interface* '(:struct interface) 'name) (foreign-string-alloc ,(name interface))
-	     (foreign-slot-value *interface* '(:struct interface) 'version) ,(version interface)
-	     (foreign-slot-value *interface* '(:struct interface) 'method_count) ,(length (requests interface))
-	     (foreign-slot-value *interface* '(:struct interface) 'methods) ,(symbolify "*requests*")
-	     (foreign-slot-value *interface* '(:struct interface) 'event_count) ,(length (events interface))
-	     (foreign-slot-value *interface* '(:struct interface) 'events) ,(symbolify "*events*")))
-     wl::*interface-init-list*)))
+
+(defun gen-interface-var-fill (interface interface-deps)
+  `((pushnew
+     (list ,(name interface)
+	   (list ,@interface-deps)
+	   (lambda ()
+	     ;; (debug-log! "Filling if struct for ~a~%" ,(name interface))
+	     ;; (debug-log! "IF before: ~a --- ~a~%" *interface* (mem-aptr *interface* '(:struct interface) 1))
+	     (setf *interface* (foreign-alloc '(:struct interface)))
+	     ;; (debug-log! "IF after: ~a~%" *interface*)
+	     (with-foreign-slots ((name version method_count methods event_count events) *interface* '(:struct interface))
+	       (setf name (foreign-string-alloc ,(name interface))
+		     version ,(version interface)
+		     method_count ,(length (requests interface))
+		     methods ,(symbolify "*requests*")
+		     event_count ,(length (events interface))
+		     events ,(symbolify "*events*")))))
+     wl::*interface-init-list*
+     :test #'interface-exists-test)))
+
 
 (defun gen-c-struct-filler (var-name methods)
-  `((defvar ,var-name
-	(let ((messages (cffi:foreign-alloc '(:struct wl_message)
-					    :count ,(length methods))))
-	  ,@(loop for opcode below (length methods)
-		  for method = (nth opcode methods)
-		  collect
-		  `(let ((interface-array (cffi:foreign-alloc '(:pointer (:pointer :void))
-							      :count ,(length (args method))))
-			 (msg-ptr (mem-aptr messages '(:struct wl_message) ,opcode)))
-		     ,@(append
-			;; Code to fill the interface array with references to interface definitions
-			(loop for index below (length (args method))
-			      collect (let ((arg (nth index (args method))))
-					`(setf (mem-aref interface-array :pointer ,index)
-					       ,(if (interface arg)
-						    (symbolify "~a::*interface*" (interface arg))
-						    `(null-pointer)))))
-			`((setf (foreign-slot-value msg-ptr '(:struct wl_message) 'wl-ffi::name)
-				(foreign-string-alloc ,(name method))
-				(foreign-slot-value msg-ptr '(:struct wl_message) 'wl-ffi::signature)
-				(foreign-string-alloc ,(signature method))
-				(foreign-slot-value msg-ptr '(:struct wl_message) 'wl-ffi::types)
-				interface-array)))))
-	  messages))))
+  (let ((interface-deps nil))
+    (values `((defvar ,var-name
+		(let ((messages (cffi:foreign-alloc '(:struct wl_message)
+						    :count ,(length methods))))
+		  ,@(loop for opcode below (length methods)
+			  for method = (nth opcode methods)
+			  collect
+			  `(let ((interface-array (cffi:foreign-alloc '(:pointer (:pointer :void))
+								      :count ,(length (args method))))
+				 (msg-ptr (mem-aptr messages '(:struct wl_message) ,opcode)))
+			     ,@(append
+				;; Code to fill the interface array with references to interface definitions
+				(loop for index below (length (args method))
+				      collect (let ((arg (nth index (args method))))
+						`(setf (mem-aref interface-array :pointer ,index)
+						       ,(if (interface arg)
+							    (progn
+							      (pushnew (interface arg) interface-deps :test #'string=)
+							      (symbolify "~a::*interface*" (interface arg)))
+							    `(null-pointer)))))
+				`((setf (foreign-slot-value msg-ptr '(:struct wl_message) 'wl-ffi::name)
+					(foreign-string-alloc ,(name method))
+					(foreign-slot-value msg-ptr '(:struct wl_message) 'wl-ffi::signature)
+					(foreign-string-alloc ,(signature method))
+					(foreign-slot-value msg-ptr '(:struct wl_message) 'wl-ffi::types)
+					interface-array)))))
+		  messages)))
+	    interface-deps)))
 
 ;; TODO: This is a bit annoying - since it loosly refers to the args symbol
 (defun gen-c-arg-selector (arg index)
@@ -147,10 +157,15 @@ argument feed."
 
 
 (defun gen-interface-c-structs (interface)
-  (append
-   (gen-c-struct-filler (symbolify "*requests*") (requests interface))
-   (gen-c-struct-filler (symbolify "*events*") (events interface))
-   (gen-interface-var-fill interface)))
+  (let ((interface-deps nil))
+    (append
+     (multiple-value-bind (sexps deps) (gen-c-struct-filler (symbolify "*requests*") (requests interface))
+       (loop for dep in deps do (pushnew dep interface-deps :test #'string=))
+       sexps)
+     (multiple-value-bind (sexps deps) (gen-c-struct-filler (symbolify "*events*") (events interface))
+       (loop for dep in deps do (pushnew dep interface-deps :test #'string=))
+       sexps)
+     (gen-interface-var-fill interface interface-deps))))
 
 (defun gen-global-init (interface)
   `((defmethod initialize-instance :after ((global global) &key)
