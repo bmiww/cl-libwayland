@@ -42,7 +42,10 @@
     (dolist (interface interfaces)
       (let ((name (car interface)) (deps (cadr interface)) (init (caddr interface)))
 	(when (not (find name *inited-interfaces* :test #'string=))
-	  (if (every (lambda (dep) (find dep *inited-interfaces* :test #'string=)) deps)
+	  (if (every (lambda (dep)
+		       (if (string= dep name) t
+			   (find dep *inited-interfaces* :test #'string=)))
+		     deps)
 	      (progn (funcall init) (push name *inited-interfaces*))
 	      (push interface needs-processing)))))
     (when (eq (length needs-processing) (length interfaces))
