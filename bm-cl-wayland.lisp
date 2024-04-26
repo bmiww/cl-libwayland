@@ -35,9 +35,22 @@
 (defvar *global-tracker* (make-hash-table :test 'eq))
 
 (defvar *interface-init-list* nil)
+(defvar *inited-interfaces* nil)
 (defun interface-exists-test (a b) (string= (car a) (car b)))
-(defun init-interface-definitions ()
-  (loop for init in (reverse *interface-init-list*) do (funcall (caddr init))))
+(defun hierarchical-init (interfaces)
+  (let ((needs-processing nil))
+    (dolist (interface interfaces)
+      (let ((name (car interface)) (deps (cadr interface)) (init (caddr interface)))
+	(when (not (find name *inited-interfaces* :test #'string=))
+	  (if (every (lambda (dep) (find dep *inited-interfaces* :test #'string=)) deps)
+	      (progn (funcall init) (push name *inited-interfaces*))
+	      (push interface needs-processing)))))
+    (when (eq (length needs-processing) (length interfaces))
+      (error "Circular dependency detected in interface initialization"))
+    (when needs-processing (hierarchical-init needs-processing))))
+
+(defun init-interface-definitions () (hierarchical-init *interface-init-list*) (setf *interface-init-list* nil))
+
 
 (defclass global (object)
   ((dispatch-impl :initarg :dispatch-impl :reader dispatch-impl)))
