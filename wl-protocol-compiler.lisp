@@ -168,7 +168,7 @@ argument feed."
 (defun gen-c-arg-setter-inner (arg index value-form)
   `(setf
     (foreign-slot-value
-     (mem-aptr arg-list '(:union wl-ffi:wl_argument) ,index)
+     (mem-aref arg-list '(:union wl-ffi:wl_argument) ,index)
      '(:union wl-ffi:wl_argument)
      ,(symbolify "'wl-ffi::~a" (arg-type-char arg)))
     ,value-form))
@@ -192,11 +192,11 @@ argument feed."
 (defun gen-event (event opcode)
   `(defmethod ,(symbolify "send-~a" (dash-name event)) ((dispatch dispatch) ,@(mapcar 'gen-generic-arg (args event)))
      (debug-log! "Event: ~a~%" ,(name event))
-     (let ((arg-list (foreign-alloc '(:pointer (:union wl_argument)) :count ,(length (args event)))))
+     (let ((arg-list (foreign-alloc '(:union wl_argument) :count ,(length (args event)))))
        ,@(loop for index below (length (args event))
 	       for arg = (nth index (args event))
 	       collect (gen-c-arg-setter arg index))
-       (resource-post-event (ptr dispatch) ,opcode arg-list))))
+       (resource-post-event-array (ptr dispatch) ,opcode arg-list))))
 
 (defun gen-events (interface)
   (let ((events (events interface)))

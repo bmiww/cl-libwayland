@@ -11,7 +11,7 @@
   (:export display-create global-create global-get-name resource-get-id resource-create
 	   client-create wl_message display-add-socket-fd display-run display-get-event-loop event-loop-get-fd
 	   event-loop-dispatch display-flush-clients resource-set-dispatcher wl_resource
-	   wl_argument resource-post-event))
+	   wl_argument resource-post-event-array))
 
 (in-package :bm-cl-libwayland)
 (define-foreign-library wayland-server
@@ -110,7 +110,7 @@
   (data :pointer)
   (destroy :pointer))
 
-(defcfun ("wl_resource_post_event" resource-post-event) :void
+(defcfun ("wl_resource_post_event_array" resource-post-event-array) :void
   (resource :pointer)
   (opcode :uint32)
   (args :pointer))

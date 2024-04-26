@@ -16,7 +16,7 @@
 	   get-data pop-data display create-resource reserve-data global-create version data-ptr set-data
 	   global-get-name wl_message display-add-socket-fd display-run display-get-event-loop event-loop-get-fd
 	   event-loop-dispatch display-flush-clients ptr debug-log! resource-set-dispatcher dispatch-impl
-	   wl_resource *resource-tracker* wl_argument id client mk-if resource-post-event))
+	   wl_resource *resource-tracker* wl_argument id client mk-if resource-post-event-array))
 (in-package :bm-cl-wayland)
 
 (defclass object ()
