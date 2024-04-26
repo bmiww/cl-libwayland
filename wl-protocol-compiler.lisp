@@ -178,6 +178,46 @@ argument feed."
 	;; The *global-tracker* set might be unnecessary
 	(set-data next-data-id (setf (gethash (pointer-address global-ptr) *global-tracker*) global))))))
 
+(defun gen-c-arg-setter-inner (arg index value-form)
+  `(setf
+    (foreign-slot-value
+     (mem-aptr args '(:union wl-ffi:wl_argument) ,index)
+     ;; args
+     '(:union wl-ffi:wl_argument)
+     ,(symbolify "'wl-ffi::~a" (arg-type-char arg)))
+    ,value-form))
+
+(defun gen-c-arg-setter (arg index)
+  (gen-c-arg-setter-inner
+   arg index
+   `(alexandria:eswitch ((arg-type arg) :test 'string=)
+      ("int" ,(symbolify (name arg)))
+      ("uint" ,(symbolify (name arg)))
+      ("new_id" ,(symbolify (name arg)))
+      ("fixed" ,(symbolify (name arg)))
+      ("fd" ,(symbolify (name arg)))
+      ("string" ,(symbolify (name arg)))
+      ("enum" `(error "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+      ("object" `(wl:ptr ,(symbolify (name arg))))
+      ("array" `(error "WL C ARRAY PARSING NOT IMPLEMENTED")))))
+
+(defun gen-event (event opcode)
+  `(defmethod ,(symbolify "send-~a" (dash-name event)) ((dispatch dispatch) ,@(mapcar 'gen-generic-arg (args event)))
+     (debug-log! "Event: ~a~%" ,(name event))
+     (let ((arg-list (foreign-alloc '(:pointer (:union wl_argument)) :count ,(length (args event)))))
+       ;; ,@(loop for index below (length (args event))
+	       ;; for arg = (nth index (args event))
+	       ;; collect (gen-c-arg-setter arg index))
+       (resource-post-event (ptr dispatch) ,opcode arg-list))))
+
+(defun gen-events (interface)
+  (let ((events (events interface)))
+    (if events
+	(loop for index below (length events)
+	      for event = (nth index events)
+	      collect (gen-event event index))
+	nil)))
+
 (defun pkg-name (interface)
   (symbolify ":~a" (name interface)))
 
@@ -194,6 +234,7 @@ argument feed."
      `((eval-when (:load-toplevel :execute)
 	 (defvar *dispatcher* (callback ,(symbolify "dispatcher-ffi")))))
      (gen-dispatch-init)
+     (gen-events interface)
 
      `((defclass global (wl::global) ()
 	 (:default-initargs :version ,(version interface) :dispatch-impl 'dispatch)
@@ -214,7 +255,8 @@ argument feed."
 	 (:use :cl :wl :cffi)
 	 (:nicknames ,(symbolify ":~a" (dash-name interface)))
 	 (:export dispatch global dispatch-bind
-		  ,@(mapcar 'symbolify (mapcar 'dash-name (requests interface))))))
+		  ,@(mapcar 'symbolify (mapcar 'dash-name (requests interface)))
+		  ,@(mapcar (lambda (event) (symbolify "send-~a" (dash-name event))) (events interface)))))
      `((in-package ,pkg-name))
      `((defcstruct interface
 	 (name :string)

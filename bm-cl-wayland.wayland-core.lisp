@@ -1,7 +1,13 @@
 (DEFPACKAGE :WL_DISPLAY
   (:USE :CL :WL :CFFI)
   (:NICKNAMES :WL-DISPLAY)
-  (:EXPORT DISPATCH GLOBAL DISPATCH-BIND SYNC GET-REGISTRY))
+  (:EXPORT DISPATCH
+           GLOBAL
+           DISPATCH-BIND
+           SYNC
+           GET-REGISTRY
+           SEND-ERROR
+           SEND-DELETE-ID))
 
 (IN-PACKAGE :WL_DISPLAY)
 
@@ -16,7 +22,7 @@
 (DEFPACKAGE :WL_REGISTRY
   (:USE :CL :WL :CFFI)
   (:NICKNAMES :WL-REGISTRY)
-  (:EXPORT DISPATCH GLOBAL DISPATCH-BIND BIND))
+  (:EXPORT DISPATCH GLOBAL DISPATCH-BIND BIND SEND-GLOBAL SEND-GLOBAL-REMOVE))
 
 (IN-PACKAGE :WL_REGISTRY)
 
@@ -30,7 +36,7 @@
 (DEFPACKAGE :WL_CALLBACK
   (:USE :CL :WL :CFFI)
   (:NICKNAMES :WL-CALLBACK)
-  (:EXPORT DISPATCH GLOBAL DISPATCH-BIND))
+  (:EXPORT DISPATCH GLOBAL DISPATCH-BIND SEND-DONE))
 
 (IN-PACKAGE :WL_CALLBACK)
 
@@ -74,7 +80,7 @@
 (DEFPACKAGE :WL_SHM
   (:USE :CL :WL :CFFI)
   (:NICKNAMES :WL-SHM)
-  (:EXPORT DISPATCH GLOBAL DISPATCH-BIND CREATE-POOL))
+  (:EXPORT DISPATCH GLOBAL DISPATCH-BIND CREATE-POOL SEND-FORMAT))
 
 (IN-PACKAGE :WL_SHM)
 
@@ -88,7 +94,7 @@
 (DEFPACKAGE :WL_BUFFER
   (:USE :CL :WL :CFFI)
   (:NICKNAMES :WL-BUFFER)
-  (:EXPORT DISPATCH GLOBAL DISPATCH-BIND DESTROY))
+  (:EXPORT DISPATCH GLOBAL DISPATCH-BIND DESTROY SEND-RELEASE))
 
 (IN-PACKAGE :WL_BUFFER)
 
@@ -109,7 +115,10 @@
            RECEIVE
            DESTROY
            FINISH
-           SET-ACTIONS))
+           SET-ACTIONS
+           SEND-OFFER
+           SEND-SOURCE-ACTIONS
+           SEND-ACTION))
 
 (IN-PACKAGE :WL_DATA_OFFER)
 
@@ -124,7 +133,18 @@
 (DEFPACKAGE :WL_DATA_SOURCE
   (:USE :CL :WL :CFFI)
   (:NICKNAMES :WL-DATA-SOURCE)
-  (:EXPORT DISPATCH GLOBAL DISPATCH-BIND OFFER DESTROY SET-ACTIONS))
+  (:EXPORT DISPATCH
+           GLOBAL
+           DISPATCH-BIND
+           OFFER
+           DESTROY
+           SET-ACTIONS
+           SEND-TARGET
+           SEND-SEND
+           SEND-CANCELLED
+           SEND-DND-DROP-PERFORMED
+           SEND-DND-FINISHED
+           SEND-ACTION))
 
 (IN-PACKAGE :WL_DATA_SOURCE)
 
@@ -139,7 +159,18 @@
 (DEFPACKAGE :WL_DATA_DEVICE
   (:USE :CL :WL :CFFI)
   (:NICKNAMES :WL-DATA-DEVICE)
-  (:EXPORT DISPATCH GLOBAL DISPATCH-BIND START-DRAG SET-SELECTION RELEASE))
+  (:EXPORT DISPATCH
+           GLOBAL
+           DISPATCH-BIND
+           START-DRAG
+           SET-SELECTION
+           RELEASE
+           SEND-DATA-OFFER
+           SEND-ENTER
+           SEND-LEAVE
+           SEND-MOTION
+           SEND-DROP
+           SEND-SELECTION))
 
 (IN-PACKAGE :WL_DATA_DEVICE)
 
@@ -195,7 +226,10 @@
            SET-POPUP
            SET-MAXIMIZED
            SET-TITLE
-           SET-CLASS))
+           SET-CLASS
+           SEND-PING
+           SEND-CONFIGURE
+           SEND-POPUP-DONE))
 
 (IN-PACKAGE :WL_SHELL_SURFACE)
 
@@ -225,7 +259,11 @@
            SET-BUFFER-TRANSFORM
            SET-BUFFER-SCALE
            DAMAGE-BUFFER
-           OFFSET))
+           OFFSET
+           SEND-ENTER
+           SEND-LEAVE
+           SEND-PREFERRED-BUFFER-SCALE
+           SEND-PREFERRED-BUFFER-TRANSFORM))
 
 (IN-PACKAGE :WL_SURFACE)
 
@@ -248,7 +286,9 @@
            GET-POINTER
            GET-KEYBOARD
            GET-TOUCH
-           RELEASE))
+           RELEASE
+           SEND-CAPABILITIES
+           SEND-NAME))
 
 (IN-PACKAGE :WL_SEAT)
 
@@ -263,7 +303,22 @@
 (DEFPACKAGE :WL_POINTER
   (:USE :CL :WL :CFFI)
   (:NICKNAMES :WL-POINTER)
-  (:EXPORT DISPATCH GLOBAL DISPATCH-BIND SET-CURSOR RELEASE))
+  (:EXPORT DISPATCH
+           GLOBAL
+           DISPATCH-BIND
+           SET-CURSOR
+           RELEASE
+           SEND-ENTER
+           SEND-LEAVE
+           SEND-MOTION
+           SEND-BUTTON
+           SEND-AXIS
+           SEND-FRAME
+           SEND-AXIS-SOURCE
+           SEND-AXIS-STOP
+           SEND-AXIS-DISCRETE
+           SEND-AXIS-VALUE120
+           SEND-AXIS-RELATIVE-DIRECTION))
 
 (IN-PACKAGE :WL_POINTER)
 
@@ -278,7 +333,16 @@
 (DEFPACKAGE :WL_KEYBOARD
   (:USE :CL :WL :CFFI)
   (:NICKNAMES :WL-KEYBOARD)
-  (:EXPORT DISPATCH GLOBAL DISPATCH-BIND RELEASE))
+  (:EXPORT DISPATCH
+           GLOBAL
+           DISPATCH-BIND
+           RELEASE
+           SEND-KEYMAP
+           SEND-ENTER
+           SEND-LEAVE
+           SEND-KEY
+           SEND-MODIFIERS
+           SEND-REPEAT-INFO))
 
 (IN-PACKAGE :WL_KEYBOARD)
 
@@ -292,7 +356,17 @@
 (DEFPACKAGE :WL_TOUCH
   (:USE :CL :WL :CFFI)
   (:NICKNAMES :WL-TOUCH)
-  (:EXPORT DISPATCH GLOBAL DISPATCH-BIND RELEASE))
+  (:EXPORT DISPATCH
+           GLOBAL
+           DISPATCH-BIND
+           RELEASE
+           SEND-DOWN
+           SEND-UP
+           SEND-MOTION
+           SEND-FRAME
+           SEND-CANCEL
+           SEND-SHAPE
+           SEND-ORIENTATION))
 
 (IN-PACKAGE :WL_TOUCH)
 
@@ -306,7 +380,16 @@
 (DEFPACKAGE :WL_OUTPUT
   (:USE :CL :WL :CFFI)
   (:NICKNAMES :WL-OUTPUT)
-  (:EXPORT DISPATCH GLOBAL DISPATCH-BIND RELEASE))
+  (:EXPORT DISPATCH
+           GLOBAL
+           DISPATCH-BIND
+           RELEASE
+           SEND-GEOMETRY
+           SEND-MODE
+           SEND-DONE
+           SEND-SCALE
+           SEND-NAME
+           SEND-DESCRIPTION))
 
 (IN-PACKAGE :WL_OUTPUT)
 
@@ -492,6 +575,76 @@ The core global object.  This is a special singleton object.  It
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
+(DEFMETHOD SEND-ERROR ((DISPATCH DISPATCH) OBJECT_ID CODE MESSAGE)
+  (DEBUG-LOG! "Event: ~a~%" "error")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 3)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::O)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" OBJECT_ID)
+              ("uint" OBJECT_ID)
+              ("new_id" OBJECT_ID)
+              ("fixed" OBJECT_ID)
+              ("fd" OBJECT_ID)
+              ("string" OBJECT_ID)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" CODE)
+              ("uint" CODE)
+              ("new_id" CODE)
+              ("fixed" CODE)
+              ("fd" CODE)
+              ("string" CODE)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::S)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" MESSAGE)
+              ("uint" MESSAGE)
+              ("new_id" MESSAGE)
+              ("fixed" MESSAGE)
+              ("fd" MESSAGE)
+              ("string" MESSAGE)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 0 ARG-LIST)))
+
+(DEFMETHOD SEND-DELETE-ID ((DISPATCH DISPATCH) ID)
+  (DEBUG-LOG! "Event: ~a~%" "delete_id")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 1)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" ID)
+              ("uint" ID)
+              ("new_id" ID)
+              ("fixed" ID)
+              ("fd" ID)
+              ("string" ID)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 1 ARG-LIST)))
+
 (DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 1 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "core global object
@@ -653,6 +806,76 @@ The singleton global registry object.  The server has a number of
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
+(DEFMETHOD SEND-GLOBAL ((DISPATCH DISPATCH) NAME INTERFACE VERSION)
+  (DEBUG-LOG! "Event: ~a~%" "global")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 3)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" NAME)
+              ("uint" NAME)
+              ("new_id" NAME)
+              ("fixed" NAME)
+              ("fd" NAME)
+              ("string" NAME)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::S)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" INTERFACE)
+              ("uint" INTERFACE)
+              ("new_id" INTERFACE)
+              ("fixed" INTERFACE)
+              ("fd" INTERFACE)
+              ("string" INTERFACE)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" VERSION)
+              ("uint" VERSION)
+              ("new_id" VERSION)
+              ("fixed" VERSION)
+              ("fd" VERSION)
+              ("string" VERSION)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 0 ARG-LIST)))
+
+(DEFMETHOD SEND-GLOBAL-REMOVE ((DISPATCH DISPATCH) NAME)
+  (DEBUG-LOG! "Event: ~a~%" "global_remove")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 1)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" NAME)
+              ("uint" NAME)
+              ("new_id" NAME)
+              ("fixed" NAME)
+              ("fd" NAME)
+              ("string" NAME)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 1 ARG-LIST)))
+
 (DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 1 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "global registry object
@@ -776,6 +999,26 @@ Clients can handle the 'done' event to get notified when
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
+
+(DEFMETHOD SEND-DONE ((DISPATCH DISPATCH) CALLBACK_DATA)
+  (DEBUG-LOG! "Event: ~a~%" "done")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 1)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" CALLBACK_DATA)
+              ("uint" CALLBACK_DATA)
+              ("new_id" CALLBACK_DATA)
+              ("fixed" CALLBACK_DATA)
+              ("fd" CALLBACK_DATA)
+              ("string" CALLBACK_DATA)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 0 ARG-LIST)))
 
 (DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 1 :DISPATCH-IMPL 'DISPATCH)
@@ -1242,6 +1485,26 @@ A singleton global object that provides support for shared
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
+(DEFMETHOD SEND-FORMAT ((DISPATCH DISPATCH) FORMAT)
+  (DEBUG-LOG! "Event: ~a~%" "format")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 1)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" FORMAT)
+              ("uint" FORMAT)
+              ("new_id" FORMAT)
+              ("fixed" FORMAT)
+              ("fd" FORMAT)
+              ("string" FORMAT)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 0 ARG-LIST)))
+
 (DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 1 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "shared memory support
@@ -1373,6 +1636,11 @@ A buffer provides the content for a wl_surface. Buffers are
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
+
+(DEFMETHOD SEND-RELEASE ((DISPATCH DISPATCH))
+  (DEBUG-LOG! "Event: ~a~%" "release")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 0)))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 0 ARG-LIST)))
 
 (DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 1 :DISPATCH-IMPL 'DISPATCH)
@@ -1622,6 +1890,66 @@ A wl_data_offer represents a piece of data offered for transfer
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
+(DEFMETHOD SEND-OFFER ((DISPATCH DISPATCH) MIME_TYPE)
+  (DEBUG-LOG! "Event: ~a~%" "offer")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 1)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::S)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" MIME_TYPE)
+              ("uint" MIME_TYPE)
+              ("new_id" MIME_TYPE)
+              ("fixed" MIME_TYPE)
+              ("fd" MIME_TYPE)
+              ("string" MIME_TYPE)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 0 ARG-LIST)))
+
+(DEFMETHOD SEND-SOURCE-ACTIONS ((DISPATCH DISPATCH) SOURCE_ACTIONS)
+  (DEBUG-LOG! "Event: ~a~%" "source_actions")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 1)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" SOURCE_ACTIONS)
+              ("uint" SOURCE_ACTIONS)
+              ("new_id" SOURCE_ACTIONS)
+              ("fixed" SOURCE_ACTIONS)
+              ("fd" SOURCE_ACTIONS)
+              ("string" SOURCE_ACTIONS)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 1 ARG-LIST)))
+
+(DEFMETHOD SEND-ACTION ((DISPATCH DISPATCH) DND_ACTION)
+  (DEBUG-LOG! "Event: ~a~%" "action")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 1)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" DND_ACTION)
+              ("uint" DND_ACTION)
+              ("new_id" DND_ACTION)
+              ("fixed" DND_ACTION)
+              ("fd" DND_ACTION)
+              ("string" DND_ACTION)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 2 ARG-LIST)))
+
 (DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 3 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "offer to transfer data
@@ -1842,6 +2170,96 @@ The wl_data_source object is the source side of a wl_data_offer.
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
+
+(DEFMETHOD SEND-TARGET ((DISPATCH DISPATCH) MIME_TYPE)
+  (DEBUG-LOG! "Event: ~a~%" "target")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 1)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::S)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" MIME_TYPE)
+              ("uint" MIME_TYPE)
+              ("new_id" MIME_TYPE)
+              ("fixed" MIME_TYPE)
+              ("fd" MIME_TYPE)
+              ("string" MIME_TYPE)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 0 ARG-LIST)))
+
+(DEFMETHOD SEND-SEND ((DISPATCH DISPATCH) MIME_TYPE FD)
+  (DEBUG-LOG! "Event: ~a~%" "send")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 2)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::S)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" MIME_TYPE)
+              ("uint" MIME_TYPE)
+              ("new_id" MIME_TYPE)
+              ("fixed" MIME_TYPE)
+              ("fd" MIME_TYPE)
+              ("string" MIME_TYPE)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::H)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" FD)
+              ("uint" FD)
+              ("new_id" FD)
+              ("fixed" FD)
+              ("fd" FD)
+              ("string" FD)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 1 ARG-LIST)))
+
+(DEFMETHOD SEND-CANCELLED ((DISPATCH DISPATCH))
+  (DEBUG-LOG! "Event: ~a~%" "cancelled")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 0)))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 2 ARG-LIST)))
+
+(DEFMETHOD SEND-DND-DROP-PERFORMED ((DISPATCH DISPATCH))
+  (DEBUG-LOG! "Event: ~a~%" "dnd_drop_performed")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 0)))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 3 ARG-LIST)))
+
+(DEFMETHOD SEND-DND-FINISHED ((DISPATCH DISPATCH))
+  (DEBUG-LOG! "Event: ~a~%" "dnd_finished")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 0)))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 4 ARG-LIST)))
+
+(DEFMETHOD SEND-ACTION ((DISPATCH DISPATCH) DND_ACTION)
+  (DEBUG-LOG! "Event: ~a~%" "action")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 1)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" DND_ACTION)
+              ("uint" DND_ACTION)
+              ("new_id" DND_ACTION)
+              ("fixed" DND_ACTION)
+              ("fd" DND_ACTION)
+              ("string" DND_ACTION)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 5 ARG-LIST)))
 
 (DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 3 :DISPATCH-IMPL 'DISPATCH)
@@ -2105,6 +2523,186 @@ There is one wl_data_device per seat which can be obtained
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
+
+(DEFMETHOD SEND-DATA-OFFER ((DISPATCH DISPATCH) ID)
+  (DEBUG-LOG! "Event: ~a~%" "data_offer")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 1)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::N)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" ID)
+              ("uint" ID)
+              ("new_id" ID)
+              ("fixed" ID)
+              ("fd" ID)
+              ("string" ID)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 0 ARG-LIST)))
+
+(DEFMETHOD SEND-ENTER ((DISPATCH DISPATCH) SERIAL SURFACE X Y ID)
+  (DEBUG-LOG! "Event: ~a~%" "enter")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 5)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" SERIAL)
+              ("uint" SERIAL)
+              ("new_id" SERIAL)
+              ("fixed" SERIAL)
+              ("fd" SERIAL)
+              ("string" SERIAL)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::O)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" SURFACE)
+              ("uint" SURFACE)
+              ("new_id" SURFACE)
+              ("fixed" SURFACE)
+              ("fd" SURFACE)
+              ("string" SURFACE)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::F)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" X)
+              ("uint" X)
+              ("new_id" X)
+              ("fixed" X)
+              ("fd" X)
+              ("string" X)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 3)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::F)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" Y)
+              ("uint" Y)
+              ("new_id" Y)
+              ("fixed" Y)
+              ("fd" Y)
+              ("string" Y)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 4)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::O)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" ID)
+              ("uint" ID)
+              ("new_id" ID)
+              ("fixed" ID)
+              ("fd" ID)
+              ("string" ID)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 1 ARG-LIST)))
+
+(DEFMETHOD SEND-LEAVE ((DISPATCH DISPATCH))
+  (DEBUG-LOG! "Event: ~a~%" "leave")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 0)))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 2 ARG-LIST)))
+
+(DEFMETHOD SEND-MOTION ((DISPATCH DISPATCH) TIME X Y)
+  (DEBUG-LOG! "Event: ~a~%" "motion")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 3)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" TIME)
+              ("uint" TIME)
+              ("new_id" TIME)
+              ("fixed" TIME)
+              ("fd" TIME)
+              ("string" TIME)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::F)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" X)
+              ("uint" X)
+              ("new_id" X)
+              ("fixed" X)
+              ("fd" X)
+              ("string" X)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::F)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" Y)
+              ("uint" Y)
+              ("new_id" Y)
+              ("fixed" Y)
+              ("fd" Y)
+              ("string" Y)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 3 ARG-LIST)))
+
+(DEFMETHOD SEND-DROP ((DISPATCH DISPATCH))
+  (DEBUG-LOG! "Event: ~a~%" "drop")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 0)))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 4 ARG-LIST)))
+
+(DEFMETHOD SEND-SELECTION ((DISPATCH DISPATCH) ID)
+  (DEBUG-LOG! "Event: ~a~%" "selection")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 1)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::O)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" ID)
+              ("uint" ID)
+              ("new_id" ID)
+              ("fixed" ID)
+              ("fd" ID)
+              ("string" ID)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 5 ARG-LIST)))
 
 (DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 3 :DISPATCH-IMPL 'DISPATCH)
@@ -2830,6 +3428,81 @@ An interface that may be implemented by a wl_surface, for
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
+(DEFMETHOD SEND-PING ((DISPATCH DISPATCH) SERIAL)
+  (DEBUG-LOG! "Event: ~a~%" "ping")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 1)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" SERIAL)
+              ("uint" SERIAL)
+              ("new_id" SERIAL)
+              ("fixed" SERIAL)
+              ("fd" SERIAL)
+              ("string" SERIAL)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 0 ARG-LIST)))
+
+(DEFMETHOD SEND-CONFIGURE ((DISPATCH DISPATCH) EDGES WIDTH HEIGHT)
+  (DEBUG-LOG! "Event: ~a~%" "configure")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 3)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" EDGES)
+              ("uint" EDGES)
+              ("new_id" EDGES)
+              ("fixed" EDGES)
+              ("fd" EDGES)
+              ("string" EDGES)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" WIDTH)
+              ("uint" WIDTH)
+              ("new_id" WIDTH)
+              ("fixed" WIDTH)
+              ("fd" WIDTH)
+              ("string" WIDTH)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" HEIGHT)
+              ("uint" HEIGHT)
+              ("new_id" HEIGHT)
+              ("fixed" HEIGHT)
+              ("fd" HEIGHT)
+              ("string" HEIGHT)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 1 ARG-LIST)))
+
+(DEFMETHOD SEND-POPUP-DONE ((DISPATCH DISPATCH))
+  (DEBUG-LOG! "Event: ~a~%" "popup_done")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 0)))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 2 ARG-LIST)))
+
 (DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 1 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "desktop-style metadata interface
@@ -3301,6 +3974,86 @@ A surface is a rectangular area that may be displayed on zero
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
+(DEFMETHOD SEND-ENTER ((DISPATCH DISPATCH) OUTPUT)
+  (DEBUG-LOG! "Event: ~a~%" "enter")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 1)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::O)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" OUTPUT)
+              ("uint" OUTPUT)
+              ("new_id" OUTPUT)
+              ("fixed" OUTPUT)
+              ("fd" OUTPUT)
+              ("string" OUTPUT)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 0 ARG-LIST)))
+
+(DEFMETHOD SEND-LEAVE ((DISPATCH DISPATCH) OUTPUT)
+  (DEBUG-LOG! "Event: ~a~%" "leave")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 1)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::O)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" OUTPUT)
+              ("uint" OUTPUT)
+              ("new_id" OUTPUT)
+              ("fixed" OUTPUT)
+              ("fd" OUTPUT)
+              ("string" OUTPUT)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 1 ARG-LIST)))
+
+(DEFMETHOD SEND-PREFERRED-BUFFER-SCALE ((DISPATCH DISPATCH) FACTOR)
+  (DEBUG-LOG! "Event: ~a~%" "preferred_buffer_scale")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 1)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" FACTOR)
+              ("uint" FACTOR)
+              ("new_id" FACTOR)
+              ("fixed" FACTOR)
+              ("fd" FACTOR)
+              ("string" FACTOR)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 2 ARG-LIST)))
+
+(DEFMETHOD SEND-PREFERRED-BUFFER-TRANSFORM ((DISPATCH DISPATCH) TRANSFORM)
+  (DEBUG-LOG! "Event: ~a~%" "preferred_buffer_transform")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 1)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" TRANSFORM)
+              ("uint" TRANSFORM)
+              ("new_id" TRANSFORM)
+              ("fixed" TRANSFORM)
+              ("fd" TRANSFORM)
+              ("string" TRANSFORM)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 3 ARG-LIST)))
+
 (DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 6 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "an onscreen surface
@@ -3536,6 +4289,46 @@ A seat is a group of keyboards, pointer and touch devices. This
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
+
+(DEFMETHOD SEND-CAPABILITIES ((DISPATCH DISPATCH) CAPABILITIES)
+  (DEBUG-LOG! "Event: ~a~%" "capabilities")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 1)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" CAPABILITIES)
+              ("uint" CAPABILITIES)
+              ("new_id" CAPABILITIES)
+              ("fixed" CAPABILITIES)
+              ("fd" CAPABILITIES)
+              ("string" CAPABILITIES)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 0 ARG-LIST)))
+
+(DEFMETHOD SEND-NAME ((DISPATCH DISPATCH) NAME)
+  (DEBUG-LOG! "Event: ~a~%" "name")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 1)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::S)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" NAME)
+              ("uint" NAME)
+              ("new_id" NAME)
+              ("fixed" NAME)
+              ("fd" NAME)
+              ("string" NAME)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 1 ARG-LIST)))
 
 (DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 9 :DISPATCH-IMPL 'DISPATCH)
@@ -3837,6 +4630,436 @@ The wl_pointer interface represents one or more input devices,
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
+(DEFMETHOD SEND-ENTER ((DISPATCH DISPATCH) SERIAL SURFACE SURFACE_X SURFACE_Y)
+  (DEBUG-LOG! "Event: ~a~%" "enter")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 4)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" SERIAL)
+              ("uint" SERIAL)
+              ("new_id" SERIAL)
+              ("fixed" SERIAL)
+              ("fd" SERIAL)
+              ("string" SERIAL)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::O)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" SURFACE)
+              ("uint" SURFACE)
+              ("new_id" SURFACE)
+              ("fixed" SURFACE)
+              ("fd" SURFACE)
+              ("string" SURFACE)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::F)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" SURFACE_X)
+              ("uint" SURFACE_X)
+              ("new_id" SURFACE_X)
+              ("fixed" SURFACE_X)
+              ("fd" SURFACE_X)
+              ("string" SURFACE_X)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 3)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::F)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" SURFACE_Y)
+              ("uint" SURFACE_Y)
+              ("new_id" SURFACE_Y)
+              ("fixed" SURFACE_Y)
+              ("fd" SURFACE_Y)
+              ("string" SURFACE_Y)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 0 ARG-LIST)))
+
+(DEFMETHOD SEND-LEAVE ((DISPATCH DISPATCH) SERIAL SURFACE)
+  (DEBUG-LOG! "Event: ~a~%" "leave")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 2)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" SERIAL)
+              ("uint" SERIAL)
+              ("new_id" SERIAL)
+              ("fixed" SERIAL)
+              ("fd" SERIAL)
+              ("string" SERIAL)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::O)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" SURFACE)
+              ("uint" SURFACE)
+              ("new_id" SURFACE)
+              ("fixed" SURFACE)
+              ("fd" SURFACE)
+              ("string" SURFACE)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 1 ARG-LIST)))
+
+(DEFMETHOD SEND-MOTION ((DISPATCH DISPATCH) TIME SURFACE_X SURFACE_Y)
+  (DEBUG-LOG! "Event: ~a~%" "motion")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 3)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" TIME)
+              ("uint" TIME)
+              ("new_id" TIME)
+              ("fixed" TIME)
+              ("fd" TIME)
+              ("string" TIME)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::F)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" SURFACE_X)
+              ("uint" SURFACE_X)
+              ("new_id" SURFACE_X)
+              ("fixed" SURFACE_X)
+              ("fd" SURFACE_X)
+              ("string" SURFACE_X)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::F)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" SURFACE_Y)
+              ("uint" SURFACE_Y)
+              ("new_id" SURFACE_Y)
+              ("fixed" SURFACE_Y)
+              ("fd" SURFACE_Y)
+              ("string" SURFACE_Y)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 2 ARG-LIST)))
+
+(DEFMETHOD SEND-BUTTON ((DISPATCH DISPATCH) SERIAL TIME BUTTON STATE)
+  (DEBUG-LOG! "Event: ~a~%" "button")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 4)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" SERIAL)
+              ("uint" SERIAL)
+              ("new_id" SERIAL)
+              ("fixed" SERIAL)
+              ("fd" SERIAL)
+              ("string" SERIAL)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" TIME)
+              ("uint" TIME)
+              ("new_id" TIME)
+              ("fixed" TIME)
+              ("fd" TIME)
+              ("string" TIME)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" BUTTON)
+              ("uint" BUTTON)
+              ("new_id" BUTTON)
+              ("fixed" BUTTON)
+              ("fd" BUTTON)
+              ("string" BUTTON)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 3)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" STATE)
+              ("uint" STATE)
+              ("new_id" STATE)
+              ("fixed" STATE)
+              ("fd" STATE)
+              ("string" STATE)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 3 ARG-LIST)))
+
+(DEFMETHOD SEND-AXIS ((DISPATCH DISPATCH) TIME AXIS VALUE)
+  (DEBUG-LOG! "Event: ~a~%" "axis")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 3)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" TIME)
+              ("uint" TIME)
+              ("new_id" TIME)
+              ("fixed" TIME)
+              ("fd" TIME)
+              ("string" TIME)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" AXIS)
+              ("uint" AXIS)
+              ("new_id" AXIS)
+              ("fixed" AXIS)
+              ("fd" AXIS)
+              ("string" AXIS)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::F)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" VALUE)
+              ("uint" VALUE)
+              ("new_id" VALUE)
+              ("fixed" VALUE)
+              ("fd" VALUE)
+              ("string" VALUE)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 4 ARG-LIST)))
+
+(DEFMETHOD SEND-FRAME ((DISPATCH DISPATCH))
+  (DEBUG-LOG! "Event: ~a~%" "frame")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 0)))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 5 ARG-LIST)))
+
+(DEFMETHOD SEND-AXIS-SOURCE ((DISPATCH DISPATCH) AXIS_SOURCE)
+  (DEBUG-LOG! "Event: ~a~%" "axis_source")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 1)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" AXIS_SOURCE)
+              ("uint" AXIS_SOURCE)
+              ("new_id" AXIS_SOURCE)
+              ("fixed" AXIS_SOURCE)
+              ("fd" AXIS_SOURCE)
+              ("string" AXIS_SOURCE)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 6 ARG-LIST)))
+
+(DEFMETHOD SEND-AXIS-STOP ((DISPATCH DISPATCH) TIME AXIS)
+  (DEBUG-LOG! "Event: ~a~%" "axis_stop")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 2)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" TIME)
+              ("uint" TIME)
+              ("new_id" TIME)
+              ("fixed" TIME)
+              ("fd" TIME)
+              ("string" TIME)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" AXIS)
+              ("uint" AXIS)
+              ("new_id" AXIS)
+              ("fixed" AXIS)
+              ("fd" AXIS)
+              ("string" AXIS)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 7 ARG-LIST)))
+
+(DEFMETHOD SEND-AXIS-DISCRETE ((DISPATCH DISPATCH) AXIS DISCRETE)
+  (DEBUG-LOG! "Event: ~a~%" "axis_discrete")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 2)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" AXIS)
+              ("uint" AXIS)
+              ("new_id" AXIS)
+              ("fixed" AXIS)
+              ("fd" AXIS)
+              ("string" AXIS)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" DISCRETE)
+              ("uint" DISCRETE)
+              ("new_id" DISCRETE)
+              ("fixed" DISCRETE)
+              ("fd" DISCRETE)
+              ("string" DISCRETE)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 8 ARG-LIST)))
+
+(DEFMETHOD SEND-AXIS-VALUE120 ((DISPATCH DISPATCH) AXIS VALUE120)
+  (DEBUG-LOG! "Event: ~a~%" "axis_value120")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 2)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" AXIS)
+              ("uint" AXIS)
+              ("new_id" AXIS)
+              ("fixed" AXIS)
+              ("fd" AXIS)
+              ("string" AXIS)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" VALUE120)
+              ("uint" VALUE120)
+              ("new_id" VALUE120)
+              ("fixed" VALUE120)
+              ("fd" VALUE120)
+              ("string" VALUE120)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 9 ARG-LIST)))
+
+(DEFMETHOD SEND-AXIS-RELATIVE-DIRECTION ((DISPATCH DISPATCH) AXIS DIRECTION)
+  (DEBUG-LOG! "Event: ~a~%" "axis_relative_direction")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 2)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" AXIS)
+              ("uint" AXIS)
+              ("new_id" AXIS)
+              ("fixed" AXIS)
+              ("fd" AXIS)
+              ("string" AXIS)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" DIRECTION)
+              ("uint" DIRECTION)
+              ("new_id" DIRECTION)
+              ("fixed" DIRECTION)
+              ("fd" DIRECTION)
+              ("string" DIRECTION)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 10 ARG-LIST)))
+
 (DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 9 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "pointer input device
@@ -4030,6 +5253,323 @@ The wl_keyboard interface represents one or more keyboards
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
+
+(DEFMETHOD SEND-KEYMAP ((DISPATCH DISPATCH) FORMAT FD SIZE)
+  (DEBUG-LOG! "Event: ~a~%" "keymap")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 3)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" FORMAT)
+              ("uint" FORMAT)
+              ("new_id" FORMAT)
+              ("fixed" FORMAT)
+              ("fd" FORMAT)
+              ("string" FORMAT)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::H)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" FD)
+              ("uint" FD)
+              ("new_id" FD)
+              ("fixed" FD)
+              ("fd" FD)
+              ("string" FD)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" SIZE)
+              ("uint" SIZE)
+              ("new_id" SIZE)
+              ("fixed" SIZE)
+              ("fd" SIZE)
+              ("string" SIZE)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 0 ARG-LIST)))
+
+(DEFMETHOD SEND-ENTER ((DISPATCH DISPATCH) SERIAL SURFACE KEYS)
+  (DEBUG-LOG! "Event: ~a~%" "enter")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 3)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" SERIAL)
+              ("uint" SERIAL)
+              ("new_id" SERIAL)
+              ("fixed" SERIAL)
+              ("fd" SERIAL)
+              ("string" SERIAL)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::O)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" SURFACE)
+              ("uint" SURFACE)
+              ("new_id" SURFACE)
+              ("fixed" SURFACE)
+              ("fd" SURFACE)
+              ("string" SURFACE)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::A)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" KEYS)
+              ("uint" KEYS)
+              ("new_id" KEYS)
+              ("fixed" KEYS)
+              ("fd" KEYS)
+              ("string" KEYS)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 1 ARG-LIST)))
+
+(DEFMETHOD SEND-LEAVE ((DISPATCH DISPATCH) SERIAL SURFACE)
+  (DEBUG-LOG! "Event: ~a~%" "leave")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 2)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" SERIAL)
+              ("uint" SERIAL)
+              ("new_id" SERIAL)
+              ("fixed" SERIAL)
+              ("fd" SERIAL)
+              ("string" SERIAL)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::O)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" SURFACE)
+              ("uint" SURFACE)
+              ("new_id" SURFACE)
+              ("fixed" SURFACE)
+              ("fd" SURFACE)
+              ("string" SURFACE)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 2 ARG-LIST)))
+
+(DEFMETHOD SEND-KEY ((DISPATCH DISPATCH) SERIAL TIME KEY STATE)
+  (DEBUG-LOG! "Event: ~a~%" "key")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 4)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" SERIAL)
+              ("uint" SERIAL)
+              ("new_id" SERIAL)
+              ("fixed" SERIAL)
+              ("fd" SERIAL)
+              ("string" SERIAL)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" TIME)
+              ("uint" TIME)
+              ("new_id" TIME)
+              ("fixed" TIME)
+              ("fd" TIME)
+              ("string" TIME)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" KEY)
+              ("uint" KEY)
+              ("new_id" KEY)
+              ("fixed" KEY)
+              ("fd" KEY)
+              ("string" KEY)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 3)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" STATE)
+              ("uint" STATE)
+              ("new_id" STATE)
+              ("fixed" STATE)
+              ("fd" STATE)
+              ("string" STATE)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 3 ARG-LIST)))
+
+(DEFMETHOD SEND-MODIFIERS
+           ((DISPATCH DISPATCH) SERIAL MODS_DEPRESSED MODS_LATCHED MODS_LOCKED
+            GROUP)
+  (DEBUG-LOG! "Event: ~a~%" "modifiers")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 5)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" SERIAL)
+              ("uint" SERIAL)
+              ("new_id" SERIAL)
+              ("fixed" SERIAL)
+              ("fd" SERIAL)
+              ("string" SERIAL)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" MODS_DEPRESSED)
+              ("uint" MODS_DEPRESSED)
+              ("new_id" MODS_DEPRESSED)
+              ("fixed" MODS_DEPRESSED)
+              ("fd" MODS_DEPRESSED)
+              ("string" MODS_DEPRESSED)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" MODS_LATCHED)
+              ("uint" MODS_LATCHED)
+              ("new_id" MODS_LATCHED)
+              ("fixed" MODS_LATCHED)
+              ("fd" MODS_LATCHED)
+              ("string" MODS_LATCHED)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 3)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" MODS_LOCKED)
+              ("uint" MODS_LOCKED)
+              ("new_id" MODS_LOCKED)
+              ("fixed" MODS_LOCKED)
+              ("fd" MODS_LOCKED)
+              ("string" MODS_LOCKED)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 4)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" GROUP)
+              ("uint" GROUP)
+              ("new_id" GROUP)
+              ("fixed" GROUP)
+              ("fd" GROUP)
+              ("string" GROUP)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 4 ARG-LIST)))
+
+(DEFMETHOD SEND-REPEAT-INFO ((DISPATCH DISPATCH) RATE DELAY)
+  (DEBUG-LOG! "Event: ~a~%" "repeat_info")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 2)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" RATE)
+              ("uint" RATE)
+              ("new_id" RATE)
+              ("fixed" RATE)
+              ("fd" RATE)
+              ("string" RATE)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" DELAY)
+              ("uint" DELAY)
+              ("new_id" DELAY)
+              ("fixed" DELAY)
+              ("fd" DELAY)
+              ("string" DELAY)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 5 ARG-LIST)))
 
 (DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 9 :DISPATCH-IMPL 'DISPATCH)
@@ -4235,6 +5775,311 @@ The wl_touch interface represents a touchscreen
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
+(DEFMETHOD SEND-DOWN ((DISPATCH DISPATCH) SERIAL TIME SURFACE ID X Y)
+  (DEBUG-LOG! "Event: ~a~%" "down")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 6)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" SERIAL)
+              ("uint" SERIAL)
+              ("new_id" SERIAL)
+              ("fixed" SERIAL)
+              ("fd" SERIAL)
+              ("string" SERIAL)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" TIME)
+              ("uint" TIME)
+              ("new_id" TIME)
+              ("fixed" TIME)
+              ("fd" TIME)
+              ("string" TIME)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::O)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" SURFACE)
+              ("uint" SURFACE)
+              ("new_id" SURFACE)
+              ("fixed" SURFACE)
+              ("fd" SURFACE)
+              ("string" SURFACE)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 3)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" ID)
+              ("uint" ID)
+              ("new_id" ID)
+              ("fixed" ID)
+              ("fd" ID)
+              ("string" ID)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 4)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::F)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" X)
+              ("uint" X)
+              ("new_id" X)
+              ("fixed" X)
+              ("fd" X)
+              ("string" X)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 5)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::F)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" Y)
+              ("uint" Y)
+              ("new_id" Y)
+              ("fixed" Y)
+              ("fd" Y)
+              ("string" Y)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 0 ARG-LIST)))
+
+(DEFMETHOD SEND-UP ((DISPATCH DISPATCH) SERIAL TIME ID)
+  (DEBUG-LOG! "Event: ~a~%" "up")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 3)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" SERIAL)
+              ("uint" SERIAL)
+              ("new_id" SERIAL)
+              ("fixed" SERIAL)
+              ("fd" SERIAL)
+              ("string" SERIAL)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" TIME)
+              ("uint" TIME)
+              ("new_id" TIME)
+              ("fixed" TIME)
+              ("fd" TIME)
+              ("string" TIME)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" ID)
+              ("uint" ID)
+              ("new_id" ID)
+              ("fixed" ID)
+              ("fd" ID)
+              ("string" ID)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 1 ARG-LIST)))
+
+(DEFMETHOD SEND-MOTION ((DISPATCH DISPATCH) TIME ID X Y)
+  (DEBUG-LOG! "Event: ~a~%" "motion")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 4)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" TIME)
+              ("uint" TIME)
+              ("new_id" TIME)
+              ("fixed" TIME)
+              ("fd" TIME)
+              ("string" TIME)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" ID)
+              ("uint" ID)
+              ("new_id" ID)
+              ("fixed" ID)
+              ("fd" ID)
+              ("string" ID)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::F)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" X)
+              ("uint" X)
+              ("new_id" X)
+              ("fixed" X)
+              ("fd" X)
+              ("string" X)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 3)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::F)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" Y)
+              ("uint" Y)
+              ("new_id" Y)
+              ("fixed" Y)
+              ("fd" Y)
+              ("string" Y)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 2 ARG-LIST)))
+
+(DEFMETHOD SEND-FRAME ((DISPATCH DISPATCH))
+  (DEBUG-LOG! "Event: ~a~%" "frame")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 0)))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 3 ARG-LIST)))
+
+(DEFMETHOD SEND-CANCEL ((DISPATCH DISPATCH))
+  (DEBUG-LOG! "Event: ~a~%" "cancel")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 0)))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 4 ARG-LIST)))
+
+(DEFMETHOD SEND-SHAPE ((DISPATCH DISPATCH) ID MAJOR MINOR)
+  (DEBUG-LOG! "Event: ~a~%" "shape")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 3)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" ID)
+              ("uint" ID)
+              ("new_id" ID)
+              ("fixed" ID)
+              ("fd" ID)
+              ("string" ID)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::F)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" MAJOR)
+              ("uint" MAJOR)
+              ("new_id" MAJOR)
+              ("fixed" MAJOR)
+              ("fd" MAJOR)
+              ("string" MAJOR)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::F)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" MINOR)
+              ("uint" MINOR)
+              ("new_id" MINOR)
+              ("fixed" MINOR)
+              ("fd" MINOR)
+              ("string" MINOR)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 5 ARG-LIST)))
+
+(DEFMETHOD SEND-ORIENTATION ((DISPATCH DISPATCH) ID ORIENTATION)
+  (DEBUG-LOG! "Event: ~a~%" "orientation")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 2)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" ID)
+              ("uint" ID)
+              ("new_id" ID)
+              ("fixed" ID)
+              ("fd" ID)
+              ("string" ID)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::F)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" ORIENTATION)
+              ("uint" ORIENTATION)
+              ("new_id" ORIENTATION)
+              ("fixed" ORIENTATION)
+              ("fd" ORIENTATION)
+              ("string" ORIENTATION)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 6 ARG-LIST)))
+
 (DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 9 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "touchscreen input device
@@ -4428,6 +6273,263 @@ An output describes part of the compositor geometry.  The
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
+
+(DEFMETHOD SEND-GEOMETRY
+           ((DISPATCH DISPATCH) X Y PHYSICAL_WIDTH PHYSICAL_HEIGHT SUBPIXEL
+            MAKE MODEL TRANSFORM)
+  (DEBUG-LOG! "Event: ~a~%" "geometry")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 8)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" X)
+              ("uint" X)
+              ("new_id" X)
+              ("fixed" X)
+              ("fd" X)
+              ("string" X)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" Y)
+              ("uint" Y)
+              ("new_id" Y)
+              ("fixed" Y)
+              ("fd" Y)
+              ("string" Y)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" PHYSICAL_WIDTH)
+              ("uint" PHYSICAL_WIDTH)
+              ("new_id" PHYSICAL_WIDTH)
+              ("fixed" PHYSICAL_WIDTH)
+              ("fd" PHYSICAL_WIDTH)
+              ("string" PHYSICAL_WIDTH)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 3)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" PHYSICAL_HEIGHT)
+              ("uint" PHYSICAL_HEIGHT)
+              ("new_id" PHYSICAL_HEIGHT)
+              ("fixed" PHYSICAL_HEIGHT)
+              ("fd" PHYSICAL_HEIGHT)
+              ("string" PHYSICAL_HEIGHT)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 4)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" SUBPIXEL)
+              ("uint" SUBPIXEL)
+              ("new_id" SUBPIXEL)
+              ("fixed" SUBPIXEL)
+              ("fd" SUBPIXEL)
+              ("string" SUBPIXEL)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 5)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::S)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" MAKE)
+              ("uint" MAKE)
+              ("new_id" MAKE)
+              ("fixed" MAKE)
+              ("fd" MAKE)
+              ("string" MAKE)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 6)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::S)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" MODEL)
+              ("uint" MODEL)
+              ("new_id" MODEL)
+              ("fixed" MODEL)
+              ("fd" MODEL)
+              ("string" MODEL)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 7)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" TRANSFORM)
+              ("uint" TRANSFORM)
+              ("new_id" TRANSFORM)
+              ("fixed" TRANSFORM)
+              ("fd" TRANSFORM)
+              ("string" TRANSFORM)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 0 ARG-LIST)))
+
+(DEFMETHOD SEND-MODE ((DISPATCH DISPATCH) FLAGS WIDTH HEIGHT REFRESH)
+  (DEBUG-LOG! "Event: ~a~%" "mode")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 4)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" FLAGS)
+              ("uint" FLAGS)
+              ("new_id" FLAGS)
+              ("fixed" FLAGS)
+              ("fd" FLAGS)
+              ("string" FLAGS)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" WIDTH)
+              ("uint" WIDTH)
+              ("new_id" WIDTH)
+              ("fixed" WIDTH)
+              ("fd" WIDTH)
+              ("string" WIDTH)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" HEIGHT)
+              ("uint" HEIGHT)
+              ("new_id" HEIGHT)
+              ("fixed" HEIGHT)
+              ("fd" HEIGHT)
+              ("string" HEIGHT)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 3)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" REFRESH)
+              ("uint" REFRESH)
+              ("new_id" REFRESH)
+              ("fixed" REFRESH)
+              ("fd" REFRESH)
+              ("string" REFRESH)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 1 ARG-LIST)))
+
+(DEFMETHOD SEND-DONE ((DISPATCH DISPATCH))
+  (DEBUG-LOG! "Event: ~a~%" "done")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 0)))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 2 ARG-LIST)))
+
+(DEFMETHOD SEND-SCALE ((DISPATCH DISPATCH) FACTOR)
+  (DEBUG-LOG! "Event: ~a~%" "scale")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 1)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" FACTOR)
+              ("uint" FACTOR)
+              ("new_id" FACTOR)
+              ("fixed" FACTOR)
+              ("fd" FACTOR)
+              ("string" FACTOR)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 3 ARG-LIST)))
+
+(DEFMETHOD SEND-NAME ((DISPATCH DISPATCH) NAME)
+  (DEBUG-LOG! "Event: ~a~%" "name")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 1)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::S)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" NAME)
+              ("uint" NAME)
+              ("new_id" NAME)
+              ("fixed" NAME)
+              ("fd" NAME)
+              ("string" NAME)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 4 ARG-LIST)))
+
+(DEFMETHOD SEND-DESCRIPTION ((DISPATCH DISPATCH) DESCRIPTION)
+  (DEBUG-LOG! "Event: ~a~%" "description")
+  (LET ((ARG-LIST (FOREIGN-ALLOC '(:POINTER (:UNION WL_ARGUMENT)) :COUNT 1)))
+    (SETF (FOREIGN-SLOT-VALUE
+           (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::S)
+            (ALEXANDRIA:ESWITCH ((ARG-TYPE ARG) :TEST 'STRING=)
+              ("int" DESCRIPTION)
+              ("uint" DESCRIPTION)
+              ("new_id" DESCRIPTION)
+              ("fixed" DESCRIPTION)
+              ("fd" DESCRIPTION)
+              ("string" DESCRIPTION)
+              ("enum"
+               `(ERROR
+                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+              ("object" `(BM-CL-WAYLAND:PTR ,(SYMBOLIFY (NAME ARG))))
+              ("array" `(ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))))
+    (RESOURCE-POST-EVENT (PTR DISPATCH) 5 ARG-LIST)))
 
 (DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 4 :DISPATCH-IMPL 'DISPATCH)
