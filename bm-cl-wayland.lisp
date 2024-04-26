@@ -133,4 +133,4 @@ and set up the client object in the lisp world for further referencing."
 ;; └─┘ ┴ ┴┴─┘
 
 (defvar *debug* t)
-(defmacro debug-log! (&rest args) (when *debug* `(format t ,@args)))
+(defmacro debug-log! (&rest args) (when *debug* `(format t "⭐: ~a" (format nil ,@args))))

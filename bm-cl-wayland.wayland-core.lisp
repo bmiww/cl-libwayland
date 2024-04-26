@@ -512,10 +512,14 @@ The core global object.  This is a special singleton object.  It
 (PUSHNEW
  (LIST "wl_display" (LIST "wl_callback" "wl_registry")
        (LAMBDA ()
+         (DEBUG-LOG! "Filling if struct for ~a~%" "wl_display")
+         (DEBUG-LOG! "IF before: ~a --- ~a~%" *INTERFACE*
+          (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
          (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
+         (DEBUG-LOG! "IF after: ~a~%" *INTERFACE*)
          (WITH-FOREIGN-SLOTS
           ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
-           '(:STRUCT INTERFACE))
+           (:STRUCT INTERFACE))
           (SETF NAME (FOREIGN-STRING-ALLOC "wl_display")
                 VERSION 1
                 METHOD_COUNT 2
@@ -704,10 +708,14 @@ The singleton global registry object.  The server has a number of
 (PUSHNEW
  (LIST "wl_registry" (LIST)
        (LAMBDA ()
+         (DEBUG-LOG! "Filling if struct for ~a~%" "wl_registry")
+         (DEBUG-LOG! "IF before: ~a --- ~a~%" *INTERFACE*
+          (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
          (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
+         (DEBUG-LOG! "IF after: ~a~%" *INTERFACE*)
          (WITH-FOREIGN-SLOTS
           ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
-           '(:STRUCT INTERFACE))
+           (:STRUCT INTERFACE))
           (SETF NAME (FOREIGN-STRING-ALLOC "wl_registry")
                 VERSION 1
                 METHOD_COUNT 1
@@ -864,10 +872,14 @@ Clients can handle the 'done' event to get notified when
 (PUSHNEW
  (LIST "wl_callback" (LIST)
        (LAMBDA ()
+         (DEBUG-LOG! "Filling if struct for ~a~%" "wl_callback")
+         (DEBUG-LOG! "IF before: ~a --- ~a~%" *INTERFACE*
+          (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
          (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
+         (DEBUG-LOG! "IF after: ~a~%" *INTERFACE*)
          (WITH-FOREIGN-SLOTS
           ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
-           '(:STRUCT INTERFACE))
+           (:STRUCT INTERFACE))
           (SETF NAME (FOREIGN-STRING-ALLOC "wl_callback")
                 VERSION 1
                 METHOD_COUNT 0
@@ -1000,10 +1012,14 @@ A compositor.  This object is a singleton global.  The
 (PUSHNEW
  (LIST "wl_compositor" (LIST "wl_surface" "wl_region")
        (LAMBDA ()
+         (DEBUG-LOG! "Filling if struct for ~a~%" "wl_compositor")
+         (DEBUG-LOG! "IF before: ~a --- ~a~%" *INTERFACE*
+          (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
          (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
+         (DEBUG-LOG! "IF after: ~a~%" *INTERFACE*)
          (WITH-FOREIGN-SLOTS
           ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
-           '(:STRUCT INTERFACE))
+           (:STRUCT INTERFACE))
           (SETF NAME (FOREIGN-STRING-ALLOC "wl_compositor")
                 VERSION 6
                 METHOD_COUNT 2
@@ -1161,10 +1177,14 @@ The wl_shm_pool object encapsulates a piece of memory shared
 (PUSHNEW
  (LIST "wl_shm_pool" (LIST "wl_buffer")
        (LAMBDA ()
+         (DEBUG-LOG! "Filling if struct for ~a~%" "wl_shm_pool")
+         (DEBUG-LOG! "IF before: ~a --- ~a~%" *INTERFACE*
+          (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
          (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
+         (DEBUG-LOG! "IF after: ~a~%" *INTERFACE*)
          (WITH-FOREIGN-SLOTS
           ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
-           '(:STRUCT INTERFACE))
+           (:STRUCT INTERFACE))
           (SETF NAME (FOREIGN-STRING-ALLOC "wl_shm_pool")
                 VERSION 1
                 METHOD_COUNT 3
@@ -1325,10 +1345,14 @@ A singleton global object that provides support for shared
 (PUSHNEW
  (LIST "wl_shm" (LIST "wl_shm_pool")
        (LAMBDA ()
+         (DEBUG-LOG! "Filling if struct for ~a~%" "wl_shm")
+         (DEBUG-LOG! "IF before: ~a --- ~a~%" *INTERFACE*
+          (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
          (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
+         (DEBUG-LOG! "IF after: ~a~%" *INTERFACE*)
          (WITH-FOREIGN-SLOTS
           ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
-           '(:STRUCT INTERFACE))
+           (:STRUCT INTERFACE))
           (SETF NAME (FOREIGN-STRING-ALLOC "wl_shm")
                 VERSION 1
                 METHOD_COUNT 1
@@ -1483,10 +1507,14 @@ A buffer provides the content for a wl_surface. Buffers are
 (PUSHNEW
  (LIST "wl_buffer" (LIST)
        (LAMBDA ()
+         (DEBUG-LOG! "Filling if struct for ~a~%" "wl_buffer")
+         (DEBUG-LOG! "IF before: ~a --- ~a~%" *INTERFACE*
+          (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
          (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
+         (DEBUG-LOG! "IF after: ~a~%" *INTERFACE*)
          (WITH-FOREIGN-SLOTS
           ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
-           '(:STRUCT INTERFACE))
+           (:STRUCT INTERFACE))
           (SETF NAME (FOREIGN-STRING-ALLOC "wl_buffer")
                 VERSION 1
                 METHOD_COUNT 1
@@ -1712,10 +1740,14 @@ A wl_data_offer represents a piece of data offered for transfer
 (PUSHNEW
  (LIST "wl_data_offer" (LIST)
        (LAMBDA ()
+         (DEBUG-LOG! "Filling if struct for ~a~%" "wl_data_offer")
+         (DEBUG-LOG! "IF before: ~a --- ~a~%" *INTERFACE*
+          (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
          (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
+         (DEBUG-LOG! "IF after: ~a~%" *INTERFACE*)
          (WITH-FOREIGN-SLOTS
           ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
-           '(:STRUCT INTERFACE))
+           (:STRUCT INTERFACE))
           (SETF NAME (FOREIGN-STRING-ALLOC "wl_data_offer")
                 VERSION 3
                 METHOD_COUNT 5
@@ -1987,10 +2019,14 @@ The wl_data_source object is the source side of a wl_data_offer.
 (PUSHNEW
  (LIST "wl_data_source" (LIST)
        (LAMBDA ()
+         (DEBUG-LOG! "Filling if struct for ~a~%" "wl_data_source")
+         (DEBUG-LOG! "IF before: ~a --- ~a~%" *INTERFACE*
+          (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
          (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
+         (DEBUG-LOG! "IF after: ~a~%" *INTERFACE*)
          (WITH-FOREIGN-SLOTS
           ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
-           '(:STRUCT INTERFACE))
+           (:STRUCT INTERFACE))
           (SETF NAME (FOREIGN-STRING-ALLOC "wl_data_source")
                 VERSION 3
                 METHOD_COUNT 3
@@ -2272,10 +2308,14 @@ There is one wl_data_device per seat which can be obtained
 (PUSHNEW
  (LIST "wl_data_device" (LIST "wl_data_offer" "wl_data_source" "wl_surface")
        (LAMBDA ()
+         (DEBUG-LOG! "Filling if struct for ~a~%" "wl_data_device")
+         (DEBUG-LOG! "IF before: ~a --- ~a~%" *INTERFACE*
+          (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
          (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
+         (DEBUG-LOG! "IF after: ~a~%" *INTERFACE*)
          (WITH-FOREIGN-SLOTS
           ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
-           '(:STRUCT INTERFACE))
+           (:STRUCT INTERFACE))
           (SETF NAME (FOREIGN-STRING-ALLOC "wl_data_device")
                 VERSION 3
                 METHOD_COUNT 3
@@ -2519,10 +2559,14 @@ The wl_data_device_manager is a singleton global object that
  (LIST "wl_data_device_manager"
        (LIST "wl_data_source" "wl_data_device" "wl_seat")
        (LAMBDA ()
+         (DEBUG-LOG! "Filling if struct for ~a~%" "wl_data_device_manager")
+         (DEBUG-LOG! "IF before: ~a --- ~a~%" *INTERFACE*
+          (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
          (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
+         (DEBUG-LOG! "IF after: ~a~%" *INTERFACE*)
          (WITH-FOREIGN-SLOTS
           ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
-           '(:STRUCT INTERFACE))
+           (:STRUCT INTERFACE))
           (SETF NAME (FOREIGN-STRING-ALLOC "wl_data_device_manager")
                 VERSION 3
                 METHOD_COUNT 2
@@ -2661,10 +2705,14 @@ This interface is implemented by servers that provide
 (PUSHNEW
  (LIST "wl_shell" (LIST "wl_shell_surface" "wl_surface")
        (LAMBDA ()
+         (DEBUG-LOG! "Filling if struct for ~a~%" "wl_shell")
+         (DEBUG-LOG! "IF before: ~a --- ~a~%" *INTERFACE*
+          (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
          (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
+         (DEBUG-LOG! "IF after: ~a~%" *INTERFACE*)
          (WITH-FOREIGN-SLOTS
           ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
-           '(:STRUCT INTERFACE))
+           (:STRUCT INTERFACE))
           (SETF NAME (FOREIGN-STRING-ALLOC "wl_shell")
                 VERSION 1
                 METHOD_COUNT 1
@@ -2991,10 +3039,14 @@ An interface that may be implemented by a wl_surface, for
 (PUSHNEW
  (LIST "wl_shell_surface" (LIST "wl_seat" "wl_surface" "wl_output")
        (LAMBDA ()
+         (DEBUG-LOG! "Filling if struct for ~a~%" "wl_shell_surface")
+         (DEBUG-LOG! "IF before: ~a --- ~a~%" *INTERFACE*
+          (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
          (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
+         (DEBUG-LOG! "IF after: ~a~%" *INTERFACE*)
          (WITH-FOREIGN-SLOTS
           ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
-           '(:STRUCT INTERFACE))
+           (:STRUCT INTERFACE))
           (SETF NAME (FOREIGN-STRING-ALLOC "wl_shell_surface")
                 VERSION 1
                 METHOD_COUNT 10
@@ -3519,10 +3571,14 @@ A surface is a rectangular area that may be displayed on zero
 (PUSHNEW
  (LIST "wl_surface" (LIST "wl_output" "wl_buffer" "wl_callback" "wl_region")
        (LAMBDA ()
+         (DEBUG-LOG! "Filling if struct for ~a~%" "wl_surface")
+         (DEBUG-LOG! "IF before: ~a --- ~a~%" *INTERFACE*
+          (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
          (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
+         (DEBUG-LOG! "IF after: ~a~%" *INTERFACE*)
          (WITH-FOREIGN-SLOTS
           ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
-           '(:STRUCT INTERFACE))
+           (:STRUCT INTERFACE))
           (SETF NAME (FOREIGN-STRING-ALLOC "wl_surface")
                 VERSION 6
                 METHOD_COUNT 11
@@ -3880,10 +3936,14 @@ A seat is a group of keyboards, pointer and touch devices. This
 (PUSHNEW
  (LIST "wl_seat" (LIST "wl_pointer" "wl_keyboard" "wl_touch")
        (LAMBDA ()
+         (DEBUG-LOG! "Filling if struct for ~a~%" "wl_seat")
+         (DEBUG-LOG! "IF before: ~a --- ~a~%" *INTERFACE*
+          (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
          (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
+         (DEBUG-LOG! "IF after: ~a~%" *INTERFACE*)
          (WITH-FOREIGN-SLOTS
           ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
-           '(:STRUCT INTERFACE))
+           (:STRUCT INTERFACE))
           (SETF NAME (FOREIGN-STRING-ALLOC "wl_seat")
                 VERSION 9
                 METHOD_COUNT 4
@@ -4208,10 +4268,14 @@ The wl_pointer interface represents one or more input devices,
 (PUSHNEW
  (LIST "wl_pointer" (LIST "wl_surface")
        (LAMBDA ()
+         (DEBUG-LOG! "Filling if struct for ~a~%" "wl_pointer")
+         (DEBUG-LOG! "IF before: ~a --- ~a~%" *INTERFACE*
+          (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
          (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
+         (DEBUG-LOG! "IF after: ~a~%" *INTERFACE*)
          (WITH-FOREIGN-SLOTS
           ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
-           '(:STRUCT INTERFACE))
+           (:STRUCT INTERFACE))
           (SETF NAME (FOREIGN-STRING-ALLOC "wl_pointer")
                 VERSION 9
                 METHOD_COUNT 2
@@ -4587,10 +4651,14 @@ The wl_keyboard interface represents one or more keyboards
 (PUSHNEW
  (LIST "wl_keyboard" (LIST "wl_surface")
        (LAMBDA ()
+         (DEBUG-LOG! "Filling if struct for ~a~%" "wl_keyboard")
+         (DEBUG-LOG! "IF before: ~a --- ~a~%" *INTERFACE*
+          (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
          (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
+         (DEBUG-LOG! "IF after: ~a~%" *INTERFACE*)
          (WITH-FOREIGN-SLOTS
           ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
-           '(:STRUCT INTERFACE))
+           (:STRUCT INTERFACE))
           (SETF NAME (FOREIGN-STRING-ALLOC "wl_keyboard")
                 VERSION 9
                 METHOD_COUNT 1
@@ -4907,10 +4975,14 @@ The wl_touch interface represents a touchscreen
 (PUSHNEW
  (LIST "wl_touch" (LIST "wl_surface")
        (LAMBDA ()
+         (DEBUG-LOG! "Filling if struct for ~a~%" "wl_touch")
+         (DEBUG-LOG! "IF before: ~a --- ~a~%" *INTERFACE*
+          (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
          (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
+         (DEBUG-LOG! "IF after: ~a~%" *INTERFACE*)
          (WITH-FOREIGN-SLOTS
           ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
-           '(:STRUCT INTERFACE))
+           (:STRUCT INTERFACE))
           (SETF NAME (FOREIGN-STRING-ALLOC "wl_touch")
                 VERSION 9
                 METHOD_COUNT 1
@@ -5215,10 +5287,14 @@ An output describes part of the compositor geometry.  The
 (PUSHNEW
  (LIST "wl_output" (LIST)
        (LAMBDA ()
+         (DEBUG-LOG! "Filling if struct for ~a~%" "wl_output")
+         (DEBUG-LOG! "IF before: ~a --- ~a~%" *INTERFACE*
+          (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
          (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
+         (DEBUG-LOG! "IF after: ~a~%" *INTERFACE*)
          (WITH-FOREIGN-SLOTS
           ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
-           '(:STRUCT INTERFACE))
+           (:STRUCT INTERFACE))
           (SETF NAME (FOREIGN-STRING-ALLOC "wl_output")
                 VERSION 4
                 METHOD_COUNT 1
@@ -5455,10 +5531,14 @@ A region object describes an area.
 (PUSHNEW
  (LIST "wl_region" (LIST)
        (LAMBDA ()
+         (DEBUG-LOG! "Filling if struct for ~a~%" "wl_region")
+         (DEBUG-LOG! "IF before: ~a --- ~a~%" *INTERFACE*
+          (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
          (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
+         (DEBUG-LOG! "IF after: ~a~%" *INTERFACE*)
          (WITH-FOREIGN-SLOTS
           ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
-           '(:STRUCT INTERFACE))
+           (:STRUCT INTERFACE))
           (SETF NAME (FOREIGN-STRING-ALLOC "wl_region")
                 VERSION 1
                 METHOD_COUNT 3
@@ -5635,10 +5715,14 @@ The global interface exposing sub-surface compositing capabilities.
 (PUSHNEW
  (LIST "wl_subcompositor" (LIST "wl_subsurface" "wl_surface")
        (LAMBDA ()
+         (DEBUG-LOG! "Filling if struct for ~a~%" "wl_subcompositor")
+         (DEBUG-LOG! "IF before: ~a --- ~a~%" *INTERFACE*
+          (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
          (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
+         (DEBUG-LOG! "IF after: ~a~%" *INTERFACE*)
          (WITH-FOREIGN-SLOTS
           ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
-           '(:STRUCT INTERFACE))
+           (:STRUCT INTERFACE))
           (SETF NAME (FOREIGN-STRING-ALLOC "wl_subcompositor")
                 VERSION 1
                 METHOD_COUNT 2
@@ -5901,10 +5985,14 @@ An additional interface to a wl_surface object, which has been
 (PUSHNEW
  (LIST "wl_subsurface" (LIST "wl_surface")
        (LAMBDA ()
+         (DEBUG-LOG! "Filling if struct for ~a~%" "wl_subsurface")
+         (DEBUG-LOG! "IF before: ~a --- ~a~%" *INTERFACE*
+          (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
          (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
+         (DEBUG-LOG! "IF after: ~a~%" *INTERFACE*)
          (WITH-FOREIGN-SLOTS
           ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
-           '(:STRUCT INTERFACE))
+           (:STRUCT INTERFACE))
           (SETF NAME (FOREIGN-STRING-ALLOC "wl_subsurface")
                 VERSION 1
                 METHOD_COUNT 6

@@ -228,23 +228,24 @@ The xdg_wm_base interface is exposed as a global object enabling clients
               INTERFACE-ARRAY))
     MESSAGES))
 
-(PUSH
- (LAMBDA ()
-   (DEBUG-LOG! "Filling if struct for ~a~%" "xdg_wm_base")
-   (DEBUG-LOG! "IF before: ~a --- ~a~%" *INTERFACE*
-    (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
-   (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
-   (DEBUG-LOG! "IF after: ~a~%" *INTERFACE*)
-   (SETF (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'NAME)
-           (FOREIGN-STRING-ALLOC "xdg_wm_base")
-         (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'VERSION) 6
-         (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'METHOD_COUNT) 4
-         (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'METHODS)
-           *REQUESTS*
-         (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENT_COUNT) 1
-         (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENTS)
-           *EVENTS*))
- BM-CL-WAYLAND::*INTERFACE-INIT-LIST*)
+(PUSHNEW
+ (LIST "xdg_wm_base" (LIST "xdg_positioner" "xdg_surface" "wl_surface")
+       (LAMBDA ()
+         (DEBUG-LOG! "Filling if struct for ~a~%" "xdg_wm_base")
+         (DEBUG-LOG! "IF before: ~a --- ~a~%" *INTERFACE*
+          (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
+         (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
+         (DEBUG-LOG! "IF after: ~a~%" *INTERFACE*)
+         (WITH-FOREIGN-SLOTS
+          ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
+           (:STRUCT INTERFACE))
+          (SETF NAME (FOREIGN-STRING-ALLOC "xdg_wm_base")
+                VERSION 6
+                METHOD_COUNT 4
+                METHODS *REQUESTS*
+                EVENT_COUNT 1
+                EVENTS *EVENTS*))))
+ BM-CL-WAYLAND::*INTERFACE-INIT-LIST* :TEST #'INTERFACE-EXISTS-TEST)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
     :INT
@@ -541,23 +542,24 @@ The xdg_positioner provides a collection of rules for the placement of a
   (LET ((MESSAGES (CFFI:FOREIGN-ALLOC '(:STRUCT WL_MESSAGE) :COUNT 0)))
     MESSAGES))
 
-(PUSH
- (LAMBDA ()
-   (DEBUG-LOG! "Filling if struct for ~a~%" "xdg_positioner")
-   (DEBUG-LOG! "IF before: ~a --- ~a~%" *INTERFACE*
-    (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
-   (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
-   (DEBUG-LOG! "IF after: ~a~%" *INTERFACE*)
-   (SETF (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'NAME)
-           (FOREIGN-STRING-ALLOC "xdg_positioner")
-         (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'VERSION) 6
-         (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'METHOD_COUNT) 10
-         (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'METHODS)
-           *REQUESTS*
-         (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENT_COUNT) 0
-         (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENTS)
-           *EVENTS*))
- BM-CL-WAYLAND::*INTERFACE-INIT-LIST*)
+(PUSHNEW
+ (LIST "xdg_positioner" (LIST)
+       (LAMBDA ()
+         (DEBUG-LOG! "Filling if struct for ~a~%" "xdg_positioner")
+         (DEBUG-LOG! "IF before: ~a --- ~a~%" *INTERFACE*
+          (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
+         (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
+         (DEBUG-LOG! "IF after: ~a~%" *INTERFACE*)
+         (WITH-FOREIGN-SLOTS
+          ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
+           (:STRUCT INTERFACE))
+          (SETF NAME (FOREIGN-STRING-ALLOC "xdg_positioner")
+                VERSION 6
+                METHOD_COUNT 10
+                METHODS *REQUESTS*
+                EVENT_COUNT 0
+                EVENTS *EVENTS*))))
+ BM-CL-WAYLAND::*INTERFACE-INIT-LIST* :TEST #'INTERFACE-EXISTS-TEST)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
     :INT
@@ -865,23 +867,25 @@ An interface that may be implemented by a wl_surface, for
               INTERFACE-ARRAY))
     MESSAGES))
 
-(PUSH
- (LAMBDA ()
-   (DEBUG-LOG! "Filling if struct for ~a~%" "xdg_surface")
-   (DEBUG-LOG! "IF before: ~a --- ~a~%" *INTERFACE*
-    (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
-   (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
-   (DEBUG-LOG! "IF after: ~a~%" *INTERFACE*)
-   (SETF (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'NAME)
-           (FOREIGN-STRING-ALLOC "xdg_surface")
-         (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'VERSION) 6
-         (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'METHOD_COUNT) 5
-         (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'METHODS)
-           *REQUESTS*
-         (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENT_COUNT) 1
-         (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENTS)
-           *EVENTS*))
- BM-CL-WAYLAND::*INTERFACE-INIT-LIST*)
+(PUSHNEW
+ (LIST "xdg_surface"
+       (LIST "xdg_toplevel" "xdg_popup" "xdg_surface" "xdg_positioner")
+       (LAMBDA ()
+         (DEBUG-LOG! "Filling if struct for ~a~%" "xdg_surface")
+         (DEBUG-LOG! "IF before: ~a --- ~a~%" *INTERFACE*
+          (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
+         (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
+         (DEBUG-LOG! "IF after: ~a~%" *INTERFACE*)
+         (WITH-FOREIGN-SLOTS
+          ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
+           (:STRUCT INTERFACE))
+          (SETF NAME (FOREIGN-STRING-ALLOC "xdg_surface")
+                VERSION 6
+                METHOD_COUNT 5
+                METHODS *REQUESTS*
+                EVENT_COUNT 1
+                EVENTS *EVENTS*))))
+ BM-CL-WAYLAND::*INTERFACE-INIT-LIST* :TEST #'INTERFACE-EXISTS-TEST)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
     :INT
@@ -1365,23 +1369,24 @@ This interface defines an xdg_surface role which allows a surface to,
               INTERFACE-ARRAY))
     MESSAGES))
 
-(PUSH
- (LAMBDA ()
-   (DEBUG-LOG! "Filling if struct for ~a~%" "xdg_toplevel")
-   (DEBUG-LOG! "IF before: ~a --- ~a~%" *INTERFACE*
-    (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
-   (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
-   (DEBUG-LOG! "IF after: ~a~%" *INTERFACE*)
-   (SETF (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'NAME)
-           (FOREIGN-STRING-ALLOC "xdg_toplevel")
-         (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'VERSION) 6
-         (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'METHOD_COUNT) 14
-         (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'METHODS)
-           *REQUESTS*
-         (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENT_COUNT) 4
-         (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENTS)
-           *EVENTS*))
- BM-CL-WAYLAND::*INTERFACE-INIT-LIST*)
+(PUSHNEW
+ (LIST "xdg_toplevel" (LIST "xdg_toplevel" "wl_seat" "wl_output")
+       (LAMBDA ()
+         (DEBUG-LOG! "Filling if struct for ~a~%" "xdg_toplevel")
+         (DEBUG-LOG! "IF before: ~a --- ~a~%" *INTERFACE*
+          (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
+         (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
+         (DEBUG-LOG! "IF after: ~a~%" *INTERFACE*)
+         (WITH-FOREIGN-SLOTS
+          ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
+           (:STRUCT INTERFACE))
+          (SETF NAME (FOREIGN-STRING-ALLOC "xdg_toplevel")
+                VERSION 6
+                METHOD_COUNT 14
+                METHODS *REQUESTS*
+                EVENT_COUNT 4
+                EVENTS *EVENTS*))))
+ BM-CL-WAYLAND::*INTERFACE-INIT-LIST* :TEST #'INTERFACE-EXISTS-TEST)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
     :INT
@@ -1742,23 +1747,24 @@ A popup surface is a short-lived, temporary surface. It can be used to
               INTERFACE-ARRAY))
     MESSAGES))
 
-(PUSH
- (LAMBDA ()
-   (DEBUG-LOG! "Filling if struct for ~a~%" "xdg_popup")
-   (DEBUG-LOG! "IF before: ~a --- ~a~%" *INTERFACE*
-    (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
-   (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
-   (DEBUG-LOG! "IF after: ~a~%" *INTERFACE*)
-   (SETF (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'NAME)
-           (FOREIGN-STRING-ALLOC "xdg_popup")
-         (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'VERSION) 6
-         (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'METHOD_COUNT) 3
-         (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'METHODS)
-           *REQUESTS*
-         (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENT_COUNT) 3
-         (FOREIGN-SLOT-VALUE *INTERFACE* '(:STRUCT INTERFACE) 'EVENTS)
-           *EVENTS*))
- BM-CL-WAYLAND::*INTERFACE-INIT-LIST*)
+(PUSHNEW
+ (LIST "xdg_popup" (LIST "wl_seat" "xdg_positioner")
+       (LAMBDA ()
+         (DEBUG-LOG! "Filling if struct for ~a~%" "xdg_popup")
+         (DEBUG-LOG! "IF before: ~a --- ~a~%" *INTERFACE*
+          (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
+         (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
+         (DEBUG-LOG! "IF after: ~a~%" *INTERFACE*)
+         (WITH-FOREIGN-SLOTS
+          ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
+           (:STRUCT INTERFACE))
+          (SETF NAME (FOREIGN-STRING-ALLOC "xdg_popup")
+                VERSION 6
+                METHOD_COUNT 3
+                METHODS *REQUESTS*
+                EVENT_COUNT 3
+                EVENTS *EVENTS*))))
+ BM-CL-WAYLAND::*INTERFACE-INIT-LIST* :TEST #'INTERFACE-EXISTS-TEST)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
     :INT
