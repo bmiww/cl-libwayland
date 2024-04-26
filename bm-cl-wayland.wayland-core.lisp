@@ -572,6 +572,7 @@ The core global object.  This is a special singleton object.  It
           (CREATE-RESOURCE (PTR (CLIENT INSTANCE)) *INTERFACE*
            (VERSION INSTANCE) (ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
+    (SETF (PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -759,6 +760,7 @@ The singleton global registry object.  The server has a number of
           (CREATE-RESOURCE (PTR (CLIENT INSTANCE)) *INTERFACE*
            (VERSION INSTANCE) (ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
+    (SETF (PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -909,6 +911,7 @@ Clients can handle the 'done' event to get notified when
           (CREATE-RESOURCE (PTR (CLIENT INSTANCE)) *INTERFACE*
            (VERSION INSTANCE) (ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
+    (SETF (PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -1055,6 +1058,7 @@ A compositor.  This object is a singleton global.  The
           (CREATE-RESOURCE (PTR (CLIENT INSTANCE)) *INTERFACE*
            (VERSION INSTANCE) (ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
+    (SETF (PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -1236,6 +1240,7 @@ The wl_shm_pool object encapsulates a piece of memory shared
           (CREATE-RESOURCE (PTR (CLIENT INSTANCE)) *INTERFACE*
            (VERSION INSTANCE) (ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
+    (SETF (PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -1383,6 +1388,7 @@ A singleton global object that provides support for shared
           (CREATE-RESOURCE (PTR (CLIENT INSTANCE)) *INTERFACE*
            (VERSION INSTANCE) (ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
+    (SETF (PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -1392,8 +1398,7 @@ A singleton global object that provides support for shared
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-APTR ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
            '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
-            (ERROR
-             "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+            FORMAT)
     (RESOURCE-POST-EVENT (PTR DISPATCH) 0 ARG-LIST)))
 
 (DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
@@ -1525,6 +1530,7 @@ A buffer provides the content for a wl_surface. Buffers are
           (CREATE-RESOURCE (PTR (CLIENT INSTANCE)) *INTERFACE*
            (VERSION INSTANCE) (ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
+    (SETF (PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -1778,6 +1784,7 @@ A wl_data_offer represents a piece of data offered for transfer
           (CREATE-RESOURCE (PTR (CLIENT INSTANCE)) *INTERFACE*
            (VERSION INSTANCE) (ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
+    (SETF (PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -1796,8 +1803,7 @@ A wl_data_offer represents a piece of data offered for transfer
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-APTR ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
            '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
-            (ERROR
-             "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+            SOURCE_ACTIONS)
     (RESOURCE-POST-EVENT (PTR DISPATCH) 1 ARG-LIST)))
 
 (DEFMETHOD SEND-ACTION ((DISPATCH DISPATCH) DND_ACTION)
@@ -1806,8 +1812,7 @@ A wl_data_offer represents a piece of data offered for transfer
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-APTR ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
            '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
-            (ERROR
-             "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+            DND_ACTION)
     (RESOURCE-POST-EVENT (PTR DISPATCH) 2 ARG-LIST)))
 
 (DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
@@ -2028,6 +2033,7 @@ The wl_data_source object is the source side of a wl_data_offer.
           (CREATE-RESOURCE (PTR (CLIENT INSTANCE)) *INTERFACE*
            (VERSION INSTANCE) (ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
+    (SETF (PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -2074,8 +2080,7 @@ The wl_data_source object is the source side of a wl_data_offer.
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-APTR ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
            '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
-            (ERROR
-             "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+            DND_ACTION)
     (RESOURCE-POST-EVENT (PTR DISPATCH) 5 ARG-LIST)))
 
 (DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
@@ -2338,6 +2343,7 @@ There is one wl_data_device per seat which can be obtained
           (CREATE-RESOURCE (PTR (CLIENT INSTANCE)) *INTERFACE*
            (VERSION INSTANCE) (ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
+    (SETF (PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -2562,6 +2568,7 @@ The wl_data_device_manager is a singleton global object that
           (CREATE-RESOURCE (PTR (CLIENT INSTANCE)) *INTERFACE*
            (VERSION INSTANCE) (ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
+    (SETF (PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -2697,6 +2704,7 @@ This interface is implemented by servers that provide
           (CREATE-RESOURCE (PTR (CLIENT INSTANCE)) *INTERFACE*
            (VERSION INSTANCE) (ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
+    (SETF (PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -3132,6 +3140,7 @@ An interface that may be implemented by a wl_surface, for
           (CREATE-RESOURCE (PTR (CLIENT INSTANCE)) *INTERFACE*
            (VERSION INSTANCE) (ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
+    (SETF (PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -3150,8 +3159,7 @@ An interface that may be implemented by a wl_surface, for
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-APTR ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
            '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
-            (ERROR
-             "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+            EDGES)
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-APTR ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
            '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I)
@@ -3635,6 +3643,7 @@ A surface is a rectangular area that may be displayed on zero
           (CREATE-RESOURCE (PTR (CLIENT INSTANCE)) *INTERFACE*
            (VERSION INSTANCE) (ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
+    (SETF (PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -3671,8 +3680,7 @@ A surface is a rectangular area that may be displayed on zero
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-APTR ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
            '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
-            (ERROR
-             "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+            TRANSFORM)
     (RESOURCE-POST-EVENT (PTR DISPATCH) 3 ARG-LIST)))
 
 (DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
@@ -3908,6 +3916,7 @@ A seat is a group of keyboards, pointer and touch devices. This
           (CREATE-RESOURCE (PTR (CLIENT INSTANCE)) *INTERFACE*
            (VERSION INSTANCE) (ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
+    (SETF (PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -3917,8 +3926,7 @@ A seat is a group of keyboards, pointer and touch devices. This
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-APTR ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
            '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
-            (ERROR
-             "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+            CAPABILITIES)
     (RESOURCE-POST-EVENT (PTR DISPATCH) 0 ARG-LIST)))
 
 (DEFMETHOD SEND-NAME ((DISPATCH DISPATCH) NAME)
@@ -4227,6 +4235,7 @@ The wl_pointer interface represents one or more input devices,
           (CREATE-RESOURCE (PTR (CLIENT INSTANCE)) *INTERFACE*
            (VERSION INSTANCE) (ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
+    (SETF (PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -4299,8 +4308,7 @@ The wl_pointer interface represents one or more input devices,
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-APTR ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 3)
            '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
-            (ERROR
-             "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+            STATE)
     (RESOURCE-POST-EVENT (PTR DISPATCH) 3 ARG-LIST)))
 
 (DEFMETHOD SEND-AXIS ((DISPATCH DISPATCH) TIME AXIS VALUE)
@@ -4313,8 +4321,7 @@ The wl_pointer interface represents one or more input devices,
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-APTR ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
            '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
-            (ERROR
-             "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+            AXIS)
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-APTR ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
            '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::F)
@@ -4332,8 +4339,7 @@ The wl_pointer interface represents one or more input devices,
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-APTR ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
            '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
-            (ERROR
-             "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+            AXIS_SOURCE)
     (RESOURCE-POST-EVENT (PTR DISPATCH) 6 ARG-LIST)))
 
 (DEFMETHOD SEND-AXIS-STOP ((DISPATCH DISPATCH) TIME AXIS)
@@ -4346,8 +4352,7 @@ The wl_pointer interface represents one or more input devices,
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-APTR ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
            '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
-            (ERROR
-             "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+            AXIS)
     (RESOURCE-POST-EVENT (PTR DISPATCH) 7 ARG-LIST)))
 
 (DEFMETHOD SEND-AXIS-DISCRETE ((DISPATCH DISPATCH) AXIS DISCRETE)
@@ -4356,8 +4361,7 @@ The wl_pointer interface represents one or more input devices,
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-APTR ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
            '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
-            (ERROR
-             "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+            AXIS)
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-APTR ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
            '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I)
@@ -4370,8 +4374,7 @@ The wl_pointer interface represents one or more input devices,
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-APTR ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
            '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
-            (ERROR
-             "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+            AXIS)
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-APTR ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
            '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I)
@@ -4384,13 +4387,11 @@ The wl_pointer interface represents one or more input devices,
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-APTR ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
            '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
-            (ERROR
-             "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+            AXIS)
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-APTR ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
            '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
-            (ERROR
-             "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+            DIRECTION)
     (RESOURCE-POST-EVENT (PTR DISPATCH) 10 ARG-LIST)))
 
 (DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
@@ -4584,6 +4585,7 @@ The wl_keyboard interface represents one or more keyboards
           (CREATE-RESOURCE (PTR (CLIENT INSTANCE)) *INTERFACE*
            (VERSION INSTANCE) (ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
+    (SETF (PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -4593,8 +4595,7 @@ The wl_keyboard interface represents one or more keyboards
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-APTR ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
            '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
-            (ERROR
-             "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+            FORMAT)
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-APTR ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
            '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::H)
@@ -4653,8 +4654,7 @@ The wl_keyboard interface represents one or more keyboards
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-APTR ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 3)
            '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
-            (ERROR
-             "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+            STATE)
     (RESOURCE-POST-EVENT (PTR DISPATCH) 3 ARG-LIST)))
 
 (DEFMETHOD SEND-MODIFIERS
@@ -4898,6 +4898,7 @@ The wl_touch interface represents a touchscreen
           (CREATE-RESOURCE (PTR (CLIENT INSTANCE)) *INTERFACE*
            (VERSION INSTANCE) (ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
+    (SETF (PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -5199,6 +5200,7 @@ An output describes part of the compositor geometry.  The
           (CREATE-RESOURCE (PTR (CLIENT INSTANCE)) *INTERFACE*
            (VERSION INSTANCE) (ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
+    (SETF (PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -5226,8 +5228,7 @@ An output describes part of the compositor geometry.  The
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-APTR ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 4)
            '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
-            (ERROR
-             "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+            SUBPIXEL)
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-APTR ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 5)
            '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::S)
@@ -5239,8 +5240,7 @@ An output describes part of the compositor geometry.  The
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-APTR ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 7)
            '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
-            (ERROR
-             "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+            TRANSFORM)
     (RESOURCE-POST-EVENT (PTR DISPATCH) 0 ARG-LIST)))
 
 (DEFMETHOD SEND-MODE ((DISPATCH DISPATCH) FLAGS WIDTH HEIGHT REFRESH)
@@ -5249,8 +5249,7 @@ An output describes part of the compositor geometry.  The
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-APTR ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
            '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::U)
-            (ERROR
-             "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+            FLAGS)
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-APTR ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
            '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'BM-CL-LIBWAYLAND::I)
@@ -5484,6 +5483,7 @@ A region object describes an area.
           (CREATE-RESOURCE (PTR (CLIENT INSTANCE)) *INTERFACE*
            (VERSION INSTANCE) (ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
+    (SETF (PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -5645,6 +5645,7 @@ The global interface exposing sub-surface compositing capabilities.
           (CREATE-RESOURCE (PTR (CLIENT INSTANCE)) *INTERFACE*
            (VERSION INSTANCE) (ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
+    (SETF (PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -5917,6 +5918,7 @@ An additional interface to a wl_surface object, which has been
           (CREATE-RESOURCE (PTR (CLIENT INSTANCE)) *INTERFACE*
            (VERSION INSTANCE) (ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
+    (SETF (PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 

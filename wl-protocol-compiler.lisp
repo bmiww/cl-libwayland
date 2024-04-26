@@ -14,20 +14,6 @@
   (:use :cl :xmls :bm-cl-wayland.parser))
 (in-package :bm-cl-wayland.compiler)
 
-(defvar *arg-type-map*
-  '("int" :int
-    "uint" :uint
-    "object" :uint
-    "new_id" :uint
-    ;; TODO: Check what exactly happens in libwayland with fixed nums. For now made it :float
-    "fixed" :float
-    "string" (:pointer :char)
-    "array" :pointer
-    ;; TODO: Recheck the FD thing - this might not be a uint
-    "fd" :uint
-    ;; TODO: Most likely correct, but needs to be checked
-    "enum" :uint))
-
 (defun gen-request-c-struct (request) `(,(symbolify (name request)) :pointer))
 (defun gen-generic-arg (arg) (symbolify (name arg)))
 (defun gen-request-generic (request)
@@ -40,6 +26,7 @@
      (let* ((resource (create-resource (ptr (client instance)) ,(symbolify "*interface*")
 				       (version instance) (id instance))))
        (setf (gethash (pointer-address resource) *resource-tracker*) instance)
+       (setf (ptr instance) resource)
        (resource-set-dispatcher resource ,(symbolify "*dispatcher*") (null-pointer) (null-pointer) (null-pointer))))))
 
 
@@ -196,7 +183,9 @@ argument feed."
      ("fixed" (symbolify (name arg)))
      ("fd" (symbolify (name arg)))
      ("string" (symbolify (name arg)))
-     ("enum" `(error "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+     ;; TODO: You wanted to create a lisp list with keywords. For now just leaving as is/or as uint
+     ;; ("enum" `(error "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+     ("enum" (symbolify (name arg)))
      ("object" `(wl:ptr ,(symbolify (name arg))))
      ("array" `(error "WL C ARRAY PARSING NOT IMPLEMENTED")))))
 
