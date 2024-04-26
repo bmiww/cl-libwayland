@@ -45,57 +45,6 @@ This can be overriden by inheritance in case if custom behaviour is required." (
 	       (global (get-data data)))
 	  (funcall 'dispatch-bind global client (null-pointer) version id)))))
 
-
-(defun gen-interface-var-fill (interface interface-deps)
-  `((pushnew
-     (list ,(name interface)
-	   (list ,@interface-deps)
-	   (lambda ()
-	     (debug-log! "Filling if struct for ~a~%" ,(name interface))
-	     (debug-log! "IF before: ~a --- ~a~%" *interface* (mem-aptr *interface* '(:struct interface) 1))
-	     (setf *interface* (foreign-alloc '(:struct interface)))
-	     (debug-log! "IF after: ~a~%" *interface*)
-	     (with-foreign-slots ((name version method_count methods event_count events) *interface* (:struct interface))
-	       (setf name (foreign-string-alloc ,(name interface))
-		     version ,(version interface)
-		     method_count ,(length (requests interface))
-		     methods ,(symbolify "*requests*")
-		     event_count ,(length (events interface))
-		     events ,(symbolify "*events*")))))
-     wl::*interface-init-list*
-     :test #'interface-exists-test)))
-
-
-(defun gen-c-struct-filler (var-name methods)
-  (let ((interface-deps nil))
-    (values `((defvar ,var-name
-		(let ((messages (cffi:foreign-alloc '(:struct wl_message)
-						    :count ,(length methods))))
-		  ,@(loop for opcode below (length methods)
-			  for method = (nth opcode methods)
-			  collect
-			  `(let ((interface-array (cffi:foreign-alloc '(:pointer (:pointer :void))
-								      :count ,(length (args method))))
-				 (msg-ptr (mem-aptr messages '(:struct wl_message) ,opcode)))
-			     ,@(append
-				;; Code to fill the interface array with references to interface definitions
-				(loop for index below (length (args method))
-				      collect (let ((arg (nth index (args method))))
-						`(setf (mem-aref interface-array :pointer ,index)
-						       ,(if (interface arg)
-							    (progn
-							      (pushnew (interface arg) interface-deps :test #'string=)
-							      (symbolify "~a::*interface*" (interface arg)))
-							    `(null-pointer)))))
-				`((setf (foreign-slot-value msg-ptr '(:struct wl_message) 'wl-ffi::name)
-					(foreign-string-alloc ,(name method))
-					(foreign-slot-value msg-ptr '(:struct wl_message) 'wl-ffi::signature)
-					(foreign-string-alloc ,(signature method))
-					(foreign-slot-value msg-ptr '(:struct wl_message) 'wl-ffi::types)
-					interface-array)))))
-		  messages)))
-	    interface-deps)))
-
 ;; TODO: This is a bit annoying - since it loosly refers to the args symbol
 (defun gen-c-arg-selector (arg index)
   `(foreign-slot-value
@@ -156,16 +105,63 @@ argument feed."
 	  0))))
 
 
-(defun gen-interface-c-structs (interface)
+(defun gen-c-struct-filler (methods)
   (let ((interface-deps nil))
-    (append
-     (multiple-value-bind (sexps deps) (gen-c-struct-filler (symbolify "*requests*") (requests interface))
-       (loop for dep in deps do (pushnew dep interface-deps :test #'string=))
-       sexps)
-     (multiple-value-bind (sexps deps) (gen-c-struct-filler (symbolify "*events*") (events interface))
-       (loop for dep in deps do (pushnew dep interface-deps :test #'string=))
-       sexps)
-     (gen-interface-var-fill interface interface-deps))))
+    (values `(let ((messages (cffi:foreign-alloc '(:struct wl_message)
+						 :count ,(length methods))))
+	       ,@(loop for opcode below (length methods)
+		       for method = (nth opcode methods)
+		       collect
+		       `(let ((interface-array (cffi:foreign-alloc '(:pointer (:pointer :void))
+								   :count ,(length (args method))))
+			      (msg-ptr (mem-aptr messages '(:struct wl_message) ,opcode)))
+			  ,@(append
+			     ;; Code to fill the interface array with references to interface definitions
+			     (loop for index below (length (args method))
+				   collect (let ((arg (nth index (args method))))
+					     `(setf (mem-aref interface-array :pointer ,index)
+						    ,(if (interface arg)
+							 (progn
+							   (pushnew (interface arg) interface-deps :test #'string=)
+							   (symbolify "~a::*interface*" (interface arg)))
+							 `(null-pointer)))))
+			     `((with-foreign-slots ((name signature types) msg-ptr (:struct wl_message))
+				 (setf name (foreign-string-alloc ,(name method))
+				       signature ,(signature method)
+				       types interface-array))))))
+	       messages)
+	    interface-deps)))
+
+(defun gen-interface-var-fill (interface interface-deps request-sexps event-sexps)
+  `((pushnew
+     (list ,(name interface)
+	   (list ,@interface-deps)
+	   (lambda ()
+	     (setf *interface* (foreign-alloc '(:struct interface)))
+	     (let ((requests-ptr ,request-sexps)
+		   (events-ptr ,event-sexps))
+	       (debug-log! "IF ptr range: ~a --- ~a~%" *interface* (mem-aptr *interface* '(:struct interface) 1))
+	       (with-foreign-slots ((name version method_count methods event_count events) *interface* (:struct interface))
+		 (setf name (foreign-string-alloc ,(name interface))
+		       version ,(version interface)
+		       method_count ,(length (requests interface))
+		       methods requests-ptr
+		       event_count ,(length (events interface))
+		       events events-ptr)))))
+     wl::*interface-init-list*
+     :test #'interface-exists-test)))
+
+(defun gen-interface-c-structs (interface)
+  (let ((interface-deps nil)
+	(request-sexps nil)
+	(event-sexps nil))
+    (multiple-value-bind (sexps deps) (gen-c-struct-filler (requests interface))
+      (loop for dep in deps do (pushnew dep interface-deps :test #'string=))
+      (setf request-sexps sexps))
+    (multiple-value-bind (sexps deps) (gen-c-struct-filler (events interface))
+      (loop for dep in deps do (pushnew dep interface-deps :test #'string=))
+      (setf event-sexps sexps))
+    (gen-interface-var-fill interface interface-deps request-sexps event-sexps)))
 
 (defun gen-global-init (interface)
   `((defmethod initialize-instance :after ((global global) &key)
@@ -252,7 +248,7 @@ argument feed."
   (let ((pkg-name (pkg-name interface)))
     (append
      `((defpackage ,pkg-name
-	 (:use :cl :wl :cffi)
+	 (:use :cl :wl :wl-ffi :cffi)
 	 (:nicknames ,(symbolify ":~a" (dash-name interface)))
 	 (:export dispatch global dispatch-bind
 		  ,@(mapcar 'symbolify (mapcar 'dash-name (requests interface)))
@@ -264,9 +260,8 @@ argument feed."
 	 (method_count :int)
 	 (methods (:pointer (:struct wl_message)))
 	 (event_count :int)
-	 (events (:pointer (:struct wl_message)))
-	 ,@(mapcar 'gen-request-c-struct (requests interface))))
-     `((defvar *interface* (cffi:foreign-alloc '(:struct interface)))))))
+	 (events (:pointer (:struct wl_message)))))
+     `((defvar *interface* nil)))))
 
 
 (defun gen-code (protocol)
@@ -289,31 +284,33 @@ argument feed."
      :depends-on (#:cffi #:cl-async #:bm-cl-wayland ,@(mapcar (lambda (dep) (symbolify "#:bm-cl-wayland.~a" dep)) deps))
      :components ((:file ,file)))))
 
+(defun symbolify-extract (target-string start end match-start match-end reg-starts reg-ends)
+  (declare (ignore match-start match-end start end))
+  (format nil "~a" (subseq target-string (aref reg-starts 0) (aref reg-ends 0))))
+
+(defun write-sexps (sexps stream)
+  (loop :for xep :in sexps
+	:do (let* ((sexp-string (format nil "~s" xep))
+		   (sexp-string (cl-ppcre:regex-replace-all "\"SYMBOLIFY ([^\"]+)\"" sexp-string 'symbolify-extract)))
+	      (format stream "~a~%~%" sexp-string))))
+
 (defun generate-wayland-classes (package xml-file &key (deps nil))
-  (dolist (dep deps) (asdf:load-system (symbolify "#:bm-cl-wayland.~a" dep)))
   (let* ((xml (with-open-file (s xml-file :if-does-not-exist :error) (xmls:parse s)))
 	 (protocol (read-protocol xml))
-	 ;; NOTE: Required so that we can compile cross package dependencies
-	 (pkg-names (mapcar 'name protocol))
-	 (pkgs (mapcar 'defpackages-during-compilation pkg-names))
 	 (code (gen-code protocol))
 	 (file (format nil "bm-cl-wayland.~a" (string-downcase package)))
 	 (asd (gen-asd package file deps)))
     (with-open-file (stream (format nil "~a.lisp" file) :direction :output :if-exists :supersede)
-      (loop :for xep :in code
-	    :do (format stream "~s~%~%" xep)))
+      (write-sexps code stream))
     (with-open-file (stream (format nil "~a.asd" file) :direction :output :if-exists :supersede)
-      (loop :for xep :in asd
-	    :do (format stream "~s~%~%" xep)))
-    (mapcar 'delete-package pkgs)
+      (write-sexps asd stream))
     t))
 
 ;; ┬ ┬┌┬┐┬┬
 ;; │ │ │ ││
 ;; └─┘ ┴ ┴┴─┘
 
-(defun symbolify (&rest args)
-  (read-from-string (apply 'format `(nil ,@args))))
+(defun symbolify (&rest args) (format nil "SYMBOLIFY ~a" (string-upcase (apply 'format nil args))))
 
 (defun nump (s)
   "Return t if `s' contains at least one character and all characters are numbers."

@@ -17,7 +17,9 @@
 	   global-get-name wl_message display-add-socket-fd display-run display-get-event-loop event-loop-get-fd
 	   event-loop-dispatch display-flush-clients ptr debug-log! resource-set-dispatcher dispatch-impl
 	   wl_resource *resource-tracker* wl_argument id client mk-if resource-post-event-array
-	   init-interface-definitions interface-exists-test))
+	   init-interface-definitions interface-exists-test
+	   name version method_count methods event_count events
+	   signature types))
 (in-package :bm-cl-wayland)
 
 (defclass object ()
