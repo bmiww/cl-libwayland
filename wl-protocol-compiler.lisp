@@ -47,7 +47,7 @@ This can be overriden by inheritance in case if custom behaviour is required." (
 	  (funcall 'dispatch-bind global client (null-pointer) version id))))))
 
 (defun gen-interface-var-fill (interface)
-  `((eval-when (:load-toplevel :execute)
+  `((eval-when (:compile-toplevel :load-toplevel :execute)
       (setf (foreign-slot-value *interface* '(:struct interface) 'name) (foreign-string-alloc ,(name interface))
 	    (foreign-slot-value *interface* '(:struct interface) 'version) ,(version interface)
 	    (foreign-slot-value *interface* '(:struct interface) 'method_count) ,(length (requests interface))
@@ -56,34 +56,30 @@ This can be overriden by inheritance in case if custom behaviour is required." (
 	    (foreign-slot-value *interface* '(:struct interface) 'events) ,(symbolify "*events*")))))
 
 (defun gen-c-struct-filler (var-name methods)
-  `((eval-when (:load-toplevel :execute)
+  `((eval-when (:compile-toplevel :load-toplevel :execute)
       (defvar ,var-name
 	(let ((messages (cffi:foreign-alloc '(:struct wl_message)
 					    :count ,(length methods))))
-	  ,@(mapcar
-	     (lambda (method)
-	       `(let ((interface-array (cffi:foreign-alloc '(:pointer (:pointer :void))
-							   :count ,(length (args method)))))
-		  ,@(append
-		     ;; Code to fill the interface array with references to interface definitions
-		     (loop for index below (length (args method))
-			   collect (let ((arg (nth index (args method))))
-				     `(setf (mem-aref interface-array :pointer ,index)
-					    ,(if (interface arg)
-						 (symbolify "~a::*interface*" (interface arg))
-						 `(null-pointer)))))
-		     `((setf (foreign-slot-value messages '(:struct wl_message) 'wl-ffi::name)
-			     (foreign-string-alloc ,(name method))
-
-			     (foreign-slot-value messages '(:struct wl_message) 'wl-ffi::signature)
-			     ;; TODO: Do signature - you already started in the parser
-			     (foreign-string-alloc ,(signature method))
-
-			     (foreign-slot-value messages '(:struct wl_message) 'wl-ffi::types)
-			     ;; TODO: This should instead be a reference to an interface.
-			     ;; The interface in question could actually span different packages. So a pain in the neck.
-			     interface-array)))))
-	     methods)
+	  ,@(loop for opcode below (length methods)
+		  for method = (nth opcode methods)
+		  collect
+		  `(let ((interface-array (cffi:foreign-alloc '(:pointer (:pointer :void))
+							      :count ,(length (args method))))
+			 (msg-ptr (mem-aptr messages '(:struct wl_message) ,opcode)))
+		     ,@(append
+			;; Code to fill the interface array with references to interface definitions
+			(loop for index below (length (args method))
+			      collect (let ((arg (nth index (args method))))
+					`(setf (mem-aref interface-array :pointer ,index)
+					       ,(if (interface arg)
+						    (symbolify "~a::*interface*" (interface arg))
+						    `(null-pointer)))))
+			`((setf (foreign-slot-value msg-ptr '(:struct wl_message) 'wl-ffi::name)
+				(foreign-string-alloc ,(name method))
+				(foreign-slot-value msg-ptr '(:struct wl_message) 'wl-ffi::signature)
+				(foreign-string-alloc ,(signature method))
+				(foreign-slot-value msg-ptr '(:struct wl_message) 'wl-ffi::types)
+				interface-array)))))
 	  messages)))))
 
 ;; TODO: This is a bit annoying - since it loosly refers to the args symbol
@@ -219,7 +215,7 @@ argument feed."
      (mapcar 'gen-request-generic (requests interface))
      (gen-interface-c-structs interface)
      (gen-dispatcher-c-callback interface)
-     `((eval-when (:load-toplevel :execute)
+     `((eval-when (:compile-toplevel :load-toplevel :execute)
 	 (defvar *dispatcher* (callback ,(symbolify "dispatcher-ffi")))))
      (gen-dispatch-init)
      (gen-events interface)
@@ -229,7 +225,7 @@ argument feed."
 	 (:documentation ,(description interface))))
      (gen-bind-callback interface)
      (gen-bind-c-callback interface)
-     `((eval-when (:load-toplevel :execute)
+     `((eval-when (:compile-toplevel :load-toplevel :execute)
 	 (defvar *dispatch-bind* (callback ,(symbolify "dispatch-bind-ffi")))))
      (gen-global-init interface))))
 
@@ -254,8 +250,9 @@ argument feed."
 	 (event_count :int)
 	 (events (:pointer (:struct wl_message)))
 	 ,@(mapcar 'gen-request-c-struct (requests interface))))
-     `((eval-when (:load-toplevel :execute)
+     `((eval-when (:compile-toplevel :load-toplevel :execute)
 	 (defvar *interface* (cffi:foreign-alloc '(:struct interface))))))))
+
 
 (defun gen-code (protocol)
   (append
