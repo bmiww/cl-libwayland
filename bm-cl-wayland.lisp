@@ -16,7 +16,8 @@
 	   get-data pop-data display create-resource reserve-data global-create version data-ptr set-data
 	   global-get-name wl_message display-add-socket-fd display-run display-get-event-loop event-loop-get-fd
 	   event-loop-dispatch display-flush-clients ptr debug-log! resource-set-dispatcher dispatch-impl
-	   wl_resource *resource-tracker* wl_argument id client mk-if resource-post-event-array))
+	   wl_resource *resource-tracker* wl_argument id client mk-if resource-post-event-array
+	   init-interface-definitions))
 (in-package :bm-cl-wayland)
 
 (defclass object ()
@@ -32,6 +33,11 @@
 
 ;; Uses integer value pointer addresses as keys
 (defvar *global-tracker* (make-hash-table :test 'eq))
+
+(defvar *interface-init-list* nil)
+(defun init-interface-definitions ()
+  (loop for init in (reverse *interface-init-list*) do (funcall init))
+  (setf *interface-init-list* nil))
 
 (defclass global (object)
   ((dispatch-impl :initarg :dispatch-impl :reader dispatch-impl)))

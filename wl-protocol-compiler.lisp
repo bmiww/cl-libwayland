@@ -46,12 +46,19 @@ This can be overriden by inheritance in case if custom behaviour is required." (
 	  (funcall 'dispatch-bind global client (null-pointer) version id)))))
 
 (defun gen-interface-var-fill (interface)
-  `((setf (foreign-slot-value *interface* '(:struct interface) 'name) (foreign-string-alloc ,(name interface))
-	    (foreign-slot-value *interface* '(:struct interface) 'version) ,(version interface)
-	    (foreign-slot-value *interface* '(:struct interface) 'method_count) ,(length (requests interface))
-	    (foreign-slot-value *interface* '(:struct interface) 'methods) ,(symbolify "*requests*")
-	    (foreign-slot-value *interface* '(:struct interface) 'event_count) ,(length (events interface))
-	    (foreign-slot-value *interface* '(:struct interface) 'events) ,(symbolify "*events*"))))
+  `((push
+     (lambda ()
+       (debug-log! "Filling if struct for ~a~%" ,(name interface))
+       (debug-log! "IF before: ~a --- ~a~%" *interface* (mem-aptr *interface* '(:struct interface) 1))
+       (setf *interface* (foreign-alloc '(:struct interface)))
+       (debug-log! "IF after: ~a~%" *interface*)
+       (setf (foreign-slot-value *interface* '(:struct interface) 'name) (foreign-string-alloc ,(name interface))
+	     (foreign-slot-value *interface* '(:struct interface) 'version) ,(version interface)
+	     (foreign-slot-value *interface* '(:struct interface) 'method_count) ,(length (requests interface))
+	     (foreign-slot-value *interface* '(:struct interface) 'methods) ,(symbolify "*requests*")
+	     (foreign-slot-value *interface* '(:struct interface) 'event_count) ,(length (events interface))
+	     (foreign-slot-value *interface* '(:struct interface) 'events) ,(symbolify "*events*")))
+     wl::*interface-init-list*)))
 
 (defun gen-c-struct-filler (var-name methods)
   `((defvar ,var-name
