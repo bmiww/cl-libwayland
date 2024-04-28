@@ -50,7 +50,6 @@
   (o :pointer)                      ;; object - usually reference to some wl_resource
   (n :uint)                         ;; new_id
   (a (:pointer (:struct wl_array))) ;; array
-  ;; (a :pointer) ;; array
   (h :int))                         ;; file descriptor
 
 ;; ┌─┐┬ ┬┌┐┌┌─┐┌─┐
