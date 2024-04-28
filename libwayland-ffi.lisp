@@ -37,10 +37,9 @@
   (dispatcher :pointer)
   (destroy_signal :pointer))
 
-;; THESE STUPID :UINT64 - WHY IS :UINT NOT DEFAULTING TO :UINT64 ???????
 (defcstruct wl_array
-  (size :uint64)
-  (alloc :uint64)
+  (size :size)
+  (alloc :size)
   (data :pointer))
 
 (defcunion wl_argument
