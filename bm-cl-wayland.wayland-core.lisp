@@ -538,7 +538,7 @@ The core global object.  This is a special singleton object.  It
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
-       (DEBUG-LOG! "Dispatching ~a~%" "sync")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_display" "sync")
        (FUNCALL 'SYNC RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -546,7 +546,7 @@ The core global object.  This is a special singleton object.  It
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::N))))
       (1
-       (DEBUG-LOG! "Dispatching ~a~%" "get-registry")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_display" "get-registry")
        (FUNCALL 'GET-REGISTRY RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -723,7 +723,7 @@ The singleton global registry object.  The server has a number of
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
-       (DEBUG-LOG! "Dispatching ~a~%" "bind")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_registry" "bind")
        (FUNCALL 'BIND RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -882,7 +882,7 @@ Clients can handle the 'done' event to get notified when
   (DECLARE (IGNORE DATA MESSAGE ARGS TARGET OPCODE))
   (ERROR
    (FORMAT NIL
-           "A dispatcher wiwthout requests has been called for interface: ~a~%"
+           "A dispatcher without requests has been called for interface: ~a~%"
            "wl_callback"))
   0)
 
@@ -1014,7 +1014,7 @@ A compositor.  This object is a singleton global.  The
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
-       (DEBUG-LOG! "Dispatching ~a~%" "create-surface")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_compositor" "create-surface")
        (FUNCALL 'CREATE-SURFACE RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -1022,7 +1022,7 @@ A compositor.  This object is a singleton global.  The
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::N))))
       (1
-       (DEBUG-LOG! "Dispatching ~a~%" "create-region")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_compositor" "create-region")
        (FUNCALL 'CREATE-REGION RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -1173,7 +1173,7 @@ The wl_shm_pool object encapsulates a piece of memory shared
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
-       (DEBUG-LOG! "Dispatching ~a~%" "create-buffer")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shm_pool" "create-buffer")
        (FUNCALL 'CREATE-BUFFER RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -1206,10 +1206,10 @@ The wl_shm_pool object encapsulates a piece of memory shared
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::U))))
       (1
-       (DEBUG-LOG! "Dispatching ~a~%" "destroy")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shm_pool" "destroy")
        (FUNCALL 'DESTROY RESOURCE))
       (2
-       (DEBUG-LOG! "Dispatching ~a~%" "resize")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shm_pool" "resize")
        (FUNCALL 'RESIZE RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -1342,7 +1342,7 @@ A singleton global object that provides support for shared
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
-       (DEBUG-LOG! "Dispatching ~a~%" "create-pool")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shm" "create-pool")
        (FUNCALL 'CREATE-POOL RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -1500,7 +1500,7 @@ A buffer provides the content for a wl_surface. Buffers are
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
-       (DEBUG-LOG! "Dispatching ~a~%" "destroy")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_buffer" "destroy")
        (FUNCALL 'DESTROY RESOURCE))))
   0)
 
@@ -1711,7 +1711,7 @@ A wl_data_offer represents a piece of data offered for transfer
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
-       (DEBUG-LOG! "Dispatching ~a~%" "accept")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_offer" "accept")
        (FUNCALL 'ACCEPT RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -1724,7 +1724,7 @@ A wl_data_offer represents a piece of data offered for transfer
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::S))))
       (1
-       (DEBUG-LOG! "Dispatching ~a~%" "receive")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_offer" "receive")
        (FUNCALL 'RECEIVE RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -1737,13 +1737,13 @@ A wl_data_offer represents a piece of data offered for transfer
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::H))))
       (2
-       (DEBUG-LOG! "Dispatching ~a~%" "destroy")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_offer" "destroy")
        (FUNCALL 'DESTROY RESOURCE))
       (3
-       (DEBUG-LOG! "Dispatching ~a~%" "finish")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_offer" "finish")
        (FUNCALL 'FINISH RESOURCE))
       (4
-       (DEBUG-LOG! "Dispatching ~a~%" "set-actions")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_offer" "set-actions")
        (FUNCALL 'SET-ACTIONS RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -1978,7 +1978,7 @@ The wl_data_source object is the source side of a wl_data_offer.
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
-       (DEBUG-LOG! "Dispatching ~a~%" "offer")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_source" "offer")
        (FUNCALL 'OFFER RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -1986,10 +1986,10 @@ The wl_data_source object is the source side of a wl_data_offer.
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::S))))
       (1
-       (DEBUG-LOG! "Dispatching ~a~%" "destroy")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_source" "destroy")
        (FUNCALL 'DESTROY RESOURCE))
       (2
-       (DEBUG-LOG! "Dispatching ~a~%" "set-actions")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_source" "set-actions")
        (FUNCALL 'SET-ACTIONS RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -2251,7 +2251,7 @@ There is one wl_data_device per seat which can be obtained
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
-       (DEBUG-LOG! "Dispatching ~a~%" "start-drag")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_device" "start-drag")
        (FUNCALL 'START-DRAG RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
@@ -2280,7 +2280,7 @@ There is one wl_data_device per seat which can be obtained
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::U))))
       (1
-       (DEBUG-LOG! "Dispatching ~a~%" "set-selection")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_device" "set-selection")
        (FUNCALL 'SET-SELECTION RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
@@ -2295,7 +2295,7 @@ There is one wl_data_device per seat which can be obtained
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::U))))
       (2
-       (DEBUG-LOG! "Dispatching ~a~%" "release")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_device" "release")
        (FUNCALL 'RELEASE RESOURCE))))
   0)
 
@@ -2500,7 +2500,8 @@ The wl_data_device_manager is a singleton global object that
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
-       (DEBUG-LOG! "Dispatching ~a~%" "create-data-source")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_device_manager"
+        "create-data-source")
        (FUNCALL 'CREATE-DATA-SOURCE RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -2508,7 +2509,8 @@ The wl_data_device_manager is a singleton global object that
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::N))))
       (1
-       (DEBUG-LOG! "Dispatching ~a~%" "get-data-device")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_device_manager"
+        "get-data-device")
        (FUNCALL 'GET-DATA-DEVICE RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -2641,7 +2643,7 @@ This interface is implemented by servers that provide
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
-       (DEBUG-LOG! "Dispatching ~a~%" "get-shell-surface")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shell" "get-shell-surface")
        (FUNCALL 'GET-SHELL-SURFACE RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -2940,7 +2942,7 @@ An interface that may be implemented by a wl_surface, for
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
-       (DEBUG-LOG! "Dispatching ~a~%" "pong")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shell_surface" "pong")
        (FUNCALL 'PONG RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -2948,7 +2950,7 @@ An interface that may be implemented by a wl_surface, for
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::U))))
       (1
-       (DEBUG-LOG! "Dispatching ~a~%" "move")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shell_surface" "move")
        (FUNCALL 'MOVE RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
@@ -2963,7 +2965,7 @@ An interface that may be implemented by a wl_surface, for
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::U))))
       (2
-       (DEBUG-LOG! "Dispatching ~a~%" "resize")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shell_surface" "resize")
        (FUNCALL 'RESIZE RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
@@ -2983,10 +2985,10 @@ An interface that may be implemented by a wl_surface, for
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::U))))
       (3
-       (DEBUG-LOG! "Dispatching ~a~%" "set-toplevel")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shell_surface" "set-toplevel")
        (FUNCALL 'SET-TOPLEVEL RESOURCE))
       (4
-       (DEBUG-LOG! "Dispatching ~a~%" "set-transient")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shell_surface" "set-transient")
        (FUNCALL 'SET-TRANSIENT RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
@@ -3011,7 +3013,7 @@ An interface that may be implemented by a wl_surface, for
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::U))))
       (5
-       (DEBUG-LOG! "Dispatching ~a~%" "set-fullscreen")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shell_surface" "set-fullscreen")
        (FUNCALL 'SET-FULLSCREEN RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -3031,7 +3033,7 @@ An interface that may be implemented by a wl_surface, for
                    'WL-FFI::O))
                  *RESOURCE-TRACKER*)))
       (6
-       (DEBUG-LOG! "Dispatching ~a~%" "set-popup")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shell_surface" "set-popup")
        (FUNCALL 'SET-POPUP RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
@@ -3068,7 +3070,7 @@ An interface that may be implemented by a wl_surface, for
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::U))))
       (7
-       (DEBUG-LOG! "Dispatching ~a~%" "set-maximized")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shell_surface" "set-maximized")
        (FUNCALL 'SET-MAXIMIZED RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
@@ -3078,7 +3080,7 @@ An interface that may be implemented by a wl_surface, for
                    'WL-FFI::O))
                  *RESOURCE-TRACKER*)))
       (8
-       (DEBUG-LOG! "Dispatching ~a~%" "set-title")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shell_surface" "set-title")
        (FUNCALL 'SET-TITLE RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -3086,7 +3088,7 @@ An interface that may be implemented by a wl_surface, for
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::S))))
       (9
-       (DEBUG-LOG! "Dispatching ~a~%" "set-class")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shell_surface" "set-class")
        (FUNCALL 'SET-CLASS RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -3466,10 +3468,10 @@ A surface is a rectangular area that may be displayed on zero
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
-       (DEBUG-LOG! "Dispatching ~a~%" "destroy")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_surface" "destroy")
        (FUNCALL 'DESTROY RESOURCE))
       (1
-       (DEBUG-LOG! "Dispatching ~a~%" "attach")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_surface" "attach")
        (FUNCALL 'ATTACH RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
@@ -3489,7 +3491,7 @@ A surface is a rectangular area that may be displayed on zero
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::I))))
       (2
-       (DEBUG-LOG! "Dispatching ~a~%" "damage")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_surface" "damage")
        (FUNCALL 'DAMAGE RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -3512,7 +3514,7 @@ A surface is a rectangular area that may be displayed on zero
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::I))))
       (3
-       (DEBUG-LOG! "Dispatching ~a~%" "frame")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_surface" "frame")
        (FUNCALL 'FRAME RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -3520,7 +3522,7 @@ A surface is a rectangular area that may be displayed on zero
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::N))))
       (4
-       (DEBUG-LOG! "Dispatching ~a~%" "set-opaque-region")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_surface" "set-opaque-region")
        (FUNCALL 'SET-OPAQUE-REGION RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
@@ -3530,7 +3532,7 @@ A surface is a rectangular area that may be displayed on zero
                    'WL-FFI::O))
                  *RESOURCE-TRACKER*)))
       (5
-       (DEBUG-LOG! "Dispatching ~a~%" "set-input-region")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_surface" "set-input-region")
        (FUNCALL 'SET-INPUT-REGION RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
@@ -3540,10 +3542,10 @@ A surface is a rectangular area that may be displayed on zero
                    'WL-FFI::O))
                  *RESOURCE-TRACKER*)))
       (6
-       (DEBUG-LOG! "Dispatching ~a~%" "commit")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_surface" "commit")
        (FUNCALL 'COMMIT RESOURCE))
       (7
-       (DEBUG-LOG! "Dispatching ~a~%" "set-buffer-transform")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_surface" "set-buffer-transform")
        (FUNCALL 'SET-BUFFER-TRANSFORM RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -3551,7 +3553,7 @@ A surface is a rectangular area that may be displayed on zero
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::U))))
       (8
-       (DEBUG-LOG! "Dispatching ~a~%" "set-buffer-scale")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_surface" "set-buffer-scale")
        (FUNCALL 'SET-BUFFER-SCALE RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -3559,7 +3561,7 @@ A surface is a rectangular area that may be displayed on zero
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::I))))
       (9
-       (DEBUG-LOG! "Dispatching ~a~%" "damage-buffer")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_surface" "damage-buffer")
        (FUNCALL 'DAMAGE-BUFFER RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -3582,7 +3584,7 @@ A surface is a rectangular area that may be displayed on zero
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::I))))
       (10
-       (DEBUG-LOG! "Dispatching ~a~%" "offset")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_surface" "offset")
        (FUNCALL 'OFFSET RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -3836,7 +3838,7 @@ A seat is a group of keyboards, pointer and touch devices. This
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
-       (DEBUG-LOG! "Dispatching ~a~%" "get-pointer")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_seat" "get-pointer")
        (FUNCALL 'GET-POINTER RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -3844,7 +3846,7 @@ A seat is a group of keyboards, pointer and touch devices. This
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::N))))
       (1
-       (DEBUG-LOG! "Dispatching ~a~%" "get-keyboard")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_seat" "get-keyboard")
        (FUNCALL 'GET-KEYBOARD RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -3852,7 +3854,7 @@ A seat is a group of keyboards, pointer and touch devices. This
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::N))))
       (2
-       (DEBUG-LOG! "Dispatching ~a~%" "get-touch")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_seat" "get-touch")
        (FUNCALL 'GET-TOUCH RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -3860,7 +3862,7 @@ A seat is a group of keyboards, pointer and touch devices. This
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::N))))
       (3
-       (DEBUG-LOG! "Dispatching ~a~%" "release")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_seat" "release")
        (FUNCALL 'RELEASE RESOURCE))))
   0)
 
@@ -4134,7 +4136,7 @@ The wl_pointer interface represents one or more input devices,
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
-       (DEBUG-LOG! "Dispatching ~a~%" "set-cursor")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_pointer" "set-cursor")
        (FUNCALL 'SET-CURSOR RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -4159,7 +4161,7 @@ The wl_pointer interface represents one or more input devices,
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::I))))
       (1
-       (DEBUG-LOG! "Dispatching ~a~%" "release")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_pointer" "release")
        (FUNCALL 'RELEASE RESOURCE))))
   0)
 
@@ -4511,7 +4513,7 @@ The wl_keyboard interface represents one or more keyboards
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
-       (DEBUG-LOG! "Dispatching ~a~%" "release")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_keyboard" "release")
        (FUNCALL 'RELEASE RESOURCE))))
   0)
 
@@ -4832,7 +4834,7 @@ The wl_touch interface represents a touchscreen
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
-       (DEBUG-LOG! "Dispatching ~a~%" "release")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_touch" "release")
        (FUNCALL 'RELEASE RESOURCE))))
   0)
 
@@ -5129,7 +5131,7 @@ An output describes part of the compositor geometry.  The
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
-       (DEBUG-LOG! "Dispatching ~a~%" "release")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_output" "release")
        (FUNCALL 'RELEASE RESOURCE))))
   0)
 
@@ -5371,10 +5373,10 @@ A region object describes an area.
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
-       (DEBUG-LOG! "Dispatching ~a~%" "destroy")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_region" "destroy")
        (FUNCALL 'DESTROY RESOURCE))
       (1
-       (DEBUG-LOG! "Dispatching ~a~%" "add")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_region" "add")
        (FUNCALL 'ADD RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -5397,7 +5399,7 @@ A region object describes an area.
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::I))))
       (2
-       (DEBUG-LOG! "Dispatching ~a~%" "subtract")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_region" "subtract")
        (FUNCALL 'SUBTRACT RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -5561,10 +5563,10 @@ The global interface exposing sub-surface compositing capabilities.
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
-       (DEBUG-LOG! "Dispatching ~a~%" "destroy")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_subcompositor" "destroy")
        (FUNCALL 'DESTROY RESOURCE))
       (1
-       (DEBUG-LOG! "Dispatching ~a~%" "get-subsurface")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_subcompositor" "get-subsurface")
        (FUNCALL 'GET-SUBSURFACE RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -5818,10 +5820,10 @@ An additional interface to a wl_surface object, which has been
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
-       (DEBUG-LOG! "Dispatching ~a~%" "destroy")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_subsurface" "destroy")
        (FUNCALL 'DESTROY RESOURCE))
       (1
-       (DEBUG-LOG! "Dispatching ~a~%" "set-position")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_subsurface" "set-position")
        (FUNCALL 'SET-POSITION RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -5834,7 +5836,7 @@ An additional interface to a wl_surface object, which has been
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::I))))
       (2
-       (DEBUG-LOG! "Dispatching ~a~%" "place-above")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_subsurface" "place-above")
        (FUNCALL 'PLACE-ABOVE RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
@@ -5844,7 +5846,7 @@ An additional interface to a wl_surface object, which has been
                    'WL-FFI::O))
                  *RESOURCE-TRACKER*)))
       (3
-       (DEBUG-LOG! "Dispatching ~a~%" "place-below")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_subsurface" "place-below")
        (FUNCALL 'PLACE-BELOW RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
@@ -5854,10 +5856,10 @@ An additional interface to a wl_surface object, which has been
                    'WL-FFI::O))
                  *RESOURCE-TRACKER*)))
       (4
-       (DEBUG-LOG! "Dispatching ~a~%" "set-sync")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_subsurface" "set-sync")
        (FUNCALL 'SET-SYNC RESOURCE))
       (5
-       (DEBUG-LOG! "Dispatching ~a~%" "set-desync")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "wl_subsurface" "set-desync")
        (FUNCALL 'SET-DESYNC RESOURCE))))
   0)
 

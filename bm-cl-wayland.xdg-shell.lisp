@@ -231,10 +231,10 @@ The xdg_wm_base interface is exposed as a global object enabling clients
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
-       (DEBUG-LOG! "Dispatching ~a~%" "destroy")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_wm_base" "destroy")
        (FUNCALL 'DESTROY RESOURCE))
       (1
-       (DEBUG-LOG! "Dispatching ~a~%" "create-positioner")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_wm_base" "create-positioner")
        (FUNCALL 'CREATE-POSITIONER RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -242,7 +242,7 @@ The xdg_wm_base interface is exposed as a global object enabling clients
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::N))))
       (2
-       (DEBUG-LOG! "Dispatching ~a~%" "get-xdg-surface")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_wm_base" "get-xdg-surface")
        (FUNCALL 'GET-XDG-SURFACE RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -257,7 +257,7 @@ The xdg_wm_base interface is exposed as a global object enabling clients
                    'WL-FFI::O))
                  *RESOURCE-TRACKER*)))
       (3
-       (DEBUG-LOG! "Dispatching ~a~%" "pong")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_wm_base" "pong")
        (FUNCALL 'PONG RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -521,10 +521,10 @@ The xdg_positioner provides a collection of rules for the placement of a
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
-       (DEBUG-LOG! "Dispatching ~a~%" "destroy")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner" "destroy")
        (FUNCALL 'DESTROY RESOURCE))
       (1
-       (DEBUG-LOG! "Dispatching ~a~%" "set-size")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner" "set-size")
        (FUNCALL 'SET-SIZE RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -537,7 +537,7 @@ The xdg_positioner provides a collection of rules for the placement of a
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::I))))
       (2
-       (DEBUG-LOG! "Dispatching ~a~%" "set-anchor-rect")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner" "set-anchor-rect")
        (FUNCALL 'SET-ANCHOR-RECT RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -560,7 +560,7 @@ The xdg_positioner provides a collection of rules for the placement of a
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::I))))
       (3
-       (DEBUG-LOG! "Dispatching ~a~%" "set-anchor")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner" "set-anchor")
        (FUNCALL 'SET-ANCHOR RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -568,7 +568,7 @@ The xdg_positioner provides a collection of rules for the placement of a
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::U))))
       (4
-       (DEBUG-LOG! "Dispatching ~a~%" "set-gravity")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner" "set-gravity")
        (FUNCALL 'SET-GRAVITY RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -576,7 +576,8 @@ The xdg_positioner provides a collection of rules for the placement of a
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::U))))
       (5
-       (DEBUG-LOG! "Dispatching ~a~%" "set-constraint-adjustment")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner"
+        "set-constraint-adjustment")
        (FUNCALL 'SET-CONSTRAINT-ADJUSTMENT RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -584,7 +585,7 @@ The xdg_positioner provides a collection of rules for the placement of a
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::U))))
       (6
-       (DEBUG-LOG! "Dispatching ~a~%" "set-offset")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner" "set-offset")
        (FUNCALL 'SET-OFFSET RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -597,10 +598,10 @@ The xdg_positioner provides a collection of rules for the placement of a
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::I))))
       (7
-       (DEBUG-LOG! "Dispatching ~a~%" "set-reactive")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner" "set-reactive")
        (FUNCALL 'SET-REACTIVE RESOURCE))
       (8
-       (DEBUG-LOG! "Dispatching ~a~%" "set-parent-size")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner" "set-parent-size")
        (FUNCALL 'SET-PARENT-SIZE RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -613,7 +614,8 @@ The xdg_positioner provides a collection of rules for the placement of a
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::I))))
       (9
-       (DEBUG-LOG! "Dispatching ~a~%" "set-parent-configure")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner"
+        "set-parent-configure")
        (FUNCALL 'SET-PARENT-CONFIGURE RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -859,10 +861,10 @@ An interface that may be implemented by a wl_surface, for
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
-       (DEBUG-LOG! "Dispatching ~a~%" "destroy")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_surface" "destroy")
        (FUNCALL 'DESTROY RESOURCE))
       (1
-       (DEBUG-LOG! "Dispatching ~a~%" "get-toplevel")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_surface" "get-toplevel")
        (FUNCALL 'GET-TOPLEVEL RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -870,7 +872,7 @@ An interface that may be implemented by a wl_surface, for
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::N))))
       (2
-       (DEBUG-LOG! "Dispatching ~a~%" "get-popup")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_surface" "get-popup")
        (FUNCALL 'GET-POPUP RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -892,7 +894,7 @@ An interface that may be implemented by a wl_surface, for
                    'WL-FFI::O))
                  *RESOURCE-TRACKER*)))
       (3
-       (DEBUG-LOG! "Dispatching ~a~%" "set-window-geometry")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_surface" "set-window-geometry")
        (FUNCALL 'SET-WINDOW-GEOMETRY RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -915,7 +917,7 @@ An interface that may be implemented by a wl_surface, for
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::I))))
       (4
-       (DEBUG-LOG! "Dispatching ~a~%" "ack-configure")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_surface" "ack-configure")
        (FUNCALL 'ACK-CONFIGURE RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -1320,10 +1322,10 @@ This interface defines an xdg_surface role which allows a surface to,
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
-       (DEBUG-LOG! "Dispatching ~a~%" "destroy")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "destroy")
        (FUNCALL 'DESTROY RESOURCE))
       (1
-       (DEBUG-LOG! "Dispatching ~a~%" "set-parent")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "set-parent")
        (FUNCALL 'SET-PARENT RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
@@ -1333,7 +1335,7 @@ This interface defines an xdg_surface role which allows a surface to,
                    'WL-FFI::O))
                  *RESOURCE-TRACKER*)))
       (2
-       (DEBUG-LOG! "Dispatching ~a~%" "set-title")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "set-title")
        (FUNCALL 'SET-TITLE RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -1341,7 +1343,7 @@ This interface defines an xdg_surface role which allows a surface to,
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::S))))
       (3
-       (DEBUG-LOG! "Dispatching ~a~%" "set-app-id")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "set-app-id")
        (FUNCALL 'SET-APP-ID RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -1349,7 +1351,7 @@ This interface defines an xdg_surface role which allows a surface to,
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::S))))
       (4
-       (DEBUG-LOG! "Dispatching ~a~%" "show-window-menu")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "show-window-menu")
        (FUNCALL 'SHOW-WINDOW-MENU RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
@@ -1374,7 +1376,7 @@ This interface defines an xdg_surface role which allows a surface to,
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::I))))
       (5
-       (DEBUG-LOG! "Dispatching ~a~%" "move")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "move")
        (FUNCALL 'MOVE RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
@@ -1389,7 +1391,7 @@ This interface defines an xdg_surface role which allows a surface to,
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::U))))
       (6
-       (DEBUG-LOG! "Dispatching ~a~%" "resize")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "resize")
        (FUNCALL 'RESIZE RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
@@ -1409,7 +1411,7 @@ This interface defines an xdg_surface role which allows a surface to,
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::U))))
       (7
-       (DEBUG-LOG! "Dispatching ~a~%" "set-max-size")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "set-max-size")
        (FUNCALL 'SET-MAX-SIZE RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -1422,7 +1424,7 @@ This interface defines an xdg_surface role which allows a surface to,
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::I))))
       (8
-       (DEBUG-LOG! "Dispatching ~a~%" "set-min-size")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "set-min-size")
        (FUNCALL 'SET-MIN-SIZE RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -1435,13 +1437,13 @@ This interface defines an xdg_surface role which allows a surface to,
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::I))))
       (9
-       (DEBUG-LOG! "Dispatching ~a~%" "set-maximized")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "set-maximized")
        (FUNCALL 'SET-MAXIMIZED RESOURCE))
       (10
-       (DEBUG-LOG! "Dispatching ~a~%" "unset-maximized")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "unset-maximized")
        (FUNCALL 'UNSET-MAXIMIZED RESOURCE))
       (11
-       (DEBUG-LOG! "Dispatching ~a~%" "set-fullscreen")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "set-fullscreen")
        (FUNCALL 'SET-FULLSCREEN RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
@@ -1451,10 +1453,10 @@ This interface defines an xdg_surface role which allows a surface to,
                    'WL-FFI::O))
                  *RESOURCE-TRACKER*)))
       (12
-       (DEBUG-LOG! "Dispatching ~a~%" "unset-fullscreen")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "unset-fullscreen")
        (FUNCALL 'UNSET-FULLSCREEN RESOURCE))
       (13
-       (DEBUG-LOG! "Dispatching ~a~%" "set-minimized")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "set-minimized")
        (FUNCALL 'SET-MINIMIZED RESOURCE))))
   0)
 
@@ -1490,7 +1492,7 @@ This interface defines an xdg_surface role which allows a surface to,
                    (DATA (FOREIGN-ALLOC :UINT32 :COUNT LENGTH)))
               (LOOP FOR INDEX BELOW LENGTH
                     DO (SETF (MEM-AREF DATA :UINT32 INDEX)
-                             (NTH INDEX STATES)))
+                               (NTH INDEX STATES)))
               (SETF (FOREIGN-SLOT-VALUE STRUCT '(:STRUCT WL_ARRAY)
                      'BM-CL-LIBWAYLAND::SIZE)
                       LENGTH
@@ -1742,10 +1744,10 @@ A popup surface is a short-lived, temporary surface. It can be used to
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
-       (DEBUG-LOG! "Dispatching ~a~%" "destroy")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_popup" "destroy")
        (FUNCALL 'DESTROY RESOURCE))
       (1
-       (DEBUG-LOG! "Dispatching ~a~%" "grab")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_popup" "grab")
        (FUNCALL 'GRAB RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
@@ -1760,7 +1762,7 @@ A popup surface is a short-lived, temporary surface. It can be used to
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::U))))
       (2
-       (DEBUG-LOG! "Dispatching ~a~%" "reposition")
+       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_popup" "reposition")
        (FUNCALL 'REPOSITION RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
@@ -1881,3 +1883,4 @@ This can be overriden by inheritance in case if custom behaviour is required."
     (SETF (BM-CL-WAYLAND:PTR GLOBAL) GLOBAL-PTR)
     (SET-DATA NEXT-DATA-ID
      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR) *GLOBAL-TRACKER*) GLOBAL))))
+
