@@ -38,7 +38,7 @@ This can be overriden by inheritance in case if custom behaviour is required." (
       (let ((bound (make-instance (dispatch-impl global) :display (display client) :client client :id id)))
 	(setf (iface client id) bound)))))
 
-(defun gen-bind-c-callback (interface)
+(defun gen-bind-c-callback ()
   `((cl-async::define-c-callback dispatch-bind-ffi :void ((client :pointer) (data :pointer) (version :uint) (id :uint))
 	(let* ((client (get-client client))
 	       (global (get-data data)))
@@ -63,7 +63,9 @@ This can be overriden by inheritance in case if custom behaviour is required." (
       ("fixed" `(values ,selector))
       ("fd" `(values ,selector))
       ("string" `(values ,selector))
-      ("enum" `(error "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+      ;; TODO: You wanted to create a lisp list with keywords. For now just leaving as is/or as uint
+      ;; ("enum" `(error "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+      ("enum" `(values ,selector))
       ("object" `(gethash (pointer-address ,selector) *resource-tracker*))
       ;; TODO: You don't know yet how to handle the darn arrays - so just error out here :)
       ("array" `(error "WL C ARRAY PARSING NOT IMPLEMENTED")))))
@@ -215,6 +217,9 @@ argument feed."
 	      collect (gen-event event index))
 	nil)))
 
+(defun has-destroy-request (interface)
+  (some (lambda (request) (string= (name request) "destroy")) (requests interface)))
+
 (defun pkg-name (interface)
   (symbolify ":~a" (name interface)))
 
@@ -226,6 +231,11 @@ argument feed."
 	 (:default-initargs :version ,(version interface))
 	 (:documentation ,(description interface))))
      (mapcar 'gen-request-generic (requests interface))
+     (if (has-destroy-request interface)
+       `((defmethod destroy ((dispatch dispatch))
+	   (debug-log! "Destroying dispatch object: ~a~%" ,(name interface))
+	   (when (slot-boundp dispatch 'destroy) (funcall (slot-value dispatch 'destroy) dispatch))))
+       nil)
      (gen-interface-c-structs interface)
      (gen-dispatcher-c-callback interface)
      `((defvar *dispatcher* (callback ,(symbolify "dispatcher-ffi"))))
@@ -236,7 +246,7 @@ argument feed."
 	 (:default-initargs :version ,(version interface) :dispatch-impl 'dispatch)
 	 (:documentation ,(description interface))))
      (gen-bind-callback interface)
-     (gen-bind-c-callback interface)
+     (gen-bind-c-callback)
      `((defvar *dispatch-bind* (callback ,(symbolify "dispatch-bind-ffi"))))
      (gen-global-init interface))))
 

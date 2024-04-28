@@ -142,6 +142,11 @@ The xdg_wm_base interface is exposed as a global object enabling clients
 (DEFGENERIC PONG
     (RESOURCE SERIAL))
 
+(DEFMETHOD DESTROY ((DISPATCH DISPATCH))
+  (DEBUG-LOG! "Destroying dispatch object: ~a~%" "xdg_wm_base")
+  (WHEN (SLOT-BOUNDP DISPATCH 'DESTROY)
+    (FUNCALL (SLOT-VALUE DISPATCH 'DESTROY) DISPATCH)))
+
 (PUSHNEW
  (LIST "xdg_wm_base" (LIST "xdg_positioner" "xdg_surface" "wl_surface")
        (LAMBDA ()
@@ -375,6 +380,11 @@ The xdg_positioner provides a collection of rules for the placement of a
 (DEFGENERIC SET-PARENT-CONFIGURE
     (RESOURCE SERIAL))
 
+(DEFMETHOD DESTROY ((DISPATCH DISPATCH))
+  (DEBUG-LOG! "Destroying dispatch object: ~a~%" "xdg_positioner")
+  (WHEN (SLOT-BOUNDP DISPATCH 'DESTROY)
+    (FUNCALL (SLOT-VALUE DISPATCH 'DESTROY) DISPATCH)))
+
 (PUSHNEW
  (LIST "xdg_positioner" (LIST)
        (LAMBDA ()
@@ -552,18 +562,27 @@ The xdg_positioner provides a collection of rules for the placement of a
       (3
        (DEBUG-LOG! "Dispatching ~a~%" "set-anchor")
        (FUNCALL 'SET-ANCHOR RESOURCE
-                (ERROR
-                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords")))
+                (VALUES
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
+                  'WL-FFI::U))))
       (4
        (DEBUG-LOG! "Dispatching ~a~%" "set-gravity")
        (FUNCALL 'SET-GRAVITY RESOURCE
-                (ERROR
-                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords")))
+                (VALUES
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
+                  'WL-FFI::U))))
       (5
        (DEBUG-LOG! "Dispatching ~a~%" "set-constraint-adjustment")
        (FUNCALL 'SET-CONSTRAINT-ADJUSTMENT RESOURCE
-                (ERROR
-                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords")))
+                (VALUES
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
+                  'WL-FFI::U))))
       (6
        (DEBUG-LOG! "Dispatching ~a~%" "set-offset")
        (FUNCALL 'SET-OFFSET RESOURCE
@@ -734,6 +753,11 @@ An interface that may be implemented by a wl_surface, for
 
 (DEFGENERIC ACK-CONFIGURE
     (RESOURCE SERIAL))
+
+(DEFMETHOD DESTROY ((DISPATCH DISPATCH))
+  (DEBUG-LOG! "Destroying dispatch object: ~a~%" "xdg_surface")
+  (WHEN (SLOT-BOUNDP DISPATCH 'DESTROY)
+    (FUNCALL (SLOT-VALUE DISPATCH 'DESTROY) DISPATCH)))
 
 (PUSHNEW
  (LIST "xdg_surface"
@@ -1070,6 +1094,11 @@ This interface defines an xdg_surface role which allows a surface to,
 (DEFGENERIC SET-MINIMIZED
     (RESOURCE))
 
+(DEFMETHOD DESTROY ((DISPATCH DISPATCH))
+  (DEBUG-LOG! "Destroying dispatch object: ~a~%" "xdg_toplevel")
+  (WHEN (SLOT-BOUNDP DISPATCH 'DESTROY)
+    (FUNCALL (SLOT-VALUE DISPATCH 'DESTROY) DISPATCH)))
+
 (PUSHNEW
  (LIST "xdg_toplevel" (LIST "xdg_toplevel" "wl_seat" "wl_output")
        (LAMBDA ()
@@ -1374,8 +1403,11 @@ This interface defines an xdg_surface role which allows a surface to,
                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::U))
-                (ERROR
-                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords")))
+                (VALUES
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
+                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
+                  'WL-FFI::U))))
       (7
        (DEBUG-LOG! "Dispatching ~a~%" "set-max-size")
        (FUNCALL 'SET-MAX-SIZE RESOURCE
@@ -1578,6 +1610,11 @@ A popup surface is a short-lived, temporary surface. It can be used to
 
 (DEFGENERIC REPOSITION
     (RESOURCE POSITIONER TOKEN))
+
+(DEFMETHOD DESTROY ((DISPATCH DISPATCH))
+  (DEBUG-LOG! "Destroying dispatch object: ~a~%" "xdg_popup")
+  (WHEN (SLOT-BOUNDP DISPATCH 'DESTROY)
+    (FUNCALL (SLOT-VALUE DISPATCH 'DESTROY) DISPATCH)))
 
 (PUSHNEW
  (LIST "xdg_popup" (LIST "wl_seat" "xdg_positioner")

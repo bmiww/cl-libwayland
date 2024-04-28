@@ -1102,6 +1102,11 @@ The wl_shm_pool object encapsulates a piece of memory shared
 (DEFGENERIC RESIZE
     (RESOURCE SIZE))
 
+(DEFMETHOD DESTROY ((DISPATCH DISPATCH))
+  (DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_shm_pool")
+  (WHEN (SLOT-BOUNDP DISPATCH 'DESTROY)
+    (FUNCALL (SLOT-VALUE DISPATCH 'DESTROY) DISPATCH)))
+
 (PUSHNEW
  (LIST "wl_shm_pool" (LIST "wl_buffer")
        (LAMBDA ()
@@ -1195,8 +1200,11 @@ The wl_shm_pool object encapsulates a piece of memory shared
                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 4)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::I))
-                (ERROR
-                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords")))
+                (VALUES
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 5)
+                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
+                  'WL-FFI::U))))
       (1
        (DEBUG-LOG! "Dispatching ~a~%" "destroy")
        (FUNCALL 'DESTROY RESOURCE))
@@ -1438,6 +1446,11 @@ A buffer provides the content for a wl_surface. Buffers are
 (DEFGENERIC DESTROY
     (RESOURCE))
 
+(DEFMETHOD DESTROY ((DISPATCH DISPATCH))
+  (DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_buffer")
+  (WHEN (SLOT-BOUNDP DISPATCH 'DESTROY)
+    (FUNCALL (SLOT-VALUE DISPATCH 'DESTROY) DISPATCH)))
+
 (PUSHNEW
  (LIST "wl_buffer" (LIST)
        (LAMBDA ()
@@ -1580,6 +1593,11 @@ A wl_data_offer represents a piece of data offered for transfer
 
 (DEFGENERIC SET-ACTIONS
     (RESOURCE DND_ACTIONS PREFERRED_ACTION))
+
+(DEFMETHOD DESTROY ((DISPATCH DISPATCH))
+  (DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_data_offer")
+  (WHEN (SLOT-BOUNDP DISPATCH 'DESTROY)
+    (FUNCALL (SLOT-VALUE DISPATCH 'DESTROY) DISPATCH)))
 
 (PUSHNEW
  (LIST "wl_data_offer" (LIST)
@@ -1727,10 +1745,16 @@ A wl_data_offer represents a piece of data offered for transfer
       (4
        (DEBUG-LOG! "Dispatching ~a~%" "set-actions")
        (FUNCALL 'SET-ACTIONS RESOURCE
-                (ERROR
-                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords")
-                (ERROR
-                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords")))))
+                (VALUES
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
+                  'WL-FFI::U))
+                (VALUES
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
+                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
+                  'WL-FFI::U))))))
   0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
@@ -1830,6 +1854,11 @@ The wl_data_source object is the source side of a wl_data_offer.
 
 (DEFGENERIC SET-ACTIONS
     (RESOURCE DND_ACTIONS))
+
+(DEFMETHOD DESTROY ((DISPATCH DISPATCH))
+  (DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_data_source")
+  (WHEN (SLOT-BOUNDP DISPATCH 'DESTROY)
+    (FUNCALL (SLOT-VALUE DISPATCH 'DESTROY) DISPATCH)))
 
 (PUSHNEW
  (LIST "wl_data_source" (LIST)
@@ -1962,8 +1991,11 @@ The wl_data_source object is the source side of a wl_data_offer.
       (2
        (DEBUG-LOG! "Dispatching ~a~%" "set-actions")
        (FUNCALL 'SET-ACTIONS RESOURCE
-                (ERROR
-                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords")))))
+                (VALUES
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
+                  'WL-FFI::U))))))
   0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
@@ -2945,8 +2977,11 @@ An interface that may be implemented by a wl_surface, for
                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::U))
-                (ERROR
-                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords")))
+                (VALUES
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
+                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
+                  'WL-FFI::U))))
       (3
        (DEBUG-LOG! "Dispatching ~a~%" "set-toplevel")
        (FUNCALL 'SET-TOPLEVEL RESOURCE))
@@ -2970,13 +3005,19 @@ An interface that may be implemented by a wl_surface, for
                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::I))
-                (ERROR
-                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords")))
+                (VALUES
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 3)
+                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
+                  'WL-FFI::U))))
       (5
        (DEBUG-LOG! "Dispatching ~a~%" "set-fullscreen")
        (FUNCALL 'SET-FULLSCREEN RESOURCE
-                (ERROR
-                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords")
+                (VALUES
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
+                  'WL-FFI::U))
                 (VALUES
                  (FOREIGN-SLOT-VALUE
                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
@@ -3021,8 +3062,11 @@ An interface that may be implemented by a wl_surface, for
                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 4)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::I))
-                (ERROR
-                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords")))
+                (VALUES
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 5)
+                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
+                  'WL-FFI::U))))
       (7
        (DEBUG-LOG! "Dispatching ~a~%" "set-maximized")
        (FUNCALL 'SET-MAXIMIZED RESOURCE
@@ -3220,6 +3264,11 @@ A surface is a rectangular area that may be displayed on zero
 
 (DEFGENERIC OFFSET
     (RESOURCE X Y))
+
+(DEFMETHOD DESTROY ((DISPATCH DISPATCH))
+  (DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_surface")
+  (WHEN (SLOT-BOUNDP DISPATCH 'DESTROY)
+    (FUNCALL (SLOT-VALUE DISPATCH 'DESTROY) DISPATCH)))
 
 (PUSHNEW
  (LIST "wl_surface" (LIST "wl_output" "wl_buffer" "wl_callback" "wl_region")
@@ -3496,8 +3545,11 @@ A surface is a rectangular area that may be displayed on zero
       (7
        (DEBUG-LOG! "Dispatching ~a~%" "set-buffer-transform")
        (FUNCALL 'SET-BUFFER-TRANSFORM RESOURCE
-                (ERROR
-                 "WL C enum not yet implemented. You wanted to create a lisp list with keywords")))
+                (VALUES
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
+                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
+                  'WL-FFI::U))))
       (8
        (DEBUG-LOG! "Dispatching ~a~%" "set-buffer-scale")
        (FUNCALL 'SET-BUFFER-SCALE RESOURCE
@@ -5233,6 +5285,11 @@ A region object describes an area.
 (DEFGENERIC SUBTRACT
     (RESOURCE X Y WIDTH HEIGHT))
 
+(DEFMETHOD DESTROY ((DISPATCH DISPATCH))
+  (DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_region")
+  (WHEN (SLOT-BOUNDP DISPATCH 'DESTROY)
+    (FUNCALL (SLOT-VALUE DISPATCH 'DESTROY) DISPATCH)))
+
 (PUSHNEW
  (LIST "wl_region" (LIST)
        (LAMBDA ()
@@ -5428,6 +5485,11 @@ The global interface exposing sub-surface compositing capabilities.
 
 (DEFGENERIC GET-SUBSURFACE
     (RESOURCE ID SURFACE PARENT))
+
+(DEFMETHOD DESTROY ((DISPATCH DISPATCH))
+  (DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_subcompositor")
+  (WHEN (SLOT-BOUNDP DISPATCH 'DESTROY)
+    (FUNCALL (SLOT-VALUE DISPATCH 'DESTROY) DISPATCH)))
 
 (PUSHNEW
  (LIST "wl_subcompositor" (LIST "wl_subsurface" "wl_surface")
@@ -5644,6 +5706,11 @@ An additional interface to a wl_surface object, which has been
 
 (DEFGENERIC SET-DESYNC
     (RESOURCE))
+
+(DEFMETHOD DESTROY ((DISPATCH DISPATCH))
+  (DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_subsurface")
+  (WHEN (SLOT-BOUNDP DISPATCH 'DESTROY)
+    (FUNCALL (SLOT-VALUE DISPATCH 'DESTROY) DISPATCH)))
 
 (PUSHNEW
  (LIST "wl_subsurface" (LIST "wl_surface")

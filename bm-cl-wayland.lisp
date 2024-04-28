@@ -19,7 +19,7 @@
 	   wl_resource *resource-tracker* wl_argument id client mk-if resource-post-event-array
 	   init-interface-definitions interface-exists-test
 	   name version method_count methods event_count events
-	   signature types))
+	   signature types destroy))
 (in-package :bm-cl-wayland)
 
 (defclass object ()
@@ -27,7 +27,8 @@
    (client :initarg :client :reader client)
    (version :initarg :version :reader version)
    (id :initarg :id :reader id)
-   (ptr :initarg :ptr :accessor ptr)))
+   (ptr :initarg :ptr :accessor ptr)
+   (destroy :initarg :destroy :accessor destroy)))
 
 (defmethod mk-if (class (object object) id &rest args)
   "Convenience method to create a new interface using the context of the creating object as reference"
