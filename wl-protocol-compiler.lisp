@@ -40,7 +40,6 @@ This can be overriden by inheritance in case if custom behaviour is required." (
 
 (defun gen-bind-c-callback (interface)
   `((cl-async::define-c-callback dispatch-bind-ffi :void ((client :pointer) (data :pointer) (version :uint) (id :uint))
-	(debug-log! "C-Binding ~a~%" ,(name interface))
 	(let* ((client (get-client client))
 	       (global (get-data data)))
 	  (funcall 'dispatch-bind global client (null-pointer) version id)))))
@@ -140,7 +139,6 @@ argument feed."
 	     (setf *interface* (foreign-alloc '(:struct interface)))
 	     (let ((requests-ptr ,request-sexps)
 		   (events-ptr ,event-sexps))
-	       (debug-log! "IF ptr range: ~a --- ~a~%" *interface* (mem-aptr *interface* '(:struct interface) 1))
 	       (with-foreign-slots ((name version method_count methods event_count events) *interface* (:struct interface))
 		 (setf name (foreign-string-alloc ,(name interface))
 		       version ,(version interface)
