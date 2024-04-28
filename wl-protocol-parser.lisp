@@ -8,7 +8,8 @@
 (defpackage :bm-cl-wayland.parser
   (:use :cl :xmls :split-sequence)
   (:export name enum description arg-type args value entries enum-name bitfield-p requests events
-	   version enums read-protocol event interface signature arg-type-char))
+	   version enums read-protocol event interface signature arg-type-char
+	   parent-interface parent-message))
 (in-package :bm-cl-wayland.parser)
 
 ;; ┌─┐┌┐┌┌┬┐┬─┐┬ ┬
@@ -21,8 +22,8 @@
 	 (version (version-of interface))
 	 (entries (xmls:node-children interface))
 	 (interface (make-instance 'interface :name name :version version :description (get-description interface))))
-    (setf (requests interface) (mapcar 'make-request (read-entries "request" entries)))
-    (setf (events interface) (mapcar 'make-event (read-entries "event" entries)))
+    (setf (requests interface) (mapcar (lambda (request) (make-request request name)) (read-entries "request" entries)))
+    (setf (events interface) (mapcar (lambda (event) (make-event event name)) (read-entries "event" entries)))
     (setf (enums interface) (mapcar (lambda (entry) (make-enum name entry)) (read-entries "enum" entries)))
     interface))
 
@@ -46,7 +47,9 @@
    (arg-type :initarg :arg-type :accessor arg-type)
    (interface :initarg :interface :accessor interface)
    (nullable :initarg :nullable :accessor nullable)
-   (enum :initarg :enum :accessor enum)))
+   (enum :initarg :enum :accessor enum)
+   (parent-interface :initarg :parent-interface :accessor parent-interface)
+   (parent-message :initarg :parent-message :accessor parent-message)))
 
 (defclass event ()
   ((name :initarg :name :accessor name)
@@ -101,10 +104,17 @@
 (defmethod initialize-instance :after ((event event) &key) (setf (signature event) (make-signature event)))
 (defmethod initialize-instance :after ((request request) &key) (setf (signature request) (make-signature request)))
 
-(defun make-request (xml) (make-instance 'request :name (name-of xml) :args (read-args xml)
-				  :description (get-description xml) :since (since-of xml)))
-(defun make-event (xml) (make-instance 'event :name (name-of xml) :args (read-args xml)
-			      :description (get-description xml) :since (since-of xml)))
+(defun make-request (xml interface)
+  (let* ((name (name-of xml))
+	(args (read-args xml name interface)))
+    (make-instance 'request :name name :args args
+		:description (get-description xml args) :since (since-of xml))))
+
+(defun make-event (xml interface)
+  (let* ((name (name-of xml))
+	(args (read-args xml name interface)))
+    (make-instance 'event :name name :args args
+	      :description (get-description xml args) :since (since-of xml))))
 
 (defun make-enum (interface-name xml)
   (make-instance 'enum :name (name-of xml) :interface-name interface-name
@@ -113,10 +123,12 @@
 
 (defun make-enum-ref (enum-name) (if enum-name (str:split "." enum-name) nil))
 
-(defun make-arg (arg-sxml)
+(defun make-arg (arg-sxml message-name interface-name)
   (let ((enum (make-enum-ref (enum-of-type arg-sxml))))
     (make-instance 'arg
        :name (name-of arg-sxml)
+       :parent-interface interface-name
+       :parent-message message-name
        :arg-type (if enum "enum" (type-of-arg arg-sxml))
        :interface (interface-of arg-sxml)
        :nullable (allow-null arg-sxml)
@@ -192,20 +204,19 @@
 	  (summary arg)))
 
 
-(defun get-description (xml)
+(defun get-description (xml &optional args)
   (let ((description-node (find-if (lambda (entry) (of-type entry "description")) (xmls:node-children xml))))
     (if description-node
 	(let* ((description (first (xmls:node-children description-node)))
-	       (summary (summary-of description-node))
-	       (args (read-args xml)))
+	       (summary (summary-of description-node)))
 	  (format nil "~A~%~%~A~%~A"
 		  summary
 		  description
 		  (if args (format nil "~%Arguments:~%~{~A~%~}" (mapcar 'format-arg-list args)) "")))
 	"")))
 
-(defun read-args (roe-sxml)
-  (remove nil (mapcar (lambda (entry) (when (of-type entry "arg") (make-arg entry)))
+(defun read-args (roe-sxml message-name interface-name)
+  (remove nil (mapcar (lambda (entry) (when (of-type entry "arg") (make-arg entry message-name interface-name)))
 		      (xmls:node-children roe-sxml))))
 
 (defun of-type (x type) (equal (xmls:node-name x) type))

@@ -19,7 +19,7 @@
 	   wl_resource *resource-tracker* wl_argument id client mk-if resource-post-event-array
 	   init-interface-definitions interface-exists-test
 	   name version method_count methods event_count events
-	   signature types destroy))
+	   signature types destroy wl_array))
 (in-package :bm-cl-wayland)
 
 (defclass object ()

@@ -14,6 +14,21 @@
   (:use :cl :xmls :bm-cl-wayland.parser))
 (in-package :bm-cl-wayland.compiler)
 
+
+(defvar *message-array-args*
+  (list
+   '("xdg_toplevel" "configure" 2 :uint32)
+   '("wl_keyboard" "enter" 2 :uint32)
+   '("xdg_toplevel" "wm_capabilities" 0 :uint32)))
+
+(defun find-array-type (interface-name message-name index)
+  (let ((c-type (loop for (interface message arg-index argtype) in *message-array-args*
+	when (and (string= interface interface-name)
+		  (string= message message-name)
+		  (= index arg-index))
+	  return argtype)))
+    (if c-type c-type (error (format nil "No array type found for ~a ~a~%" interface-name message-name)))))
+
 (defun gen-request-c-struct (request) `(,(symbolify (name request)) :pointer))
 (defun gen-generic-arg (arg) (symbolify (name arg)))
 (defun gen-request-generic (request)
@@ -185,20 +200,45 @@ argument feed."
     ,value-form))
 
 (defun gen-c-arg-setter (arg index)
-  (gen-c-arg-setter-inner
-   arg index
-   (alexandria:eswitch ((arg-type arg) :test 'string=)
-     ("int" (symbolify (name arg)))
-     ("uint" (symbolify (name arg)))
-     ("new_id" (symbolify (name arg)))
-     ("fixed" (symbolify (name arg)))
-     ("fd" (symbolify (name arg)))
-     ("string" (symbolify (name arg)))
-     ;; TODO: You wanted to create a lisp list with keywords. For now just leaving as is/or as uint
-     ;; ("enum" `(error "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
-     ("enum" (symbolify (name arg)))
-     ("object" `(wl:ptr ,(symbolify (name arg))))
-     ("array" `(error "WL C ARRAY PARSING NOT IMPLEMENTED")))))
+  (let ((name (symbolify (name arg))))
+    (gen-c-arg-setter-inner
+     arg index
+     (alexandria:eswitch ((arg-type arg) :test 'string=)
+       ("int" name) ("uint" name) ("new_id" name)
+       ("fixed" name) ("fd" name) ("string" name)
+       ;; TODO: You wanted to create a lisp list with keywords. For now just leaving as is/or as uint
+       ;; ("enum" `(error "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
+       ("enum" name)
+       ("object" `(wl:ptr ,name))
+       ;; ("array" `(error "NOPE"))
+       ("array"
+	;; NOTE: For some reason - the pywayland implementation sets alloc to equal the size of the array
+	(let ((c-type (find-array-type (parent-interface arg) (parent-message arg) index)))
+	  `(let* ((length (length ,name))
+		  (struct (foreign-alloc '(:struct wl_array)))
+		  ;; (data (foreign-alloc '(:pointer :void) :count length)))
+		  (data (foreign-alloc ,c-type :count length)))
+
+	     (loop for index below length do
+	       ;; (setf (mem-aref data '(:pointer ,c-type) index)
+	       (setf (mem-aref data ,c-type index)
+	       ;; (setf (mem-aref data '(:pointer :void) index)
+		     ;; (foreign-alloc ,c-type :initial-element (nth index ,name))))
+		     (nth index ,name)))
+
+	     (setf (foreign-slot-value struct '(:struct wl_array) 'wl-ffi::size)
+		   length
+		   ;; (* (foreign-type-size ,c-type) length)
+
+		   ;; (foreign-slot-value struct '(:struct wl_array) 'wl-ffi::alloc)
+		   ;; (* (foreign-type-size ,c-type) length)
+		   (foreign-slot-value struct '(:struct wl_array) 'wl-ffi::alloc)
+		   length
+		   ;; (* (foreign-type-size ,c-type) length)
+
+		   (foreign-slot-value struct '(:struct wl_array) 'wl-ffi::data)
+		   data)
+	     struct)))))))
 
 (defun gen-event (event opcode)
   `(defmethod ,(symbolify "send-~a" (dash-name event)) ((dispatch dispatch) ,@(mapcar 'gen-generic-arg (args event)))

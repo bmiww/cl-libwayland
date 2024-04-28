@@ -4561,7 +4561,22 @@ The wl_keyboard interface represents one or more keyboards
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
            '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'WL-FFI::A)
-            (ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))
+            (LET* ((LENGTH (LENGTH KEYS))
+                   (STRUCT (FOREIGN-ALLOC '(:STRUCT WL_ARRAY)))
+                   (DATA (FOREIGN-ALLOC :UINT32 :COUNT LENGTH)))
+              (LOOP FOR INDEX BELOW LENGTH
+                    DO (SETF (MEM-AREF DATA :UINT32 INDEX)
+                               (NTH INDEX KEYS)))
+              (SETF (FOREIGN-SLOT-VALUE STRUCT '(:STRUCT WL_ARRAY)
+                     'BM-CL-LIBWAYLAND::SIZE)
+                      LENGTH
+                    (FOREIGN-SLOT-VALUE STRUCT '(:STRUCT WL_ARRAY)
+                     'BM-CL-LIBWAYLAND::ALLOC)
+                      LENGTH
+                    (FOREIGN-SLOT-VALUE STRUCT '(:STRUCT WL_ARRAY)
+                     'BM-CL-LIBWAYLAND::DATA)
+                      DATA)
+              STRUCT))
     (RESOURCE-POST-EVENT-ARRAY (PTR DISPATCH) 1 ARG-LIST)))
 
 (DEFMETHOD SEND-LEAVE

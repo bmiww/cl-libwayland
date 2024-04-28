@@ -1485,7 +1485,22 @@ This interface defines an xdg_surface role which allows a surface to,
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
            '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'WL-FFI::A)
-            (ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))
+            (LET* ((LENGTH (LENGTH STATES))
+                   (STRUCT (FOREIGN-ALLOC '(:STRUCT WL_ARRAY)))
+                   (DATA (FOREIGN-ALLOC :UINT32 :COUNT LENGTH)))
+              (LOOP FOR INDEX BELOW LENGTH
+                    DO (SETF (MEM-AREF DATA :UINT32 INDEX)
+                             (NTH INDEX STATES)))
+              (SETF (FOREIGN-SLOT-VALUE STRUCT '(:STRUCT WL_ARRAY)
+                     'BM-CL-LIBWAYLAND::SIZE)
+                      LENGTH
+                    (FOREIGN-SLOT-VALUE STRUCT '(:STRUCT WL_ARRAY)
+                     'BM-CL-LIBWAYLAND::ALLOC)
+                      LENGTH
+                    (FOREIGN-SLOT-VALUE STRUCT '(:STRUCT WL_ARRAY)
+                     'BM-CL-LIBWAYLAND::DATA)
+                      DATA)
+              STRUCT))
     (RESOURCE-POST-EVENT-ARRAY (PTR DISPATCH) 0 ARG-LIST)))
 
 (DEFMETHOD SEND-CLOSE ((DISPATCH DISPATCH))
@@ -1514,7 +1529,22 @@ This interface defines an xdg_surface role which allows a surface to,
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
            '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'WL-FFI::A)
-            (ERROR "WL C ARRAY PARSING NOT IMPLEMENTED"))
+            (LET* ((LENGTH (LENGTH CAPABILITIES))
+                   (STRUCT (FOREIGN-ALLOC '(:STRUCT WL_ARRAY)))
+                   (DATA (FOREIGN-ALLOC :UINT32 :COUNT LENGTH)))
+              (LOOP FOR INDEX BELOW LENGTH
+                    DO (SETF (MEM-AREF DATA :UINT32 INDEX)
+                               (NTH INDEX CAPABILITIES)))
+              (SETF (FOREIGN-SLOT-VALUE STRUCT '(:STRUCT WL_ARRAY)
+                     'BM-CL-LIBWAYLAND::SIZE)
+                      LENGTH
+                    (FOREIGN-SLOT-VALUE STRUCT '(:STRUCT WL_ARRAY)
+                     'BM-CL-LIBWAYLAND::ALLOC)
+                      LENGTH
+                    (FOREIGN-SLOT-VALUE STRUCT '(:STRUCT WL_ARRAY)
+                     'BM-CL-LIBWAYLAND::DATA)
+                      DATA)
+              STRUCT))
     (RESOURCE-POST-EVENT-ARRAY (PTR DISPATCH) 3 ARG-LIST)))
 
 (DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
@@ -1851,4 +1881,3 @@ This can be overriden by inheritance in case if custom behaviour is required."
     (SETF (BM-CL-WAYLAND:PTR GLOBAL) GLOBAL-PTR)
     (SET-DATA NEXT-DATA-ID
      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR) *GLOBAL-TRACKER*) GLOBAL))))
-
