@@ -519,8 +519,6 @@ The core global object.  This is a special singleton object.  It
                            SIGNATURE "u"
                            TYPES INTERFACE-ARRAY)))
                   MESSAGES)))
-           (DEBUG-LOG! "IF ptr range: ~a --- ~a~%" *INTERFACE*
-            (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
            (WITH-FOREIGN-SLOTS
             ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
              (:STRUCT INTERFACE))
@@ -537,10 +535,10 @@ The core global object.  This is a special singleton object.  It
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
-  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_display")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
+       (DEBUG-LOG! "Dispatching ~a~%" "sync")
        (FUNCALL 'SYNC RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -548,6 +546,7 @@ The core global object.  This is a special singleton object.  It
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::N))))
       (1
+       (DEBUG-LOG! "Dispatching ~a~%" "get-registry")
        (FUNCALL 'GET-REGISTRY RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -615,7 +614,6 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (DEBUG-LOG! "C-Binding ~a~%" "wl_display")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (GET-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
@@ -706,8 +704,6 @@ The singleton global registry object.  The server has a number of
                            SIGNATURE "u"
                            TYPES INTERFACE-ARRAY)))
                   MESSAGES)))
-           (DEBUG-LOG! "IF ptr range: ~a --- ~a~%" *INTERFACE*
-            (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
            (WITH-FOREIGN-SLOTS
             ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
              (:STRUCT INTERFACE))
@@ -724,10 +720,10 @@ The singleton global registry object.  The server has a number of
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
-  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_registry")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
+       (DEBUG-LOG! "Dispatching ~a~%" "bind")
        (FUNCALL 'BIND RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -819,7 +815,6 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (DEBUG-LOG! "C-Binding ~a~%" "wl_registry")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (GET-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
@@ -869,8 +864,6 @@ Clients can handle the 'done' event to get notified when
                            SIGNATURE "u"
                            TYPES INTERFACE-ARRAY)))
                   MESSAGES)))
-           (DEBUG-LOG! "IF ptr range: ~a --- ~a~%" *INTERFACE*
-            (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
            (WITH-FOREIGN-SLOTS
             ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
              (:STRUCT INTERFACE))
@@ -887,7 +880,6 @@ Clients can handle the 'done' event to get notified when
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE ARGS TARGET OPCODE))
-  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_callback")
   (ERROR
    (FORMAT NIL
            "A dispatcher wiwthout requests has been called for interface: ~a~%"
@@ -938,7 +930,6 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (DEBUG-LOG! "C-Binding ~a~%" "wl_callback")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (GET-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
@@ -1004,8 +995,6 @@ A compositor.  This object is a singleton global.  The
                 (LET ((MESSAGES
                        (CFFI:FOREIGN-ALLOC '(:STRUCT WL_MESSAGE) :COUNT 0)))
                   MESSAGES)))
-           (DEBUG-LOG! "IF ptr range: ~a --- ~a~%" *INTERFACE*
-            (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
            (WITH-FOREIGN-SLOTS
             ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
              (:STRUCT INTERFACE))
@@ -1022,10 +1011,10 @@ A compositor.  This object is a singleton global.  The
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
-  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_compositor")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
+       (DEBUG-LOG! "Dispatching ~a~%" "create-surface")
        (FUNCALL 'CREATE-SURFACE RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -1033,6 +1022,7 @@ A compositor.  This object is a singleton global.  The
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::N))))
       (1
+       (DEBUG-LOG! "Dispatching ~a~%" "create-region")
        (FUNCALL 'CREATE-REGION RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -1073,7 +1063,6 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (DEBUG-LOG! "C-Binding ~a~%" "wl_compositor")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (GET-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
@@ -1160,8 +1149,6 @@ The wl_shm_pool object encapsulates a piece of memory shared
                 (LET ((MESSAGES
                        (CFFI:FOREIGN-ALLOC '(:STRUCT WL_MESSAGE) :COUNT 0)))
                   MESSAGES)))
-           (DEBUG-LOG! "IF ptr range: ~a --- ~a~%" *INTERFACE*
-            (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
            (WITH-FOREIGN-SLOTS
             ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
              (:STRUCT INTERFACE))
@@ -1178,10 +1165,10 @@ The wl_shm_pool object encapsulates a piece of memory shared
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
-  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_shm_pool")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
+       (DEBUG-LOG! "Dispatching ~a~%" "create-buffer")
        (FUNCALL 'CREATE-BUFFER RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -1210,8 +1197,11 @@ The wl_shm_pool object encapsulates a piece of memory shared
                   'WL-FFI::I))
                 (ERROR
                  "WL C enum not yet implemented. You wanted to create a lisp list with keywords")))
-      (1 (FUNCALL 'DESTROY RESOURCE))
+      (1
+       (DEBUG-LOG! "Dispatching ~a~%" "destroy")
+       (FUNCALL 'DESTROY RESOURCE))
       (2
+       (DEBUG-LOG! "Dispatching ~a~%" "resize")
        (FUNCALL 'RESIZE RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -1256,7 +1246,6 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (DEBUG-LOG! "C-Binding ~a~%" "wl_shm_pool")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (GET-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
@@ -1326,8 +1315,6 @@ A singleton global object that provides support for shared
                            SIGNATURE "u"
                            TYPES INTERFACE-ARRAY)))
                   MESSAGES)))
-           (DEBUG-LOG! "IF ptr range: ~a --- ~a~%" *INTERFACE*
-            (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
            (WITH-FOREIGN-SLOTS
             ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
              (:STRUCT INTERFACE))
@@ -1344,10 +1331,10 @@ A singleton global object that provides support for shared
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
-  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_shm")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
+       (DEBUG-LOG! "Dispatching ~a~%" "create-pool")
        (FUNCALL 'CREATE-POOL RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -1413,7 +1400,6 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (DEBUG-LOG! "C-Binding ~a~%" "wl_shm")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (GET-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
@@ -1482,8 +1468,6 @@ A buffer provides the content for a wl_surface. Buffers are
                            SIGNATURE ""
                            TYPES INTERFACE-ARRAY)))
                   MESSAGES)))
-           (DEBUG-LOG! "IF ptr range: ~a --- ~a~%" *INTERFACE*
-            (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
            (WITH-FOREIGN-SLOTS
             ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
              (:STRUCT INTERFACE))
@@ -1500,9 +1484,11 @@ A buffer provides the content for a wl_surface. Buffers are
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE ARGS))
-  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_buffer")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
-    (ECASE OPCODE (0 (FUNCALL 'DESTROY RESOURCE))))
+    (ECASE OPCODE
+      (0
+       (DEBUG-LOG! "Dispatching ~a~%" "destroy")
+       (FUNCALL 'DESTROY RESOURCE))))
   0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
@@ -1552,7 +1538,6 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (DEBUG-LOG! "C-Binding ~a~%" "wl_buffer")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (GET-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
@@ -1689,8 +1674,6 @@ A wl_data_offer represents a piece of data offered for transfer
                            SIGNATURE "3u"
                            TYPES INTERFACE-ARRAY)))
                   MESSAGES)))
-           (DEBUG-LOG! "IF ptr range: ~a --- ~a~%" *INTERFACE*
-            (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
            (WITH-FOREIGN-SLOTS
             ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
              (:STRUCT INTERFACE))
@@ -1707,10 +1690,10 @@ A wl_data_offer represents a piece of data offered for transfer
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
-  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_data_offer")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
+       (DEBUG-LOG! "Dispatching ~a~%" "accept")
        (FUNCALL 'ACCEPT RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -1723,6 +1706,7 @@ A wl_data_offer represents a piece of data offered for transfer
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::S))))
       (1
+       (DEBUG-LOG! "Dispatching ~a~%" "receive")
        (FUNCALL 'RECEIVE RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -1734,9 +1718,14 @@ A wl_data_offer represents a piece of data offered for transfer
                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::H))))
-      (2 (FUNCALL 'DESTROY RESOURCE))
-      (3 (FUNCALL 'FINISH RESOURCE))
+      (2
+       (DEBUG-LOG! "Dispatching ~a~%" "destroy")
+       (FUNCALL 'DESTROY RESOURCE))
+      (3
+       (DEBUG-LOG! "Dispatching ~a~%" "finish")
+       (FUNCALL 'FINISH RESOURCE))
       (4
+       (DEBUG-LOG! "Dispatching ~a~%" "set-actions")
        (FUNCALL 'SET-ACTIONS RESOURCE
                 (ERROR
                  "WL C enum not yet implemented. You wanted to create a lisp list with keywords")
@@ -1807,7 +1796,6 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (DEBUG-LOG! "C-Binding ~a~%" "wl_data_offer")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (GET-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
@@ -1942,8 +1930,6 @@ The wl_data_source object is the source side of a wl_data_offer.
                            SIGNATURE "3u"
                            TYPES INTERFACE-ARRAY)))
                   MESSAGES)))
-           (DEBUG-LOG! "IF ptr range: ~a --- ~a~%" *INTERFACE*
-            (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
            (WITH-FOREIGN-SLOTS
             ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
              (:STRUCT INTERFACE))
@@ -1960,18 +1946,21 @@ The wl_data_source object is the source side of a wl_data_offer.
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
-  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_data_source")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
+       (DEBUG-LOG! "Dispatching ~a~%" "offer")
        (FUNCALL 'OFFER RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::S))))
-      (1 (FUNCALL 'DESTROY RESOURCE))
+      (1
+       (DEBUG-LOG! "Dispatching ~a~%" "destroy")
+       (FUNCALL 'DESTROY RESOURCE))
       (2
+       (DEBUG-LOG! "Dispatching ~a~%" "set-actions")
        (FUNCALL 'SET-ACTIONS RESOURCE
                 (ERROR
                  "WL C enum not yet implemented. You wanted to create a lisp list with keywords")))))
@@ -2057,7 +2046,6 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (DEBUG-LOG! "C-Binding ~a~%" "wl_data_source")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (GET-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
@@ -2212,8 +2200,6 @@ There is one wl_data_device per seat which can be obtained
                            SIGNATURE "?o"
                            TYPES INTERFACE-ARRAY)))
                   MESSAGES)))
-           (DEBUG-LOG! "IF ptr range: ~a --- ~a~%" *INTERFACE*
-            (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
            (WITH-FOREIGN-SLOTS
             ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
              (:STRUCT INTERFACE))
@@ -2230,10 +2216,10 @@ There is one wl_data_device per seat which can be obtained
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
-  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_data_device")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
+       (DEBUG-LOG! "Dispatching ~a~%" "start-drag")
        (FUNCALL 'START-DRAG RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
@@ -2262,6 +2248,7 @@ There is one wl_data_device per seat which can be obtained
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::U))))
       (1
+       (DEBUG-LOG! "Dispatching ~a~%" "set-selection")
        (FUNCALL 'SET-SELECTION RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
@@ -2275,7 +2262,9 @@ There is one wl_data_device per seat which can be obtained
                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::U))))
-      (2 (FUNCALL 'RELEASE RESOURCE))))
+      (2
+       (DEBUG-LOG! "Dispatching ~a~%" "release")
+       (FUNCALL 'RELEASE RESOURCE))))
   0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
@@ -2385,7 +2374,6 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (DEBUG-LOG! "C-Binding ~a~%" "wl_data_device")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (GET-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
@@ -2461,8 +2449,6 @@ The wl_data_device_manager is a singleton global object that
                 (LET ((MESSAGES
                        (CFFI:FOREIGN-ALLOC '(:STRUCT WL_MESSAGE) :COUNT 0)))
                   MESSAGES)))
-           (DEBUG-LOG! "IF ptr range: ~a --- ~a~%" *INTERFACE*
-            (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
            (WITH-FOREIGN-SLOTS
             ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
              (:STRUCT INTERFACE))
@@ -2479,10 +2465,10 @@ The wl_data_device_manager is a singleton global object that
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
-  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_data_device_manager")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
+       (DEBUG-LOG! "Dispatching ~a~%" "create-data-source")
        (FUNCALL 'CREATE-DATA-SOURCE RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -2490,6 +2476,7 @@ The wl_data_device_manager is a singleton global object that
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::N))))
       (1
+       (DEBUG-LOG! "Dispatching ~a~%" "get-data-device")
        (FUNCALL 'GET-DATA-DEVICE RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -2544,7 +2531,6 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (DEBUG-LOG! "C-Binding ~a~%" "wl_data_device_manager")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (GET-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
@@ -2604,8 +2590,6 @@ This interface is implemented by servers that provide
                 (LET ((MESSAGES
                        (CFFI:FOREIGN-ALLOC '(:STRUCT WL_MESSAGE) :COUNT 0)))
                   MESSAGES)))
-           (DEBUG-LOG! "IF ptr range: ~a --- ~a~%" *INTERFACE*
-            (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
            (WITH-FOREIGN-SLOTS
             ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
              (:STRUCT INTERFACE))
@@ -2622,10 +2606,10 @@ This interface is implemented by servers that provide
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
-  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_shell")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
+       (DEBUG-LOG! "Dispatching ~a~%" "get-shell-surface")
        (FUNCALL 'GET-SHELL-SURFACE RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -2679,7 +2663,6 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (DEBUG-LOG! "C-Binding ~a~%" "wl_shell")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (GET-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
@@ -2906,8 +2889,6 @@ An interface that may be implemented by a wl_surface, for
                            SIGNATURE ""
                            TYPES INTERFACE-ARRAY)))
                   MESSAGES)))
-           (DEBUG-LOG! "IF ptr range: ~a --- ~a~%" *INTERFACE*
-            (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
            (WITH-FOREIGN-SLOTS
             ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
              (:STRUCT INTERFACE))
@@ -2924,10 +2905,10 @@ An interface that may be implemented by a wl_surface, for
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
-  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_shell_surface")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
+       (DEBUG-LOG! "Dispatching ~a~%" "pong")
        (FUNCALL 'PONG RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -2935,6 +2916,7 @@ An interface that may be implemented by a wl_surface, for
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::U))))
       (1
+       (DEBUG-LOG! "Dispatching ~a~%" "move")
        (FUNCALL 'MOVE RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
@@ -2949,6 +2931,7 @@ An interface that may be implemented by a wl_surface, for
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::U))))
       (2
+       (DEBUG-LOG! "Dispatching ~a~%" "resize")
        (FUNCALL 'RESIZE RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
@@ -2964,8 +2947,11 @@ An interface that may be implemented by a wl_surface, for
                   'WL-FFI::U))
                 (ERROR
                  "WL C enum not yet implemented. You wanted to create a lisp list with keywords")))
-      (3 (FUNCALL 'SET-TOPLEVEL RESOURCE))
+      (3
+       (DEBUG-LOG! "Dispatching ~a~%" "set-toplevel")
+       (FUNCALL 'SET-TOPLEVEL RESOURCE))
       (4
+       (DEBUG-LOG! "Dispatching ~a~%" "set-transient")
        (FUNCALL 'SET-TRANSIENT RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
@@ -2987,6 +2973,7 @@ An interface that may be implemented by a wl_surface, for
                 (ERROR
                  "WL C enum not yet implemented. You wanted to create a lisp list with keywords")))
       (5
+       (DEBUG-LOG! "Dispatching ~a~%" "set-fullscreen")
        (FUNCALL 'SET-FULLSCREEN RESOURCE
                 (ERROR
                  "WL C enum not yet implemented. You wanted to create a lisp list with keywords")
@@ -3003,6 +2990,7 @@ An interface that may be implemented by a wl_surface, for
                    'WL-FFI::O))
                  *RESOURCE-TRACKER*)))
       (6
+       (DEBUG-LOG! "Dispatching ~a~%" "set-popup")
        (FUNCALL 'SET-POPUP RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
@@ -3036,6 +3024,7 @@ An interface that may be implemented by a wl_surface, for
                 (ERROR
                  "WL C enum not yet implemented. You wanted to create a lisp list with keywords")))
       (7
+       (DEBUG-LOG! "Dispatching ~a~%" "set-maximized")
        (FUNCALL 'SET-MAXIMIZED RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
@@ -3045,6 +3034,7 @@ An interface that may be implemented by a wl_surface, for
                    'WL-FFI::O))
                  *RESOURCE-TRACKER*)))
       (8
+       (DEBUG-LOG! "Dispatching ~a~%" "set-title")
        (FUNCALL 'SET-TITLE RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -3052,6 +3042,7 @@ An interface that may be implemented by a wl_surface, for
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::S))))
       (9
+       (DEBUG-LOG! "Dispatching ~a~%" "set-class")
        (FUNCALL 'SET-CLASS RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -3133,7 +3124,6 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (DEBUG-LOG! "C-Binding ~a~%" "wl_shell_surface")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (GET-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
@@ -3408,8 +3398,6 @@ A surface is a rectangular area that may be displayed on zero
                            SIGNATURE "6u"
                            TYPES INTERFACE-ARRAY)))
                   MESSAGES)))
-           (DEBUG-LOG! "IF ptr range: ~a --- ~a~%" *INTERFACE*
-            (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
            (WITH-FOREIGN-SLOTS
             ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
              (:STRUCT INTERFACE))
@@ -3426,11 +3414,13 @@ A surface is a rectangular area that may be displayed on zero
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
-  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_surface")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
-      (0 (FUNCALL 'DESTROY RESOURCE))
+      (0
+       (DEBUG-LOG! "Dispatching ~a~%" "destroy")
+       (FUNCALL 'DESTROY RESOURCE))
       (1
+       (DEBUG-LOG! "Dispatching ~a~%" "attach")
        (FUNCALL 'ATTACH RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
@@ -3450,6 +3440,7 @@ A surface is a rectangular area that may be displayed on zero
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::I))))
       (2
+       (DEBUG-LOG! "Dispatching ~a~%" "damage")
        (FUNCALL 'DAMAGE RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -3472,6 +3463,7 @@ A surface is a rectangular area that may be displayed on zero
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::I))))
       (3
+       (DEBUG-LOG! "Dispatching ~a~%" "frame")
        (FUNCALL 'FRAME RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -3479,6 +3471,7 @@ A surface is a rectangular area that may be displayed on zero
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::N))))
       (4
+       (DEBUG-LOG! "Dispatching ~a~%" "set-opaque-region")
        (FUNCALL 'SET-OPAQUE-REGION RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
@@ -3488,6 +3481,7 @@ A surface is a rectangular area that may be displayed on zero
                    'WL-FFI::O))
                  *RESOURCE-TRACKER*)))
       (5
+       (DEBUG-LOG! "Dispatching ~a~%" "set-input-region")
        (FUNCALL 'SET-INPUT-REGION RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
@@ -3496,12 +3490,16 @@ A surface is a rectangular area that may be displayed on zero
                    '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                    'WL-FFI::O))
                  *RESOURCE-TRACKER*)))
-      (6 (FUNCALL 'COMMIT RESOURCE))
+      (6
+       (DEBUG-LOG! "Dispatching ~a~%" "commit")
+       (FUNCALL 'COMMIT RESOURCE))
       (7
+       (DEBUG-LOG! "Dispatching ~a~%" "set-buffer-transform")
        (FUNCALL 'SET-BUFFER-TRANSFORM RESOURCE
                 (ERROR
                  "WL C enum not yet implemented. You wanted to create a lisp list with keywords")))
       (8
+       (DEBUG-LOG! "Dispatching ~a~%" "set-buffer-scale")
        (FUNCALL 'SET-BUFFER-SCALE RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -3509,6 +3507,7 @@ A surface is a rectangular area that may be displayed on zero
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::I))))
       (9
+       (DEBUG-LOG! "Dispatching ~a~%" "damage-buffer")
        (FUNCALL 'DAMAGE-BUFFER RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -3531,6 +3530,7 @@ A surface is a rectangular area that may be displayed on zero
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::I))))
       (10
+       (DEBUG-LOG! "Dispatching ~a~%" "offset")
        (FUNCALL 'OFFSET RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -3653,7 +3653,6 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (DEBUG-LOG! "C-Binding ~a~%" "wl_surface")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (GET-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
@@ -3766,8 +3765,6 @@ A seat is a group of keyboards, pointer and touch devices. This
                            SIGNATURE "2s"
                            TYPES INTERFACE-ARRAY)))
                   MESSAGES)))
-           (DEBUG-LOG! "IF ptr range: ~a --- ~a~%" *INTERFACE*
-            (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
            (WITH-FOREIGN-SLOTS
             ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
              (:STRUCT INTERFACE))
@@ -3784,10 +3781,10 @@ A seat is a group of keyboards, pointer and touch devices. This
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
-  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_seat")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
+       (DEBUG-LOG! "Dispatching ~a~%" "get-pointer")
        (FUNCALL 'GET-POINTER RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -3795,6 +3792,7 @@ A seat is a group of keyboards, pointer and touch devices. This
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::N))))
       (1
+       (DEBUG-LOG! "Dispatching ~a~%" "get-keyboard")
        (FUNCALL 'GET-KEYBOARD RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -3802,13 +3800,16 @@ A seat is a group of keyboards, pointer and touch devices. This
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::N))))
       (2
+       (DEBUG-LOG! "Dispatching ~a~%" "get-touch")
        (FUNCALL 'GET-TOUCH RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::N))))
-      (3 (FUNCALL 'RELEASE RESOURCE))))
+      (3
+       (DEBUG-LOG! "Dispatching ~a~%" "release")
+       (FUNCALL 'RELEASE RESOURCE))))
   0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
@@ -3863,7 +3864,6 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (DEBUG-LOG! "C-Binding ~a~%" "wl_seat")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (GET-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
@@ -4063,8 +4063,6 @@ The wl_pointer interface represents one or more input devices,
                            SIGNATURE "9uu"
                            TYPES INTERFACE-ARRAY)))
                   MESSAGES)))
-           (DEBUG-LOG! "IF ptr range: ~a --- ~a~%" *INTERFACE*
-            (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
            (WITH-FOREIGN-SLOTS
             ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
              (:STRUCT INTERFACE))
@@ -4081,10 +4079,10 @@ The wl_pointer interface represents one or more input devices,
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
-  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_pointer")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
+       (DEBUG-LOG! "Dispatching ~a~%" "set-cursor")
        (FUNCALL 'SET-CURSOR RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -4108,7 +4106,9 @@ The wl_pointer interface represents one or more input devices,
                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 3)
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::I))))
-      (1 (FUNCALL 'RELEASE RESOURCE))))
+      (1
+       (DEBUG-LOG! "Dispatching ~a~%" "release")
+       (FUNCALL 'RELEASE RESOURCE))))
   0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
@@ -4317,7 +4317,6 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (DEBUG-LOG! "C-Binding ~a~%" "wl_pointer")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (GET-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
@@ -4441,8 +4440,6 @@ The wl_keyboard interface represents one or more keyboards
                            SIGNATURE "4ii"
                            TYPES INTERFACE-ARRAY)))
                   MESSAGES)))
-           (DEBUG-LOG! "IF ptr range: ~a --- ~a~%" *INTERFACE*
-            (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
            (WITH-FOREIGN-SLOTS
             ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
              (:STRUCT INTERFACE))
@@ -4459,9 +4456,11 @@ The wl_keyboard interface represents one or more keyboards
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE ARGS))
-  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_keyboard")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
-    (ECASE OPCODE (0 (FUNCALL 'RELEASE RESOURCE))))
+    (ECASE OPCODE
+      (0
+       (DEBUG-LOG! "Dispatching ~a~%" "release")
+       (FUNCALL 'RELEASE RESOURCE))))
   0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
@@ -4611,7 +4610,6 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (DEBUG-LOG! "C-Binding ~a~%" "wl_keyboard")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (GET-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
@@ -4748,8 +4746,6 @@ The wl_touch interface represents a touchscreen
                            SIGNATURE "6if"
                            TYPES INTERFACE-ARRAY)))
                   MESSAGES)))
-           (DEBUG-LOG! "IF ptr range: ~a --- ~a~%" *INTERFACE*
-            (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
            (WITH-FOREIGN-SLOTS
             ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
              (:STRUCT INTERFACE))
@@ -4766,9 +4762,11 @@ The wl_touch interface represents a touchscreen
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE ARGS))
-  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_touch")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
-    (ECASE OPCODE (0 (FUNCALL 'RELEASE RESOURCE))))
+    (ECASE OPCODE
+      (0
+       (DEBUG-LOG! "Dispatching ~a~%" "release")
+       (FUNCALL 'RELEASE RESOURCE))))
   0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
@@ -4924,7 +4922,6 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (DEBUG-LOG! "C-Binding ~a~%" "wl_touch")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (GET-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
@@ -5046,8 +5043,6 @@ An output describes part of the compositor geometry.  The
                            SIGNATURE "4s"
                            TYPES INTERFACE-ARRAY)))
                   MESSAGES)))
-           (DEBUG-LOG! "IF ptr range: ~a --- ~a~%" *INTERFACE*
-            (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
            (WITH-FOREIGN-SLOTS
             ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
              (:STRUCT INTERFACE))
@@ -5064,9 +5059,11 @@ An output describes part of the compositor geometry.  The
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE ARGS))
-  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_output")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
-    (ECASE OPCODE (0 (FUNCALL 'RELEASE RESOURCE))))
+    (ECASE OPCODE
+      (0
+       (DEBUG-LOG! "Dispatching ~a~%" "release")
+       (FUNCALL 'RELEASE RESOURCE))))
   0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
@@ -5201,7 +5198,6 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (DEBUG-LOG! "C-Binding ~a~%" "wl_output")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (GET-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
@@ -5284,8 +5280,6 @@ A region object describes an area.
                 (LET ((MESSAGES
                        (CFFI:FOREIGN-ALLOC '(:STRUCT WL_MESSAGE) :COUNT 0)))
                   MESSAGES)))
-           (DEBUG-LOG! "IF ptr range: ~a --- ~a~%" *INTERFACE*
-            (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
            (WITH-FOREIGN-SLOTS
             ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
              (:STRUCT INTERFACE))
@@ -5302,11 +5296,13 @@ A region object describes an area.
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
-  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_region")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
-      (0 (FUNCALL 'DESTROY RESOURCE))
+      (0
+       (DEBUG-LOG! "Dispatching ~a~%" "destroy")
+       (FUNCALL 'DESTROY RESOURCE))
       (1
+       (DEBUG-LOG! "Dispatching ~a~%" "add")
        (FUNCALL 'ADD RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -5329,6 +5325,7 @@ A region object describes an area.
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::I))))
       (2
+       (DEBUG-LOG! "Dispatching ~a~%" "subtract")
        (FUNCALL 'SUBTRACT RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -5385,7 +5382,6 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (DEBUG-LOG! "C-Binding ~a~%" "wl_region")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (GET-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
@@ -5469,8 +5465,6 @@ The global interface exposing sub-surface compositing capabilities.
                 (LET ((MESSAGES
                        (CFFI:FOREIGN-ALLOC '(:STRUCT WL_MESSAGE) :COUNT 0)))
                   MESSAGES)))
-           (DEBUG-LOG! "IF ptr range: ~a --- ~a~%" *INTERFACE*
-            (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
            (WITH-FOREIGN-SLOTS
             ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
              (:STRUCT INTERFACE))
@@ -5487,11 +5481,13 @@ The global interface exposing sub-surface compositing capabilities.
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
-  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_subcompositor")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
-      (0 (FUNCALL 'DESTROY RESOURCE))
+      (0
+       (DEBUG-LOG! "Dispatching ~a~%" "destroy")
+       (FUNCALL 'DESTROY RESOURCE))
       (1
+       (DEBUG-LOG! "Dispatching ~a~%" "get-subsurface")
        (FUNCALL 'GET-SUBSURFACE RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -5562,7 +5558,6 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (DEBUG-LOG! "C-Binding ~a~%" "wl_subcompositor")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (GET-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
@@ -5722,8 +5717,6 @@ An additional interface to a wl_surface object, which has been
                 (LET ((MESSAGES
                        (CFFI:FOREIGN-ALLOC '(:STRUCT WL_MESSAGE) :COUNT 0)))
                   MESSAGES)))
-           (DEBUG-LOG! "IF ptr range: ~a --- ~a~%" *INTERFACE*
-            (MEM-APTR *INTERFACE* '(:STRUCT INTERFACE) 1))
            (WITH-FOREIGN-SLOTS
             ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
              (:STRUCT INTERFACE))
@@ -5740,11 +5733,13 @@ An additional interface to a wl_surface object, which has been
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
-  (DEBUG-LOG! "Dispatcher invoked: ~a~%" "wl_subsurface")
   (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
     (ECASE OPCODE
-      (0 (FUNCALL 'DESTROY RESOURCE))
+      (0
+       (DEBUG-LOG! "Dispatching ~a~%" "destroy")
+       (FUNCALL 'DESTROY RESOURCE))
       (1
+       (DEBUG-LOG! "Dispatching ~a~%" "set-position")
        (FUNCALL 'SET-POSITION RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
@@ -5757,6 +5752,7 @@ An additional interface to a wl_surface object, which has been
                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                   'WL-FFI::I))))
       (2
+       (DEBUG-LOG! "Dispatching ~a~%" "place-above")
        (FUNCALL 'PLACE-ABOVE RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
@@ -5766,6 +5762,7 @@ An additional interface to a wl_surface object, which has been
                    'WL-FFI::O))
                  *RESOURCE-TRACKER*)))
       (3
+       (DEBUG-LOG! "Dispatching ~a~%" "place-below")
        (FUNCALL 'PLACE-BELOW RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
@@ -5774,8 +5771,12 @@ An additional interface to a wl_surface object, which has been
                    '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
                    'WL-FFI::O))
                  *RESOURCE-TRACKER*)))
-      (4 (FUNCALL 'SET-SYNC RESOURCE))
-      (5 (FUNCALL 'SET-DESYNC RESOURCE))))
+      (4
+       (DEBUG-LOG! "Dispatching ~a~%" "set-sync")
+       (FUNCALL 'SET-SYNC RESOURCE))
+      (5
+       (DEBUG-LOG! "Dispatching ~a~%" "set-desync")
+       (FUNCALL 'SET-DESYNC RESOURCE))))
   0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
@@ -5854,7 +5855,6 @@ This can be overriden by inheritance in case if custom behaviour is required."
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (DEBUG-LOG! "C-Binding ~a~%" "wl_subsurface")
   (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (GET-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 

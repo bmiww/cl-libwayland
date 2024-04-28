@@ -72,10 +72,12 @@ This can be overriden by inheritance in case if custom behaviour is required." (
 (defun gen-matcher (opcode request)
   "A case form to match an opcode to a method to be called upon a resource and it's
 argument feed."
-  `(,opcode (funcall ',(symbolify (dash-name request)) resource
-		     ,@(loop for index below (length (args request))
-			     for arg = (nth index (args request))
-			     collect (gen-c-arg-mapping arg index)))))
+  `(,opcode
+    (debug-log! "Dispatching ~a~%" ,(dash-name request))
+    (funcall ',(symbolify (dash-name request)) resource
+	     ,@(loop for index below (length (args request))
+		     for arg = (nth index (args request))
+		     collect (gen-c-arg-mapping arg index)))))
 
 
 ;; NOTE: An implementation of this in the python lib
@@ -96,7 +98,6 @@ argument feed."
     `((cl-async::define-c-callback dispatcher-ffi :int
 	  ((data :pointer) (target :pointer) (opcode :uint) (message :pointer) (args :pointer))
 	(declare (ignore data message ,@ignore-list))
-	(debug-log! "Dispatcher invoked: ~a~%" ,(name interface))
 	,(if (requests interface)
 	     `(let ((resource (gethash (pointer-address target) *resource-tracker*)))
 		(ecase opcode ,@matchers))
