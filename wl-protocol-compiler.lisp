@@ -86,11 +86,11 @@ This can be overriden by inheritance in case if custom behaviour is required." (
       ("array" `(error "WL C ARRAY PARSING NOT IMPLEMENTED")))))
 
 ;; TODO: This is a bit annoying - since it loosly refers to the symbol "resource"
-(defun gen-matcher (opcode request)
+(defun gen-matcher (ifname opcode request)
   "A case form to match an opcode to a method to be called upon a resource and it's
 argument feed."
   `(,opcode
-    (debug-log! "Dispatching ~a~%" ,(dash-name request))
+    (debug-log! "Dispatching ~a:~a~%" ,ifname ,(dash-name request))
     (funcall ',(symbolify (dash-name request)) resource
 	     ,@(loop for index below (length (args request))
 		     for arg = (nth index (args request))
@@ -107,7 +107,7 @@ argument feed."
 	 (matchers (loop for index below (length (requests interface))
 			 for request = (nth index (requests interface))
 			 do (incf arg-usage (length (args request)))
-			 collect (gen-matcher index request)))
+			 collect (gen-matcher (name interface) index request)))
 	 (ignore-list (if (requests interface)
 			  (if (= 0 arg-usage) '(args) nil)
 			  '(args target opcode))))
@@ -118,7 +118,7 @@ argument feed."
 	,(if (requests interface)
 	     `(let ((resource (gethash (pointer-address target) *resource-tracker*)))
 		(ecase opcode ,@matchers))
-	     `(error (format nil "A dispatcher wiwthout requests has been called for interface: ~a~%" ,(name interface))))
+	     `(error (format nil "A dispatcher without requests has been called for interface: ~a~%" ,(name interface))))
 	  0))))
 
 
