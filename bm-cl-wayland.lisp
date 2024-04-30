@@ -55,7 +55,9 @@
       (error "Circular dependency detected in interface initialization"))
     (when needs-processing (hierarchical-init needs-processing))))
 
-(defun init-interface-definitions () (hierarchical-init *interface-init-list*) (setf *interface-init-list* nil))
+(defun init-interface-definitions ()
+  (when *interface-init-list*
+    (hierarchical-init *interface-init-list*) (setf *interface-init-list* nil)))
 
 
 (defclass global (object)
