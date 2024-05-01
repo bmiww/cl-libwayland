@@ -5,7 +5,7 @@
 ;; ██╔══╝  ██╔══╝  ██║
 ;; ██║     ██║     ██║
 ;; ╚═╝     ╚═╝     ╚═╝
-(defpackage :bm-cl-libwayland
+(defpackage :libwayland-ffi
   (:use :cl :cffi)
   (:nicknames :wl-ffi)
   (:export display-create global-create global-get-name resource-get-id resource-create
@@ -14,7 +14,7 @@
 	   wl_argument resource-post-event-array name version method_count methods event_count events
 	   signature types wl_array))
 
-(in-package :bm-cl-libwayland)
+(in-package :libwayland-ffi)
 (define-foreign-library wayland-server
   (t (:default "libwayland-server")))
 

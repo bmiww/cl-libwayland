@@ -1,5 +1,5 @@
 (defpackage #:bm-cl-wayland
-  (:use #:cl #:bm-cl-libwayland #:cffi)
+  (:use #:cl #:cffi :wl-ffi)
   (:nicknames :wl)
   (:export display-create create-client *global-tracker* resource-get-id object get-client iface
 	   get-data pop-data display create-resource reserve-data global-create version data-ptr set-data
