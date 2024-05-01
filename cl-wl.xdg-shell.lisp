@@ -315,7 +315,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "xdg_wm_base")
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL:DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
@@ -330,8 +330,9 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Initializing global object: ~a~%" "xdg_wm_base")
   (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (CL-WL:PTR (CL-WL:DISPLAY GLOBAL)) *INTERFACE*
-           (VERSION GLOBAL) (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
+          (GLOBAL-CREATE (CL-WL:DISPLAY-PTR (CL-WL:GET-DISPLAY GLOBAL))
+           *INTERFACE* (VERSION GLOBAL) (CL-WL::DATA-PTR NEXT-DATA-ID)
+           *DISPATCH-BIND*)))
     (SETF (CL-WL:PTR GLOBAL) GLOBAL-PTR)
     (CL-WL::SET-DATA NEXT-DATA-ID
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
@@ -693,7 +694,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "xdg_positioner")
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL:DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
@@ -708,8 +709,9 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Initializing global object: ~a~%" "xdg_positioner")
   (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (CL-WL:PTR (CL-WL:DISPLAY GLOBAL)) *INTERFACE*
-           (VERSION GLOBAL) (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
+          (GLOBAL-CREATE (CL-WL:DISPLAY-PTR (CL-WL:GET-DISPLAY GLOBAL))
+           *INTERFACE* (VERSION GLOBAL) (CL-WL::DATA-PTR NEXT-DATA-ID)
+           *DISPATCH-BIND*)))
     (SETF (CL-WL:PTR GLOBAL) GLOBAL-PTR)
     (CL-WL::SET-DATA NEXT-DATA-ID
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
@@ -1042,7 +1044,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "xdg_surface")
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL:DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
@@ -1057,8 +1059,9 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Initializing global object: ~a~%" "xdg_surface")
   (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (CL-WL:PTR (CL-WL:DISPLAY GLOBAL)) *INTERFACE*
-           (VERSION GLOBAL) (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
+          (GLOBAL-CREATE (CL-WL:DISPLAY-PTR (CL-WL:GET-DISPLAY GLOBAL))
+           *INTERFACE* (VERSION GLOBAL) (CL-WL::DATA-PTR NEXT-DATA-ID)
+           *DISPATCH-BIND*)))
     (SETF (CL-WL:PTR GLOBAL) GLOBAL-PTR)
     (CL-WL::SET-DATA NEXT-DATA-ID
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
@@ -1652,7 +1655,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "xdg_toplevel")
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL:DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
@@ -1667,8 +1670,9 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Initializing global object: ~a~%" "xdg_toplevel")
   (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (CL-WL:PTR (CL-WL:DISPLAY GLOBAL)) *INTERFACE*
-           (VERSION GLOBAL) (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
+          (GLOBAL-CREATE (CL-WL:DISPLAY-PTR (CL-WL:GET-DISPLAY GLOBAL))
+           *INTERFACE* (VERSION GLOBAL) (CL-WL::DATA-PTR NEXT-DATA-ID)
+           *DISPATCH-BIND*)))
     (SETF (CL-WL:PTR GLOBAL) GLOBAL-PTR)
     (CL-WL::SET-DATA NEXT-DATA-ID
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
@@ -1947,7 +1951,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "xdg_popup")
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL:DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
@@ -1962,8 +1966,9 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Initializing global object: ~a~%" "xdg_popup")
   (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (CL-WL:PTR (CL-WL:DISPLAY GLOBAL)) *INTERFACE*
-           (VERSION GLOBAL) (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
+          (GLOBAL-CREATE (CL-WL:DISPLAY-PTR (CL-WL:GET-DISPLAY GLOBAL))
+           *INTERFACE* (VERSION GLOBAL) (CL-WL::DATA-PTR NEXT-DATA-ID)
+           *DISPATCH-BIND*)))
     (SETF (CL-WL:PTR GLOBAL) GLOBAL-PTR)
     (CL-WL::SET-DATA NEXT-DATA-ID
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)

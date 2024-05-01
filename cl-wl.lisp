@@ -11,8 +11,8 @@
   (:export create-client mk-if iface init-interface-definitions
 	   object get-display client version id ptr destroy
 	   global dispatch-impl
-	   client objects display ptr
-	   display dispatch-event-loop event-loop-fd flush-clients ptr
+	   client objects get-display ptr
+	   display dispatch-event-loop event-loop-fd flush-clients display-ptr
 
 	   ;; TODO: These are coming directly from wl-ffi - wrap around them?
 	   ;; TODO: A bit nasty to expose something this internal - needs a better way to handle this
@@ -32,17 +32,18 @@
    (event-loop-fd :accessor event-loop-fd)))
 
 (defmethod initialize-instance :before ((display display) &key)
-  (when *display-singleton* (error "There can only be one!... display.")))
+  (restart-case (when *display-singleton* (error "There can only be one!... display."))
+    (make-a-new-one () (setf *display-singleton* nil))))
 
 (defmethod initialize-instance :after ((display display) &key)
-  (setf (ptr display) (display-create))
-  (display-add-socket-fd (ptr display) (socket-fd display))
-  (setf (event-loop display) (display-get-event-loop (ptr display)))
+  (setf (display-ptr display) (display-create))
+  (display-add-socket-fd (display-ptr display) (socket-fd display))
+  (setf (event-loop display) (display-get-event-loop (display-ptr display)))
   (setf (event-loop-fd display) (event-loop-get-fd (event-loop display)))
   (setf *display-singleton* display))
 
 (defmethod dispatch-event-loop ((display display)) (event-loop-dispatch (event-loop display) 0))
-(defmethod flush-clients ((display display)) (display-flush-clients (ptr display)))
+(defmethod flush-clients ((display display)) (display-flush-clients (display-ptr display)))
 
 ;; ┌─┐┌┐  ┬┌─┐┌─┐┌┬┐
 ;; │ │├┴┐ │├┤ │   │
@@ -57,7 +58,7 @@
 
 (defmethod mk-if (class (object object) id &rest args)
   "Convenience method to create a new interface using the context of the creating object as reference"
-  (apply #'make-instance class :display (display object) :client (client object) :id id args))
+  (apply #'make-instance class :display (get-display object) :client (client object) :id id args))
 
 ;; Uses integer value pointer addresses as keys
 ;; TODO: Maybe clear this out once a client is destroyed or a restart is done
@@ -76,7 +77,7 @@
 ;; └─┘┴─┘┴└─┘┘└┘ ┴
 (defclass client ()
   ((objects :initform (make-hash-table :test 'eq) :accessor objects)
-   (display :initarg :display :reader display)
+   (display :initarg :display :reader get-display)
    (ptr :initarg :ptr :reader ptr)))
 
 ;; TODO: Clear this out once a client is destroyed or a restart is done
@@ -97,7 +98,7 @@
   "This function should be called when a new client connects to the socket.
 This will in essence forward the client to the libwayland implementation
 and set up the client object in the lisp world for further referencing."
-  (let* ((client (client-create (ptr display) fd))
+  (let* ((client (client-create (display-ptr display) fd))
 	 (pid (client-get-credentials client)))
     (setf (gethash pid *client-tracker*) (make-instance 'client :display display :ptr client))
     client))
