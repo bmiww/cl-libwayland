@@ -11,6 +11,9 @@
 ;; Currently exporting things that the generated files can use
 (in-package :bm-cl-wayland)
 
+;; ┌─┐┌┐  ┬┌─┐┌─┐┌┬┐
+;; │ │├┴┐ │├┤ │   │
+;; └─┘└─┘└┘└─┘└─┘ ┴
 (defclass object ()
   ((display :initarg :display :reader display)
    (client :initarg :client :reader client)
@@ -101,15 +104,6 @@ and set up the client object in the lisp world for further referencing."
 
 (defun set-data (index data) (setf (gethash index *data-tracker*) data))
 
-
-;; ┬ ┬┌┬┐┬┬
-;; │ │ │ ││
-;; └─┘ ┴ ┴┴─┘
-
-(defvar *debug* t)
-(defmacro debug-log! (&rest args) (when *debug* `(format t "⭐: ~a" (format nil ,@args))))
-
-
 ;; ┌─┐┌┬┐┌─┐┌┬┐┬┌─┐  ┌─┐┌─┐┬  ┬┌┐┌┬┌┬┐
 ;; └─┐ │ ├─┤ │ ││    ├┤ ├┤ │  │││││ │
 ;; └─┘ ┴ ┴ ┴ ┴ ┴└─┘  └  └  ┴  ┴┘└┘┴ ┴
@@ -135,3 +129,9 @@ and set up the client object in the lisp world for further referencing."
 (defun init-interface-definitions ()
   (when *interface-init-list*
     (hierarchical-init *interface-init-list*) (setf *interface-init-list* nil)))
+
+;; ┬ ┬┌┬┐┬┬
+;; │ │ │ ││
+;; └─┘ ┴ ┴┴─┘
+(defvar *debug* nil)
+(defmacro debug-log! (&rest args) (when *debug* `(format t "⭐: ~a" (format nil ,@args))))
