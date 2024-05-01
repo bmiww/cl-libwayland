@@ -9,7 +9,7 @@
 (defpackage :cl-wl.ffi
   (:use :cl :cffi)
   (:nicknames :wl-ffi)
-  (:export display-create global-create global-get-name resource-get-id resource-create
+  (:export display-create display-destroy global-create global-get-name resource-get-id resource-create
 	   client-create wl_message display-add-socket-fd display-run display-get-event-loop event-loop-get-fd
 	   event-loop-dispatch display-flush-clients resource-set-dispatcher wl_resource
 	   wl_argument resource-post-event-array name version method_count methods event_count events
@@ -63,6 +63,8 @@
   (size :int))
 
 (defcfun ("wl_display_create" display-create) :pointer)
+(defcfun ("wl_display_destroy" display-destroy) :void
+  (display :pointer))
 (defcfun ("wl_display_add_socket_fd" display-add-socket-fd) :int
   (display :pointer)
   (fd :int))

@@ -45,7 +45,9 @@
 ;; TODO: This could also clean up some of the resources and close client connections
 ;; Gracefully. Maybe need to also do a notify for all globals/objects that they are being
 ;; destroyed.
-(defmethod destroy ((display display)) (setf *display-singleton* nil))
+(defmethod destroy ((display display))
+  (display-destroy (display-ptr display))
+  (setf *display-singleton* nil))
 
 ;; ┌─┐┌┐  ┬┌─┐┌─┐┌┬┐
 ;; │ │├┴┐ │├┤ │   │
