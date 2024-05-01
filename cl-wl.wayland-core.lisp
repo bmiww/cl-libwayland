@@ -450,7 +450,7 @@
 
 (IN-PACKAGE :WL_DISPLAY)
 
-(DEFCLASS DISPATCH (CL-WL::OBJECT) NIL (:DEFAULT-INITARGS :VERSION 1)
+(DEFCLASS DISPATCH (CL-WL:OBJECT) NIL (:DEFAULT-INITARGS :VERSION 1)
           (:DOCUMENTATION "core global object
 
 The core global object.  This is a special singleton object.  It
@@ -567,12 +567,12 @@ The core global object.  This is a special singleton object.  It
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
   (LET* ((RESOURCE
-          (CL-WL::CREATE-RESOURCE (CL-WL::PTR (CL-WL::CLIENT INSTANCE))
+          (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                   *INTERFACE* (VERSION INSTANCE)
-                                  (CL-WL::ID INSTANCE))))
+                                  (CL-WL:ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) CL-WL::*RESOURCE-TRACKER*)
             INSTANCE)
-    (SETF (CL-WL::PTR INSTANCE) RESOURCE)
+    (SETF (CL-WL:PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -584,7 +584,7 @@ The core global object.  This is a special singleton object.  It
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O)
-            (CL-WL::PTR OBJECT_ID))
+            (CL-WL:PTR OBJECT_ID))
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
@@ -593,7 +593,7 @@ The core global object.  This is a special singleton object.  It
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::S)
             MESSAGE)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 0 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 0 ARG-LIST)))
 
 (DEFMETHOD SEND-DELETE-ID ((DISPATCH DISPATCH) ID)
   (CL-WL::DEBUG-LOG! "Event: ~a~%" "delete_id")
@@ -602,9 +602,9 @@ The core global object.  This is a special singleton object.  It
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
             ID)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 1 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 1 ARG-LIST)))
 
-(DEFCLASS GLOBAL (CL-WL::GLOBAL) NIL
+(DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 1 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "core global object
 
@@ -617,9 +617,9 @@ The core global object.  This is a special singleton object.  It
 This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_display")
   (LET ((BOUND
-         (MAKE-INSTANCE (CL-WL::DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL::DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
-    (SETF (CL-WL::IFACE CLIENT ID) BOUND)))
+         (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
+                        (CL-WL:DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+    (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -633,9 +633,9 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Initializing global object: ~a~%" "wl_display")
   (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (CL-WL::DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
+          (GLOBAL-CREATE (CL-WL:DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
-    (SETF (CL-WL::PTR GLOBAL) GLOBAL-PTR)
+    (SETF (CL-WL:PTR GLOBAL) GLOBAL-PTR)
     (CL-WL::SET-DATA NEXT-DATA-ID
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
                                     CL-WL::*GLOBAL-TRACKER*)
@@ -643,7 +643,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
 (IN-PACKAGE :WL_REGISTRY)
 
-(DEFCLASS DISPATCH (CL-WL::OBJECT) NIL (:DEFAULT-INITARGS :VERSION 1)
+(DEFCLASS DISPATCH (CL-WL:OBJECT) NIL (:DEFAULT-INITARGS :VERSION 1)
           (:DOCUMENTATION "global registry object
 
 The singleton global registry object.  The server has a number of
@@ -759,12 +759,12 @@ The singleton global registry object.  The server has a number of
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
   (LET* ((RESOURCE
-          (CL-WL::CREATE-RESOURCE (CL-WL::PTR (CL-WL::CLIENT INSTANCE))
+          (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                   *INTERFACE* (VERSION INSTANCE)
-                                  (CL-WL::ID INSTANCE))))
+                                  (CL-WL:ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) CL-WL::*RESOURCE-TRACKER*)
             INSTANCE)
-    (SETF (CL-WL::PTR INSTANCE) RESOURCE)
+    (SETF (CL-WL:PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -785,7 +785,7 @@ The singleton global registry object.  The server has a number of
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
             VERSION)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 0 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 0 ARG-LIST)))
 
 (DEFMETHOD SEND-GLOBAL-REMOVE
            ((DISPATCH DISPATCH) NAME)
@@ -795,9 +795,9 @@ The singleton global registry object.  The server has a number of
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
             NAME)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 1 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 1 ARG-LIST)))
 
-(DEFCLASS GLOBAL (CL-WL::GLOBAL) NIL
+(DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 1 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "global registry object
 
@@ -828,9 +828,9 @@ The singleton global registry object.  The server has a number of
 This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_registry")
   (LET ((BOUND
-         (MAKE-INSTANCE (CL-WL::DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL::DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
-    (SETF (CL-WL::IFACE CLIENT ID) BOUND)))
+         (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
+                        (CL-WL:DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+    (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -844,9 +844,9 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Initializing global object: ~a~%" "wl_registry")
   (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (CL-WL::DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
+          (GLOBAL-CREATE (CL-WL:DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
-    (SETF (CL-WL::PTR GLOBAL) GLOBAL-PTR)
+    (SETF (CL-WL:PTR GLOBAL) GLOBAL-PTR)
     (CL-WL::SET-DATA NEXT-DATA-ID
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
                                     CL-WL::*GLOBAL-TRACKER*)
@@ -854,7 +854,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
 (IN-PACKAGE :WL_CALLBACK)
 
-(DEFCLASS DISPATCH (CL-WL::OBJECT) NIL (:DEFAULT-INITARGS :VERSION 1)
+(DEFCLASS DISPATCH (CL-WL:OBJECT) NIL (:DEFAULT-INITARGS :VERSION 1)
           (:DOCUMENTATION "callback object
 
 Clients can handle the 'done' event to get notified when
@@ -916,12 +916,12 @@ Clients can handle the 'done' event to get notified when
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
   (LET* ((RESOURCE
-          (CL-WL::CREATE-RESOURCE (CL-WL::PTR (CL-WL::CLIENT INSTANCE))
+          (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                   *INTERFACE* (VERSION INSTANCE)
-                                  (CL-WL::ID INSTANCE))))
+                                  (CL-WL:ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) CL-WL::*RESOURCE-TRACKER*)
             INSTANCE)
-    (SETF (CL-WL::PTR INSTANCE) RESOURCE)
+    (SETF (CL-WL:PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -933,9 +933,9 @@ Clients can handle the 'done' event to get notified when
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
             CALLBACK_DATA)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 0 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 0 ARG-LIST)))
 
-(DEFCLASS GLOBAL (CL-WL::GLOBAL) NIL
+(DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 1 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "callback object
 
@@ -951,9 +951,9 @@ Clients can handle the 'done' event to get notified when
 This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_callback")
   (LET ((BOUND
-         (MAKE-INSTANCE (CL-WL::DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL::DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
-    (SETF (CL-WL::IFACE CLIENT ID) BOUND)))
+         (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
+                        (CL-WL:DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+    (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -967,9 +967,9 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Initializing global object: ~a~%" "wl_callback")
   (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (CL-WL::DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
+          (GLOBAL-CREATE (CL-WL:DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
-    (SETF (CL-WL::PTR GLOBAL) GLOBAL-PTR)
+    (SETF (CL-WL:PTR GLOBAL) GLOBAL-PTR)
     (CL-WL::SET-DATA NEXT-DATA-ID
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
                                     CL-WL::*GLOBAL-TRACKER*)
@@ -977,7 +977,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
 (IN-PACKAGE :WL_COMPOSITOR)
 
-(DEFCLASS DISPATCH (CL-WL::OBJECT) NIL (:DEFAULT-INITARGS :VERSION 6)
+(DEFCLASS DISPATCH (CL-WL:OBJECT) NIL (:DEFAULT-INITARGS :VERSION 6)
           (:DOCUMENTATION "the compositor singleton
 
 A compositor.  This object is a singleton global.  The
@@ -1071,16 +1071,16 @@ A compositor.  This object is a singleton global.  The
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
   (LET* ((RESOURCE
-          (CL-WL::CREATE-RESOURCE (CL-WL::PTR (CL-WL::CLIENT INSTANCE))
+          (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                   *INTERFACE* (VERSION INSTANCE)
-                                  (CL-WL::ID INSTANCE))))
+                                  (CL-WL:ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) CL-WL::*RESOURCE-TRACKER*)
             INSTANCE)
-    (SETF (CL-WL::PTR INSTANCE) RESOURCE)
+    (SETF (CL-WL:PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
-(DEFCLASS GLOBAL (CL-WL::GLOBAL) NIL
+(DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 6 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "the compositor singleton
 
@@ -1094,9 +1094,9 @@ A compositor.  This object is a singleton global.  The
 This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_compositor")
   (LET ((BOUND
-         (MAKE-INSTANCE (CL-WL::DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL::DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
-    (SETF (CL-WL::IFACE CLIENT ID) BOUND)))
+         (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
+                        (CL-WL:DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+    (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -1110,9 +1110,9 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Initializing global object: ~a~%" "wl_compositor")
   (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (CL-WL::DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
+          (GLOBAL-CREATE (CL-WL:DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
-    (SETF (CL-WL::PTR GLOBAL) GLOBAL-PTR)
+    (SETF (CL-WL:PTR GLOBAL) GLOBAL-PTR)
     (CL-WL::SET-DATA NEXT-DATA-ID
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
                                     CL-WL::*GLOBAL-TRACKER*)
@@ -1120,7 +1120,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
 (IN-PACKAGE :WL_SHM_POOL)
 
-(DEFCLASS DISPATCH (CL-WL::OBJECT) NIL (:DEFAULT-INITARGS :VERSION 1)
+(DEFCLASS DISPATCH (CL-WL:OBJECT) NIL (:DEFAULT-INITARGS :VERSION 1)
           (:DOCUMENTATION "a shared memory pool
 
 The wl_shm_pool object encapsulates a piece of memory shared
@@ -1144,8 +1144,8 @@ The wl_shm_pool object encapsulates a piece of memory shared
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_shm_pool")
-  (WHEN (SLOT-BOUNDP DISPATCH 'DESTROY)
-    (FUNCALL (SLOT-VALUE DISPATCH 'DESTROY) DISPATCH)))
+  (WHEN (SLOT-BOUNDP DISPATCH 'CL-WL:DESTROY)
+    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH)))
 
 (PUSHNEW
  (LIST "wl_shm_pool" (LIST "wl_buffer")
@@ -1263,16 +1263,16 @@ The wl_shm_pool object encapsulates a piece of memory shared
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
   (LET* ((RESOURCE
-          (CL-WL::CREATE-RESOURCE (CL-WL::PTR (CL-WL::CLIENT INSTANCE))
+          (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                   *INTERFACE* (VERSION INSTANCE)
-                                  (CL-WL::ID INSTANCE))))
+                                  (CL-WL:ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) CL-WL::*RESOURCE-TRACKER*)
             INSTANCE)
-    (SETF (CL-WL::PTR INSTANCE) RESOURCE)
+    (SETF (CL-WL:PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
-(DEFCLASS GLOBAL (CL-WL::GLOBAL) NIL
+(DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 1 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "a shared memory pool
 
@@ -1290,9 +1290,9 @@ The wl_shm_pool object encapsulates a piece of memory shared
 This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_shm_pool")
   (LET ((BOUND
-         (MAKE-INSTANCE (CL-WL::DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL::DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
-    (SETF (CL-WL::IFACE CLIENT ID) BOUND)))
+         (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
+                        (CL-WL:DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+    (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -1306,9 +1306,9 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Initializing global object: ~a~%" "wl_shm_pool")
   (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (CL-WL::DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
+          (GLOBAL-CREATE (CL-WL:DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
-    (SETF (CL-WL::PTR GLOBAL) GLOBAL-PTR)
+    (SETF (CL-WL:PTR GLOBAL) GLOBAL-PTR)
     (CL-WL::SET-DATA NEXT-DATA-ID
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
                                     CL-WL::*GLOBAL-TRACKER*)
@@ -1316,7 +1316,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
 (IN-PACKAGE :WL_SHM)
 
-(DEFCLASS DISPATCH (CL-WL::OBJECT) NIL (:DEFAULT-INITARGS :VERSION 1)
+(DEFCLASS DISPATCH (CL-WL:OBJECT) NIL (:DEFAULT-INITARGS :VERSION 1)
           (:DOCUMENTATION "shared memory support
 
 A singleton global object that provides support for shared
@@ -1413,12 +1413,12 @@ A singleton global object that provides support for shared
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
   (LET* ((RESOURCE
-          (CL-WL::CREATE-RESOURCE (CL-WL::PTR (CL-WL::CLIENT INSTANCE))
+          (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                   *INTERFACE* (VERSION INSTANCE)
-                                  (CL-WL::ID INSTANCE))))
+                                  (CL-WL:ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) CL-WL::*RESOURCE-TRACKER*)
             INSTANCE)
-    (SETF (CL-WL::PTR INSTANCE) RESOURCE)
+    (SETF (CL-WL:PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -1429,9 +1429,9 @@ A singleton global object that provides support for shared
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
             FORMAT)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 0 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 0 ARG-LIST)))
 
-(DEFCLASS GLOBAL (CL-WL::GLOBAL) NIL
+(DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 1 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "shared memory support
 
@@ -1451,9 +1451,9 @@ A singleton global object that provides support for shared
 This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_shm")
   (LET ((BOUND
-         (MAKE-INSTANCE (CL-WL::DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL::DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
-    (SETF (CL-WL::IFACE CLIENT ID) BOUND)))
+         (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
+                        (CL-WL:DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+    (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -1467,9 +1467,9 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Initializing global object: ~a~%" "wl_shm")
   (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (CL-WL::DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
+          (GLOBAL-CREATE (CL-WL:DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
-    (SETF (CL-WL::PTR GLOBAL) GLOBAL-PTR)
+    (SETF (CL-WL:PTR GLOBAL) GLOBAL-PTR)
     (CL-WL::SET-DATA NEXT-DATA-ID
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
                                     CL-WL::*GLOBAL-TRACKER*)
@@ -1477,7 +1477,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
 (IN-PACKAGE :WL_BUFFER)
 
-(DEFCLASS DISPATCH (CL-WL::OBJECT) NIL (:DEFAULT-INITARGS :VERSION 1)
+(DEFCLASS DISPATCH (CL-WL:OBJECT) NIL (:DEFAULT-INITARGS :VERSION 1)
           (:DOCUMENTATION "content for a wl_surface
 
 A buffer provides the content for a wl_surface. Buffers are
@@ -1500,8 +1500,8 @@ A buffer provides the content for a wl_surface. Buffers are
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_buffer")
-  (WHEN (SLOT-BOUNDP DISPATCH 'DESTROY)
-    (FUNCALL (SLOT-VALUE DISPATCH 'DESTROY) DISPATCH)))
+  (WHEN (SLOT-BOUNDP DISPATCH 'CL-WL:DESTROY)
+    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH)))
 
 (PUSHNEW
  (LIST "wl_buffer" (LIST)
@@ -1566,21 +1566,21 @@ A buffer provides the content for a wl_surface. Buffers are
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
   (LET* ((RESOURCE
-          (CL-WL::CREATE-RESOURCE (CL-WL::PTR (CL-WL::CLIENT INSTANCE))
+          (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                   *INTERFACE* (VERSION INSTANCE)
-                                  (CL-WL::ID INSTANCE))))
+                                  (CL-WL:ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) CL-WL::*RESOURCE-TRACKER*)
             INSTANCE)
-    (SETF (CL-WL::PTR INSTANCE) RESOURCE)
+    (SETF (CL-WL:PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
 (DEFMETHOD SEND-RELEASE ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Event: ~a~%" "release")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 0)))
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 0 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 0 ARG-LIST)))
 
-(DEFCLASS GLOBAL (CL-WL::GLOBAL) NIL
+(DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 1 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "content for a wl_surface
 
@@ -1604,9 +1604,9 @@ A buffer provides the content for a wl_surface. Buffers are
 This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_buffer")
   (LET ((BOUND
-         (MAKE-INSTANCE (CL-WL::DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL::DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
-    (SETF (CL-WL::IFACE CLIENT ID) BOUND)))
+         (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
+                        (CL-WL:DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+    (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -1620,9 +1620,9 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Initializing global object: ~a~%" "wl_buffer")
   (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (CL-WL::DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
+          (GLOBAL-CREATE (CL-WL:DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
-    (SETF (CL-WL::PTR GLOBAL) GLOBAL-PTR)
+    (SETF (CL-WL:PTR GLOBAL) GLOBAL-PTR)
     (CL-WL::SET-DATA NEXT-DATA-ID
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
                                     CL-WL::*GLOBAL-TRACKER*)
@@ -1630,7 +1630,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
 (IN-PACKAGE :WL_DATA_OFFER)
 
-(DEFCLASS DISPATCH (CL-WL::OBJECT) NIL (:DEFAULT-INITARGS :VERSION 3)
+(DEFCLASS DISPATCH (CL-WL:OBJECT) NIL (:DEFAULT-INITARGS :VERSION 3)
           (:DOCUMENTATION "offer to transfer data
 
 A wl_data_offer represents a piece of data offered for transfer
@@ -1658,8 +1658,8 @@ A wl_data_offer represents a piece of data offered for transfer
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_data_offer")
-  (WHEN (SLOT-BOUNDP DISPATCH 'DESTROY)
-    (FUNCALL (SLOT-VALUE DISPATCH 'DESTROY) DISPATCH)))
+  (WHEN (SLOT-BOUNDP DISPATCH 'CL-WL:DESTROY)
+    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH)))
 
 (PUSHNEW
  (LIST "wl_data_offer" (LIST)
@@ -1835,12 +1835,12 @@ A wl_data_offer represents a piece of data offered for transfer
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
   (LET* ((RESOURCE
-          (CL-WL::CREATE-RESOURCE (CL-WL::PTR (CL-WL::CLIENT INSTANCE))
+          (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                   *INTERFACE* (VERSION INSTANCE)
-                                  (CL-WL::ID INSTANCE))))
+                                  (CL-WL:ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) CL-WL::*RESOURCE-TRACKER*)
             INSTANCE)
-    (SETF (CL-WL::PTR INSTANCE) RESOURCE)
+    (SETF (CL-WL:PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -1851,7 +1851,7 @@ A wl_data_offer represents a piece of data offered for transfer
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::S)
             MIME_TYPE)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 0 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 0 ARG-LIST)))
 
 (DEFMETHOD SEND-SOURCE-ACTIONS
            ((DISPATCH DISPATCH) SOURCE_ACTIONS)
@@ -1861,7 +1861,7 @@ A wl_data_offer represents a piece of data offered for transfer
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
             SOURCE_ACTIONS)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 1 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 1 ARG-LIST)))
 
 (DEFMETHOD SEND-ACTION ((DISPATCH DISPATCH) DND_ACTION)
   (CL-WL::DEBUG-LOG! "Event: ~a~%" "action")
@@ -1870,9 +1870,9 @@ A wl_data_offer represents a piece of data offered for transfer
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
             DND_ACTION)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 2 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 2 ARG-LIST)))
 
-(DEFCLASS GLOBAL (CL-WL::GLOBAL) NIL
+(DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 3 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "offer to transfer data
 
@@ -1889,9 +1889,9 @@ A wl_data_offer represents a piece of data offered for transfer
 This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_data_offer")
   (LET ((BOUND
-         (MAKE-INSTANCE (CL-WL::DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL::DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
-    (SETF (CL-WL::IFACE CLIENT ID) BOUND)))
+         (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
+                        (CL-WL:DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+    (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -1905,9 +1905,9 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Initializing global object: ~a~%" "wl_data_offer")
   (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (CL-WL::DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
+          (GLOBAL-CREATE (CL-WL:DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
-    (SETF (CL-WL::PTR GLOBAL) GLOBAL-PTR)
+    (SETF (CL-WL:PTR GLOBAL) GLOBAL-PTR)
     (CL-WL::SET-DATA NEXT-DATA-ID
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
                                     CL-WL::*GLOBAL-TRACKER*)
@@ -1915,7 +1915,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
 (IN-PACKAGE :WL_DATA_SOURCE)
 
-(DEFCLASS DISPATCH (CL-WL::OBJECT) NIL (:DEFAULT-INITARGS :VERSION 3)
+(DEFCLASS DISPATCH (CL-WL:OBJECT) NIL (:DEFAULT-INITARGS :VERSION 3)
           (:DOCUMENTATION "offer to transfer data
 
 The wl_data_source object is the source side of a wl_data_offer.
@@ -1935,8 +1935,8 @@ The wl_data_source object is the source side of a wl_data_offer.
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_data_source")
-  (WHEN (SLOT-BOUNDP DISPATCH 'DESTROY)
-    (FUNCALL (SLOT-VALUE DISPATCH 'DESTROY) DISPATCH)))
+  (WHEN (SLOT-BOUNDP DISPATCH 'CL-WL:DESTROY)
+    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH)))
 
 (PUSHNEW
  (LIST "wl_data_source" (LIST)
@@ -2098,12 +2098,12 @@ The wl_data_source object is the source side of a wl_data_offer.
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
   (LET* ((RESOURCE
-          (CL-WL::CREATE-RESOURCE (CL-WL::PTR (CL-WL::CLIENT INSTANCE))
+          (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                   *INTERFACE* (VERSION INSTANCE)
-                                  (CL-WL::ID INSTANCE))))
+                                  (CL-WL:ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) CL-WL::*RESOURCE-TRACKER*)
             INSTANCE)
-    (SETF (CL-WL::PTR INSTANCE) RESOURCE)
+    (SETF (CL-WL:PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -2114,7 +2114,7 @@ The wl_data_source object is the source side of a wl_data_offer.
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::S)
             MIME_TYPE)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 0 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 0 ARG-LIST)))
 
 (DEFMETHOD SEND-SEND
            ((DISPATCH DISPATCH) MIME_TYPE FD)
@@ -2128,22 +2128,22 @@ The wl_data_source object is the source side of a wl_data_offer.
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::H)
             FD)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 1 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 1 ARG-LIST)))
 
 (DEFMETHOD SEND-CANCELLED ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Event: ~a~%" "cancelled")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 0)))
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 2 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 2 ARG-LIST)))
 
 (DEFMETHOD SEND-DND-DROP-PERFORMED ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Event: ~a~%" "dnd_drop_performed")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 0)))
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 3 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 3 ARG-LIST)))
 
 (DEFMETHOD SEND-DND-FINISHED ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Event: ~a~%" "dnd_finished")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 0)))
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 4 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 4 ARG-LIST)))
 
 (DEFMETHOD SEND-ACTION ((DISPATCH DISPATCH) DND_ACTION)
   (CL-WL::DEBUG-LOG! "Event: ~a~%" "action")
@@ -2152,9 +2152,9 @@ The wl_data_source object is the source side of a wl_data_offer.
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
             DND_ACTION)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 5 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 5 ARG-LIST)))
 
-(DEFCLASS GLOBAL (CL-WL::GLOBAL) NIL
+(DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 3 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "offer to transfer data
 
@@ -2169,9 +2169,9 @@ The wl_data_source object is the source side of a wl_data_offer.
 This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_data_source")
   (LET ((BOUND
-         (MAKE-INSTANCE (CL-WL::DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL::DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
-    (SETF (CL-WL::IFACE CLIENT ID) BOUND)))
+         (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
+                        (CL-WL:DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+    (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -2185,9 +2185,9 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Initializing global object: ~a~%" "wl_data_source")
   (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (CL-WL::DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
+          (GLOBAL-CREATE (CL-WL:DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
-    (SETF (CL-WL::PTR GLOBAL) GLOBAL-PTR)
+    (SETF (CL-WL:PTR GLOBAL) GLOBAL-PTR)
     (CL-WL::SET-DATA NEXT-DATA-ID
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
                                     CL-WL::*GLOBAL-TRACKER*)
@@ -2195,7 +2195,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
 (IN-PACKAGE :WL_DATA_DEVICE)
 
-(DEFCLASS DISPATCH (CL-WL::OBJECT) NIL (:DEFAULT-INITARGS :VERSION 3)
+(DEFCLASS DISPATCH (CL-WL:OBJECT) NIL (:DEFAULT-INITARGS :VERSION 3)
           (:DOCUMENTATION "data transfer device
 
 There is one wl_data_device per seat which can be obtained
@@ -2418,12 +2418,12 @@ There is one wl_data_device per seat which can be obtained
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
   (LET* ((RESOURCE
-          (CL-WL::CREATE-RESOURCE (CL-WL::PTR (CL-WL::CLIENT INSTANCE))
+          (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                   *INTERFACE* (VERSION INSTANCE)
-                                  (CL-WL::ID INSTANCE))))
+                                  (CL-WL:ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) CL-WL::*RESOURCE-TRACKER*)
             INSTANCE)
-    (SETF (CL-WL::PTR INSTANCE) RESOURCE)
+    (SETF (CL-WL:PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -2434,7 +2434,7 @@ There is one wl_data_device per seat which can be obtained
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N)
             ID)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 0 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 0 ARG-LIST)))
 
 (DEFMETHOD SEND-ENTER
            ((DISPATCH DISPATCH) SERIAL SURFACE
@@ -2448,7 +2448,7 @@ There is one wl_data_device per seat which can be obtained
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O)
-            (CL-WL::PTR SURFACE))
+            (CL-WL:PTR SURFACE))
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::F)
@@ -2460,13 +2460,13 @@ There is one wl_data_device per seat which can be obtained
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 4)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O)
-            (CL-WL::PTR ID))
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 1 ARG-LIST)))
+            (CL-WL:PTR ID))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 1 ARG-LIST)))
 
 (DEFMETHOD SEND-LEAVE ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Event: ~a~%" "leave")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 0)))
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 2 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 2 ARG-LIST)))
 
 (DEFMETHOD SEND-MOTION
            ((DISPATCH DISPATCH) TIME X Y)
@@ -2484,12 +2484,12 @@ There is one wl_data_device per seat which can be obtained
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::F)
             Y)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 3 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 3 ARG-LIST)))
 
 (DEFMETHOD SEND-DROP ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Event: ~a~%" "drop")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 0)))
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 4 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 4 ARG-LIST)))
 
 (DEFMETHOD SEND-SELECTION ((DISPATCH DISPATCH) ID)
   (CL-WL::DEBUG-LOG! "Event: ~a~%" "selection")
@@ -2497,10 +2497,10 @@ There is one wl_data_device per seat which can be obtained
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O)
-            (CL-WL::PTR ID))
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 5 ARG-LIST)))
+            (CL-WL:PTR ID))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 5 ARG-LIST)))
 
-(DEFCLASS GLOBAL (CL-WL::GLOBAL) NIL
+(DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 3 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "data transfer device
 
@@ -2516,9 +2516,9 @@ There is one wl_data_device per seat which can be obtained
 This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_data_device")
   (LET ((BOUND
-         (MAKE-INSTANCE (CL-WL::DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL::DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
-    (SETF (CL-WL::IFACE CLIENT ID) BOUND)))
+         (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
+                        (CL-WL:DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+    (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -2532,9 +2532,9 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Initializing global object: ~a~%" "wl_data_device")
   (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (CL-WL::DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
+          (GLOBAL-CREATE (CL-WL:DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
-    (SETF (CL-WL::PTR GLOBAL) GLOBAL-PTR)
+    (SETF (CL-WL:PTR GLOBAL) GLOBAL-PTR)
     (CL-WL::SET-DATA NEXT-DATA-ID
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
                                     CL-WL::*GLOBAL-TRACKER*)
@@ -2542,7 +2542,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
 (IN-PACKAGE :WL_DATA_DEVICE_MANAGER)
 
-(DEFCLASS DISPATCH (CL-WL::OBJECT) NIL (:DEFAULT-INITARGS :VERSION 3)
+(DEFCLASS DISPATCH (CL-WL:OBJECT) NIL (:DEFAULT-INITARGS :VERSION 3)
           (:DOCUMENTATION "data transfer interface
 
 The wl_data_device_manager is a singleton global object that
@@ -2652,16 +2652,16 @@ The wl_data_device_manager is a singleton global object that
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
   (LET* ((RESOURCE
-          (CL-WL::CREATE-RESOURCE (CL-WL::PTR (CL-WL::CLIENT INSTANCE))
+          (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                   *INTERFACE* (VERSION INSTANCE)
-                                  (CL-WL::ID INSTANCE))))
+                                  (CL-WL:ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) CL-WL::*RESOURCE-TRACKER*)
             INSTANCE)
-    (SETF (CL-WL::PTR INSTANCE) RESOURCE)
+    (SETF (CL-WL:PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
-(DEFCLASS GLOBAL (CL-WL::GLOBAL) NIL
+(DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 3 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "data transfer interface
 
@@ -2682,9 +2682,9 @@ The wl_data_device_manager is a singleton global object that
 This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_data_device_manager")
   (LET ((BOUND
-         (MAKE-INSTANCE (CL-WL::DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL::DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
-    (SETF (CL-WL::IFACE CLIENT ID) BOUND)))
+         (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
+                        (CL-WL:DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+    (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -2699,9 +2699,9 @@ This can be overriden by inheritance in case if custom behaviour is required."
                      "wl_data_device_manager")
   (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (CL-WL::DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
+          (GLOBAL-CREATE (CL-WL:DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
-    (SETF (CL-WL::PTR GLOBAL) GLOBAL-PTR)
+    (SETF (CL-WL:PTR GLOBAL) GLOBAL-PTR)
     (CL-WL::SET-DATA NEXT-DATA-ID
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
                                     CL-WL::*GLOBAL-TRACKER*)
@@ -2709,7 +2709,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
 (IN-PACKAGE :WL_SHELL)
 
-(DEFCLASS DISPATCH (CL-WL::OBJECT) NIL (:DEFAULT-INITARGS :VERSION 1)
+(DEFCLASS DISPATCH (CL-WL:OBJECT) NIL (:DEFAULT-INITARGS :VERSION 1)
           (:DOCUMENTATION "create desktop-style surfaces
 
 This interface is implemented by servers that provide
@@ -2792,16 +2792,16 @@ This interface is implemented by servers that provide
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
   (LET* ((RESOURCE
-          (CL-WL::CREATE-RESOURCE (CL-WL::PTR (CL-WL::CLIENT INSTANCE))
+          (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                   *INTERFACE* (VERSION INSTANCE)
-                                  (CL-WL::ID INSTANCE))))
+                                  (CL-WL:ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) CL-WL::*RESOURCE-TRACKER*)
             INSTANCE)
-    (SETF (CL-WL::PTR INSTANCE) RESOURCE)
+    (SETF (CL-WL:PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
-(DEFCLASS GLOBAL (CL-WL::GLOBAL) NIL
+(DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 1 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "create desktop-style surfaces
 
@@ -2821,9 +2821,9 @@ This interface is implemented by servers that provide
 This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_shell")
   (LET ((BOUND
-         (MAKE-INSTANCE (CL-WL::DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL::DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
-    (SETF (CL-WL::IFACE CLIENT ID) BOUND)))
+         (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
+                        (CL-WL:DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+    (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -2837,9 +2837,9 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Initializing global object: ~a~%" "wl_shell")
   (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (CL-WL::DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
+          (GLOBAL-CREATE (CL-WL:DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
-    (SETF (CL-WL::PTR GLOBAL) GLOBAL-PTR)
+    (SETF (CL-WL:PTR GLOBAL) GLOBAL-PTR)
     (CL-WL::SET-DATA NEXT-DATA-ID
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
                                     CL-WL::*GLOBAL-TRACKER*)
@@ -2847,7 +2847,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
 (IN-PACKAGE :WL_SHELL_SURFACE)
 
-(DEFCLASS DISPATCH (CL-WL::OBJECT) NIL (:DEFAULT-INITARGS :VERSION 1)
+(DEFCLASS DISPATCH (CL-WL:OBJECT) NIL (:DEFAULT-INITARGS :VERSION 1)
           (:DOCUMENTATION "desktop-style metadata interface
 
 An interface that may be implemented by a wl_surface, for
@@ -3244,12 +3244,12 @@ An interface that may be implemented by a wl_surface, for
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
   (LET* ((RESOURCE
-          (CL-WL::CREATE-RESOURCE (CL-WL::PTR (CL-WL::CLIENT INSTANCE))
+          (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                   *INTERFACE* (VERSION INSTANCE)
-                                  (CL-WL::ID INSTANCE))))
+                                  (CL-WL:ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) CL-WL::*RESOURCE-TRACKER*)
             INSTANCE)
-    (SETF (CL-WL::PTR INSTANCE) RESOURCE)
+    (SETF (CL-WL:PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -3260,7 +3260,7 @@ An interface that may be implemented by a wl_surface, for
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
             SERIAL)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 0 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 0 ARG-LIST)))
 
 (DEFMETHOD SEND-CONFIGURE
            ((DISPATCH DISPATCH) EDGES WIDTH
@@ -3279,14 +3279,14 @@ An interface that may be implemented by a wl_surface, for
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I)
             HEIGHT)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 1 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 1 ARG-LIST)))
 
 (DEFMETHOD SEND-POPUP-DONE ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Event: ~a~%" "popup_done")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 0)))
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 2 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 2 ARG-LIST)))
 
-(DEFCLASS GLOBAL (CL-WL::GLOBAL) NIL
+(DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 1 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "desktop-style metadata interface
 
@@ -3308,9 +3308,9 @@ An interface that may be implemented by a wl_surface, for
 This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_shell_surface")
   (LET ((BOUND
-         (MAKE-INSTANCE (CL-WL::DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL::DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
-    (SETF (CL-WL::IFACE CLIENT ID) BOUND)))
+         (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
+                        (CL-WL:DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+    (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -3324,9 +3324,9 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Initializing global object: ~a~%" "wl_shell_surface")
   (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (CL-WL::DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
+          (GLOBAL-CREATE (CL-WL:DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
-    (SETF (CL-WL::PTR GLOBAL) GLOBAL-PTR)
+    (SETF (CL-WL:PTR GLOBAL) GLOBAL-PTR)
     (CL-WL::SET-DATA NEXT-DATA-ID
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
                                     CL-WL::*GLOBAL-TRACKER*)
@@ -3334,7 +3334,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
 (IN-PACKAGE :WL_SURFACE)
 
-(DEFCLASS DISPATCH (CL-WL::OBJECT) NIL (:DEFAULT-INITARGS :VERSION 6)
+(DEFCLASS DISPATCH (CL-WL:OBJECT) NIL (:DEFAULT-INITARGS :VERSION 6)
           (:DOCUMENTATION "an onscreen surface
 
 A surface is a rectangular area that may be displayed on zero
@@ -3416,8 +3416,8 @@ A surface is a rectangular area that may be displayed on zero
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_surface")
-  (WHEN (SLOT-BOUNDP DISPATCH 'DESTROY)
-    (FUNCALL (SLOT-VALUE DISPATCH 'DESTROY) DISPATCH)))
+  (WHEN (SLOT-BOUNDP DISPATCH 'CL-WL:DESTROY)
+    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH)))
 
 (PUSHNEW
  (LIST "wl_surface" (LIST "wl_output" "wl_buffer" "wl_callback" "wl_region")
@@ -3768,12 +3768,12 @@ A surface is a rectangular area that may be displayed on zero
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
   (LET* ((RESOURCE
-          (CL-WL::CREATE-RESOURCE (CL-WL::PTR (CL-WL::CLIENT INSTANCE))
+          (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                   *INTERFACE* (VERSION INSTANCE)
-                                  (CL-WL::ID INSTANCE))))
+                                  (CL-WL:ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) CL-WL::*RESOURCE-TRACKER*)
             INSTANCE)
-    (SETF (CL-WL::PTR INSTANCE) RESOURCE)
+    (SETF (CL-WL:PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -3783,8 +3783,8 @@ A surface is a rectangular area that may be displayed on zero
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O)
-            (CL-WL::PTR OUTPUT))
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 0 ARG-LIST)))
+            (CL-WL:PTR OUTPUT))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 0 ARG-LIST)))
 
 (DEFMETHOD SEND-LEAVE ((DISPATCH DISPATCH) OUTPUT)
   (CL-WL::DEBUG-LOG! "Event: ~a~%" "leave")
@@ -3792,8 +3792,8 @@ A surface is a rectangular area that may be displayed on zero
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O)
-            (CL-WL::PTR OUTPUT))
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 1 ARG-LIST)))
+            (CL-WL:PTR OUTPUT))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 1 ARG-LIST)))
 
 (DEFMETHOD SEND-PREFERRED-BUFFER-SCALE
            ((DISPATCH DISPATCH) FACTOR)
@@ -3803,7 +3803,7 @@ A surface is a rectangular area that may be displayed on zero
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I)
             FACTOR)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 2 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 2 ARG-LIST)))
 
 (DEFMETHOD SEND-PREFERRED-BUFFER-TRANSFORM
            ((DISPATCH DISPATCH) TRANSFORM)
@@ -3813,9 +3813,9 @@ A surface is a rectangular area that may be displayed on zero
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
             TRANSFORM)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 3 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 3 ARG-LIST)))
 
-(DEFCLASS GLOBAL (CL-WL::GLOBAL) NIL
+(DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 6 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "an onscreen surface
 
@@ -3868,9 +3868,9 @@ A surface is a rectangular area that may be displayed on zero
 This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_surface")
   (LET ((BOUND
-         (MAKE-INSTANCE (CL-WL::DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL::DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
-    (SETF (CL-WL::IFACE CLIENT ID) BOUND)))
+         (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
+                        (CL-WL:DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+    (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -3884,9 +3884,9 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Initializing global object: ~a~%" "wl_surface")
   (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (CL-WL::DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
+          (GLOBAL-CREATE (CL-WL:DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
-    (SETF (CL-WL::PTR GLOBAL) GLOBAL-PTR)
+    (SETF (CL-WL:PTR GLOBAL) GLOBAL-PTR)
     (CL-WL::SET-DATA NEXT-DATA-ID
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
                                     CL-WL::*GLOBAL-TRACKER*)
@@ -3894,7 +3894,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
 (IN-PACKAGE :WL_SEAT)
 
-(DEFCLASS DISPATCH (CL-WL::OBJECT) NIL (:DEFAULT-INITARGS :VERSION 9)
+(DEFCLASS DISPATCH (CL-WL:OBJECT) NIL (:DEFAULT-INITARGS :VERSION 9)
           (:DOCUMENTATION "group of input devices
 
 A seat is a group of keyboards, pointer and touch devices. This
@@ -4051,12 +4051,12 @@ A seat is a group of keyboards, pointer and touch devices. This
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
   (LET* ((RESOURCE
-          (CL-WL::CREATE-RESOURCE (CL-WL::PTR (CL-WL::CLIENT INSTANCE))
+          (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                   *INTERFACE* (VERSION INSTANCE)
-                                  (CL-WL::ID INSTANCE))))
+                                  (CL-WL:ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) CL-WL::*RESOURCE-TRACKER*)
             INSTANCE)
-    (SETF (CL-WL::PTR INSTANCE) RESOURCE)
+    (SETF (CL-WL:PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -4068,7 +4068,7 @@ A seat is a group of keyboards, pointer and touch devices. This
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
             CAPABILITIES)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 0 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 0 ARG-LIST)))
 
 (DEFMETHOD SEND-NAME ((DISPATCH DISPATCH) NAME)
   (CL-WL::DEBUG-LOG! "Event: ~a~%" "name")
@@ -4077,9 +4077,9 @@ A seat is a group of keyboards, pointer and touch devices. This
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::S)
             NAME)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 1 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 1 ARG-LIST)))
 
-(DEFCLASS GLOBAL (CL-WL::GLOBAL) NIL
+(DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 9 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "group of input devices
 
@@ -4094,9 +4094,9 @@ A seat is a group of keyboards, pointer and touch devices. This
 This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_seat")
   (LET ((BOUND
-         (MAKE-INSTANCE (CL-WL::DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL::DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
-    (SETF (CL-WL::IFACE CLIENT ID) BOUND)))
+         (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
+                        (CL-WL:DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+    (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -4110,9 +4110,9 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Initializing global object: ~a~%" "wl_seat")
   (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (CL-WL::DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
+          (GLOBAL-CREATE (CL-WL:DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
-    (SETF (CL-WL::PTR GLOBAL) GLOBAL-PTR)
+    (SETF (CL-WL:PTR GLOBAL) GLOBAL-PTR)
     (CL-WL::SET-DATA NEXT-DATA-ID
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
                                     CL-WL::*GLOBAL-TRACKER*)
@@ -4120,7 +4120,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
 (IN-PACKAGE :WL_POINTER)
 
-(DEFCLASS DISPATCH (CL-WL::OBJECT) NIL (:DEFAULT-INITARGS :VERSION 9)
+(DEFCLASS DISPATCH (CL-WL:OBJECT) NIL (:DEFAULT-INITARGS :VERSION 9)
           (:DOCUMENTATION "pointer input device
 
 The wl_pointer interface represents one or more input devices,
@@ -4379,12 +4379,12 @@ The wl_pointer interface represents one or more input devices,
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
   (LET* ((RESOURCE
-          (CL-WL::CREATE-RESOURCE (CL-WL::PTR (CL-WL::CLIENT INSTANCE))
+          (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                   *INTERFACE* (VERSION INSTANCE)
-                                  (CL-WL::ID INSTANCE))))
+                                  (CL-WL:ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) CL-WL::*RESOURCE-TRACKER*)
             INSTANCE)
-    (SETF (CL-WL::PTR INSTANCE) RESOURCE)
+    (SETF (CL-WL:PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -4400,7 +4400,7 @@ The wl_pointer interface represents one or more input devices,
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O)
-            (CL-WL::PTR SURFACE))
+            (CL-WL:PTR SURFACE))
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::F)
@@ -4409,7 +4409,7 @@ The wl_pointer interface represents one or more input devices,
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::F)
             SURFACE_Y)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 0 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 0 ARG-LIST)))
 
 (DEFMETHOD SEND-LEAVE
            ((DISPATCH DISPATCH) SERIAL SURFACE)
@@ -4422,8 +4422,8 @@ The wl_pointer interface represents one or more input devices,
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O)
-            (CL-WL::PTR SURFACE))
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 1 ARG-LIST)))
+            (CL-WL:PTR SURFACE))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 1 ARG-LIST)))
 
 (DEFMETHOD SEND-MOTION
            ((DISPATCH DISPATCH) TIME SURFACE_X
@@ -4442,7 +4442,7 @@ The wl_pointer interface represents one or more input devices,
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::F)
             SURFACE_Y)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 2 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 2 ARG-LIST)))
 
 (DEFMETHOD SEND-BUTTON
            ((DISPATCH DISPATCH) SERIAL TIME
@@ -4465,7 +4465,7 @@ The wl_pointer interface represents one or more input devices,
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
             STATE)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 3 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 3 ARG-LIST)))
 
 (DEFMETHOD SEND-AXIS
            ((DISPATCH DISPATCH) TIME AXIS
@@ -4484,12 +4484,12 @@ The wl_pointer interface represents one or more input devices,
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::F)
             VALUE)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 4 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 4 ARG-LIST)))
 
 (DEFMETHOD SEND-FRAME ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Event: ~a~%" "frame")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 0)))
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 5 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 5 ARG-LIST)))
 
 (DEFMETHOD SEND-AXIS-SOURCE
            ((DISPATCH DISPATCH) AXIS_SOURCE)
@@ -4499,7 +4499,7 @@ The wl_pointer interface represents one or more input devices,
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
             AXIS_SOURCE)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 6 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 6 ARG-LIST)))
 
 (DEFMETHOD SEND-AXIS-STOP
            ((DISPATCH DISPATCH) TIME AXIS)
@@ -4513,7 +4513,7 @@ The wl_pointer interface represents one or more input devices,
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
             AXIS)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 7 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 7 ARG-LIST)))
 
 (DEFMETHOD SEND-AXIS-DISCRETE
            ((DISPATCH DISPATCH) AXIS DISCRETE)
@@ -4527,7 +4527,7 @@ The wl_pointer interface represents one or more input devices,
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I)
             DISCRETE)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 8 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 8 ARG-LIST)))
 
 (DEFMETHOD SEND-AXIS-VALUE120
            ((DISPATCH DISPATCH) AXIS VALUE120)
@@ -4541,7 +4541,7 @@ The wl_pointer interface represents one or more input devices,
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I)
             VALUE120)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 9 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 9 ARG-LIST)))
 
 (DEFMETHOD SEND-AXIS-RELATIVE-DIRECTION
            ((DISPATCH DISPATCH) AXIS DIRECTION)
@@ -4555,9 +4555,9 @@ The wl_pointer interface represents one or more input devices,
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
             DIRECTION)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 10 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 10 ARG-LIST)))
 
-(DEFCLASS GLOBAL (CL-WL::GLOBAL) NIL
+(DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 9 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "pointer input device
 
@@ -4576,9 +4576,9 @@ The wl_pointer interface represents one or more input devices,
 This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_pointer")
   (LET ((BOUND
-         (MAKE-INSTANCE (CL-WL::DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL::DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
-    (SETF (CL-WL::IFACE CLIENT ID) BOUND)))
+         (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
+                        (CL-WL:DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+    (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -4592,9 +4592,9 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Initializing global object: ~a~%" "wl_pointer")
   (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (CL-WL::DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
+          (GLOBAL-CREATE (CL-WL:DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
-    (SETF (CL-WL::PTR GLOBAL) GLOBAL-PTR)
+    (SETF (CL-WL:PTR GLOBAL) GLOBAL-PTR)
     (CL-WL::SET-DATA NEXT-DATA-ID
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
                                     CL-WL::*GLOBAL-TRACKER*)
@@ -4602,7 +4602,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
 (IN-PACKAGE :WL_KEYBOARD)
 
-(DEFCLASS DISPATCH (CL-WL::OBJECT) NIL (:DEFAULT-INITARGS :VERSION 9)
+(DEFCLASS DISPATCH (CL-WL:OBJECT) NIL (:DEFAULT-INITARGS :VERSION 9)
           (:DOCUMENTATION "keyboard input device
 
 The wl_keyboard interface represents one or more keyboards
@@ -4751,12 +4751,12 @@ The wl_keyboard interface represents one or more keyboards
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
   (LET* ((RESOURCE
-          (CL-WL::CREATE-RESOURCE (CL-WL::PTR (CL-WL::CLIENT INSTANCE))
+          (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                   *INTERFACE* (VERSION INSTANCE)
-                                  (CL-WL::ID INSTANCE))))
+                                  (CL-WL:ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) CL-WL::*RESOURCE-TRACKER*)
             INSTANCE)
-    (SETF (CL-WL::PTR INSTANCE) RESOURCE)
+    (SETF (CL-WL:PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -4777,7 +4777,7 @@ The wl_keyboard interface represents one or more keyboards
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
             SIZE)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 0 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 0 ARG-LIST)))
 
 (DEFMETHOD SEND-ENTER
            ((DISPATCH DISPATCH) SERIAL SURFACE
@@ -4791,7 +4791,7 @@ The wl_keyboard interface represents one or more keyboards
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O)
-            (CL-WL::PTR SURFACE))
+            (CL-WL:PTR SURFACE))
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::A)
@@ -4811,7 +4811,7 @@ The wl_keyboard interface represents one or more keyboards
                      'CL-WL.FFI::DATA)
                       DATA)
               STRUCT))
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 1 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 1 ARG-LIST)))
 
 (DEFMETHOD SEND-LEAVE
            ((DISPATCH DISPATCH) SERIAL SURFACE)
@@ -4824,8 +4824,8 @@ The wl_keyboard interface represents one or more keyboards
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O)
-            (CL-WL::PTR SURFACE))
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 2 ARG-LIST)))
+            (CL-WL:PTR SURFACE))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 2 ARG-LIST)))
 
 (DEFMETHOD SEND-KEY
            ((DISPATCH DISPATCH) SERIAL TIME
@@ -4848,7 +4848,7 @@ The wl_keyboard interface represents one or more keyboards
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
             STATE)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 3 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 3 ARG-LIST)))
 
 (DEFMETHOD SEND-MODIFIERS
            ((DISPATCH DISPATCH) SERIAL MODS_DEPRESSED
@@ -4875,7 +4875,7 @@ The wl_keyboard interface represents one or more keyboards
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 4)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
             GROUP)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 4 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 4 ARG-LIST)))
 
 (DEFMETHOD SEND-REPEAT-INFO
            ((DISPATCH DISPATCH) RATE DELAY)
@@ -4889,9 +4889,9 @@ The wl_keyboard interface represents one or more keyboards
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I)
             DELAY)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 5 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 5 ARG-LIST)))
 
-(DEFCLASS GLOBAL (CL-WL::GLOBAL) NIL
+(DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 9 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "keyboard input device
 
@@ -4904,9 +4904,9 @@ The wl_keyboard interface represents one or more keyboards
 This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_keyboard")
   (LET ((BOUND
-         (MAKE-INSTANCE (CL-WL::DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL::DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
-    (SETF (CL-WL::IFACE CLIENT ID) BOUND)))
+         (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
+                        (CL-WL:DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+    (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -4920,9 +4920,9 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Initializing global object: ~a~%" "wl_keyboard")
   (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (CL-WL::DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
+          (GLOBAL-CREATE (CL-WL:DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
-    (SETF (CL-WL::PTR GLOBAL) GLOBAL-PTR)
+    (SETF (CL-WL:PTR GLOBAL) GLOBAL-PTR)
     (CL-WL::SET-DATA NEXT-DATA-ID
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
                                     CL-WL::*GLOBAL-TRACKER*)
@@ -4930,7 +4930,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
 (IN-PACKAGE :WL_TOUCH)
 
-(DEFCLASS DISPATCH (CL-WL::OBJECT) NIL (:DEFAULT-INITARGS :VERSION 9)
+(DEFCLASS DISPATCH (CL-WL:OBJECT) NIL (:DEFAULT-INITARGS :VERSION 9)
           (:DOCUMENTATION "touchscreen input device
 
 The wl_touch interface represents a touchscreen
@@ -5094,12 +5094,12 @@ The wl_touch interface represents a touchscreen
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
   (LET* ((RESOURCE
-          (CL-WL::CREATE-RESOURCE (CL-WL::PTR (CL-WL::CLIENT INSTANCE))
+          (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                   *INTERFACE* (VERSION INSTANCE)
-                                  (CL-WL::ID INSTANCE))))
+                                  (CL-WL:ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) CL-WL::*RESOURCE-TRACKER*)
             INSTANCE)
-    (SETF (CL-WL::PTR INSTANCE) RESOURCE)
+    (SETF (CL-WL:PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -5119,7 +5119,7 @@ The wl_touch interface represents a touchscreen
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O)
-            (CL-WL::PTR SURFACE))
+            (CL-WL:PTR SURFACE))
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I)
@@ -5132,7 +5132,7 @@ The wl_touch interface represents a touchscreen
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 5)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::F)
             Y)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 0 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 0 ARG-LIST)))
 
 (DEFMETHOD SEND-UP
            ((DISPATCH DISPATCH) SERIAL TIME
@@ -5151,7 +5151,7 @@ The wl_touch interface represents a touchscreen
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I)
             ID)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 1 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 1 ARG-LIST)))
 
 (DEFMETHOD SEND-MOTION
            ((DISPATCH DISPATCH) TIME ID X
@@ -5174,17 +5174,17 @@ The wl_touch interface represents a touchscreen
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::F)
             Y)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 2 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 2 ARG-LIST)))
 
 (DEFMETHOD SEND-FRAME ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Event: ~a~%" "frame")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 0)))
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 3 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 3 ARG-LIST)))
 
 (DEFMETHOD SEND-CANCEL ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Event: ~a~%" "cancel")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 0)))
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 4 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 4 ARG-LIST)))
 
 (DEFMETHOD SEND-SHAPE
            ((DISPATCH DISPATCH) ID MAJOR
@@ -5203,7 +5203,7 @@ The wl_touch interface represents a touchscreen
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::F)
             MINOR)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 5 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 5 ARG-LIST)))
 
 (DEFMETHOD SEND-ORIENTATION
            ((DISPATCH DISPATCH) ID ORIENTATION)
@@ -5217,9 +5217,9 @@ The wl_touch interface represents a touchscreen
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::F)
             ORIENTATION)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 6 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 6 ARG-LIST)))
 
-(DEFCLASS GLOBAL (CL-WL::GLOBAL) NIL
+(DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 9 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "touchscreen input device
 
@@ -5238,9 +5238,9 @@ The wl_touch interface represents a touchscreen
 This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_touch")
   (LET ((BOUND
-         (MAKE-INSTANCE (CL-WL::DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL::DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
-    (SETF (CL-WL::IFACE CLIENT ID) BOUND)))
+         (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
+                        (CL-WL:DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+    (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -5254,9 +5254,9 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Initializing global object: ~a~%" "wl_touch")
   (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (CL-WL::DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
+          (GLOBAL-CREATE (CL-WL:DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
-    (SETF (CL-WL::PTR GLOBAL) GLOBAL-PTR)
+    (SETF (CL-WL:PTR GLOBAL) GLOBAL-PTR)
     (CL-WL::SET-DATA NEXT-DATA-ID
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
                                     CL-WL::*GLOBAL-TRACKER*)
@@ -5264,7 +5264,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
 (IN-PACKAGE :WL_OUTPUT)
 
-(DEFCLASS DISPATCH (CL-WL::OBJECT) NIL (:DEFAULT-INITARGS :VERSION 4)
+(DEFCLASS DISPATCH (CL-WL:OBJECT) NIL (:DEFAULT-INITARGS :VERSION 4)
           (:DOCUMENTATION "compositor output region
 
 An output describes part of the compositor geometry.  The
@@ -5411,12 +5411,12 @@ An output describes part of the compositor geometry.  The
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
   (LET* ((RESOURCE
-          (CL-WL::CREATE-RESOURCE (CL-WL::PTR (CL-WL::CLIENT INSTANCE))
+          (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                   *INTERFACE* (VERSION INSTANCE)
-                                  (CL-WL::ID INSTANCE))))
+                                  (CL-WL:ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) CL-WL::*RESOURCE-TRACKER*)
             INSTANCE)
-    (SETF (CL-WL::PTR INSTANCE) RESOURCE)
+    (SETF (CL-WL:PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -5459,7 +5459,7 @@ An output describes part of the compositor geometry.  The
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 7)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
             TRANSFORM)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 0 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 0 ARG-LIST)))
 
 (DEFMETHOD SEND-MODE
            ((DISPATCH DISPATCH) FLAGS WIDTH
@@ -5482,12 +5482,12 @@ An output describes part of the compositor geometry.  The
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I)
             REFRESH)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 1 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 1 ARG-LIST)))
 
 (DEFMETHOD SEND-DONE ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Event: ~a~%" "done")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 0)))
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 2 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 2 ARG-LIST)))
 
 (DEFMETHOD SEND-SCALE ((DISPATCH DISPATCH) FACTOR)
   (CL-WL::DEBUG-LOG! "Event: ~a~%" "scale")
@@ -5496,7 +5496,7 @@ An output describes part of the compositor geometry.  The
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I)
             FACTOR)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 3 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 3 ARG-LIST)))
 
 (DEFMETHOD SEND-NAME ((DISPATCH DISPATCH) NAME)
   (CL-WL::DEBUG-LOG! "Event: ~a~%" "name")
@@ -5505,7 +5505,7 @@ An output describes part of the compositor geometry.  The
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::S)
             NAME)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 4 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 4 ARG-LIST)))
 
 (DEFMETHOD SEND-DESCRIPTION
            ((DISPATCH DISPATCH) DESCRIPTION)
@@ -5515,9 +5515,9 @@ An output describes part of the compositor geometry.  The
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::S)
             DESCRIPTION)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 5 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 5 ARG-LIST)))
 
-(DEFCLASS GLOBAL (CL-WL::GLOBAL) NIL
+(DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 4 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "compositor output region
 
@@ -5534,9 +5534,9 @@ An output describes part of the compositor geometry.  The
 This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_output")
   (LET ((BOUND
-         (MAKE-INSTANCE (CL-WL::DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL::DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
-    (SETF (CL-WL::IFACE CLIENT ID) BOUND)))
+         (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
+                        (CL-WL:DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+    (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -5550,9 +5550,9 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Initializing global object: ~a~%" "wl_output")
   (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (CL-WL::DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
+          (GLOBAL-CREATE (CL-WL:DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
-    (SETF (CL-WL::PTR GLOBAL) GLOBAL-PTR)
+    (SETF (CL-WL:PTR GLOBAL) GLOBAL-PTR)
     (CL-WL::SET-DATA NEXT-DATA-ID
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
                                     CL-WL::*GLOBAL-TRACKER*)
@@ -5560,7 +5560,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
 (IN-PACKAGE :WL_REGION)
 
-(DEFCLASS DISPATCH (CL-WL::OBJECT) NIL (:DEFAULT-INITARGS :VERSION 1)
+(DEFCLASS DISPATCH (CL-WL:OBJECT) NIL (:DEFAULT-INITARGS :VERSION 1)
           (:DOCUMENTATION "region interface
 
 A region object describes an area.
@@ -5580,8 +5580,8 @@ A region object describes an area.
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_region")
-  (WHEN (SLOT-BOUNDP DISPATCH 'DESTROY)
-    (FUNCALL (SLOT-VALUE DISPATCH 'DESTROY) DISPATCH)))
+  (WHEN (SLOT-BOUNDP DISPATCH 'CL-WL:DESTROY)
+    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH)))
 
 (PUSHNEW
  (LIST "wl_region" (LIST)
@@ -5703,16 +5703,16 @@ A region object describes an area.
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
   (LET* ((RESOURCE
-          (CL-WL::CREATE-RESOURCE (CL-WL::PTR (CL-WL::CLIENT INSTANCE))
+          (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                   *INTERFACE* (VERSION INSTANCE)
-                                  (CL-WL::ID INSTANCE))))
+                                  (CL-WL:ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) CL-WL::*RESOURCE-TRACKER*)
             INSTANCE)
-    (SETF (CL-WL::PTR INSTANCE) RESOURCE)
+    (SETF (CL-WL:PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
-(DEFCLASS GLOBAL (CL-WL::GLOBAL) NIL
+(DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 1 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "region interface
 
@@ -5727,9 +5727,9 @@ A region object describes an area.
 This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_region")
   (LET ((BOUND
-         (MAKE-INSTANCE (CL-WL::DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL::DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
-    (SETF (CL-WL::IFACE CLIENT ID) BOUND)))
+         (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
+                        (CL-WL:DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+    (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -5743,9 +5743,9 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Initializing global object: ~a~%" "wl_region")
   (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (CL-WL::DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
+          (GLOBAL-CREATE (CL-WL:DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
-    (SETF (CL-WL::PTR GLOBAL) GLOBAL-PTR)
+    (SETF (CL-WL:PTR GLOBAL) GLOBAL-PTR)
     (CL-WL::SET-DATA NEXT-DATA-ID
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
                                     CL-WL::*GLOBAL-TRACKER*)
@@ -5753,7 +5753,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
 (IN-PACKAGE :WL_SUBCOMPOSITOR)
 
-(DEFCLASS DISPATCH (CL-WL::OBJECT) NIL (:DEFAULT-INITARGS :VERSION 1)
+(DEFCLASS DISPATCH (CL-WL:OBJECT) NIL (:DEFAULT-INITARGS :VERSION 1)
           (:DOCUMENTATION "sub-surface compositing
 
 The global interface exposing sub-surface compositing capabilities.
@@ -5785,8 +5785,8 @@ The global interface exposing sub-surface compositing capabilities.
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_subcompositor")
-  (WHEN (SLOT-BOUNDP DISPATCH 'DESTROY)
-    (FUNCALL (SLOT-VALUE DISPATCH 'DESTROY) DISPATCH)))
+  (WHEN (SLOT-BOUNDP DISPATCH 'CL-WL:DESTROY)
+    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH)))
 
 (PUSHNEW
  (LIST "wl_subcompositor" (LIST "wl_subsurface" "wl_surface")
@@ -5877,16 +5877,16 @@ The global interface exposing sub-surface compositing capabilities.
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
   (LET* ((RESOURCE
-          (CL-WL::CREATE-RESOURCE (CL-WL::PTR (CL-WL::CLIENT INSTANCE))
+          (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                   *INTERFACE* (VERSION INSTANCE)
-                                  (CL-WL::ID INSTANCE))))
+                                  (CL-WL:ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) CL-WL::*RESOURCE-TRACKER*)
             INSTANCE)
-    (SETF (CL-WL::PTR INSTANCE) RESOURCE)
+    (SETF (CL-WL:PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
-(DEFCLASS GLOBAL (CL-WL::GLOBAL) NIL
+(DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 1 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "sub-surface compositing
 
@@ -5916,9 +5916,9 @@ The global interface exposing sub-surface compositing capabilities.
 This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_subcompositor")
   (LET ((BOUND
-         (MAKE-INSTANCE (CL-WL::DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL::DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
-    (SETF (CL-WL::IFACE CLIENT ID) BOUND)))
+         (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
+                        (CL-WL:DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+    (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -5932,9 +5932,9 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Initializing global object: ~a~%" "wl_subcompositor")
   (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (CL-WL::DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
+          (GLOBAL-CREATE (CL-WL:DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
-    (SETF (CL-WL::PTR GLOBAL) GLOBAL-PTR)
+    (SETF (CL-WL:PTR GLOBAL) GLOBAL-PTR)
     (CL-WL::SET-DATA NEXT-DATA-ID
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
                                     CL-WL::*GLOBAL-TRACKER*)
@@ -5942,7 +5942,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
 (IN-PACKAGE :WL_SUBSURFACE)
 
-(DEFCLASS DISPATCH (CL-WL::OBJECT) NIL (:DEFAULT-INITARGS :VERSION 1)
+(DEFCLASS DISPATCH (CL-WL:OBJECT) NIL (:DEFAULT-INITARGS :VERSION 1)
           (:DOCUMENTATION "sub-surface interface to a wl_surface
 
 An additional interface to a wl_surface object, which has been
@@ -6014,8 +6014,8 @@ An additional interface to a wl_surface object, which has been
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_subsurface")
-  (WHEN (SLOT-BOUNDP DISPATCH 'DESTROY)
-    (FUNCALL (SLOT-VALUE DISPATCH 'DESTROY) DISPATCH)))
+  (WHEN (SLOT-BOUNDP DISPATCH 'CL-WL:DESTROY)
+    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH)))
 
 (PUSHNEW
  (LIST "wl_subsurface" (LIST "wl_surface")
@@ -6165,16 +6165,16 @@ An additional interface to a wl_surface object, which has been
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
   (LET* ((RESOURCE
-          (CL-WL::CREATE-RESOURCE (CL-WL::PTR (CL-WL::CLIENT INSTANCE))
+          (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                   *INTERFACE* (VERSION INSTANCE)
-                                  (CL-WL::ID INSTANCE))))
+                                  (CL-WL:ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) CL-WL::*RESOURCE-TRACKER*)
             INSTANCE)
-    (SETF (CL-WL::PTR INSTANCE) RESOURCE)
+    (SETF (CL-WL:PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
-(DEFCLASS GLOBAL (CL-WL::GLOBAL) NIL
+(DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 1 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "sub-surface interface to a wl_surface
 
@@ -6232,9 +6232,9 @@ An additional interface to a wl_surface object, which has been
 This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_subsurface")
   (LET ((BOUND
-         (MAKE-INSTANCE (CL-WL::DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL::DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
-    (SETF (CL-WL::IFACE CLIENT ID) BOUND)))
+         (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
+                        (CL-WL:DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+    (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -6248,9 +6248,9 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Initializing global object: ~a~%" "wl_subsurface")
   (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (CL-WL::DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
+          (GLOBAL-CREATE (CL-WL:DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
-    (SETF (CL-WL::PTR GLOBAL) GLOBAL-PTR)
+    (SETF (CL-WL:PTR GLOBAL) GLOBAL-PTR)
     (CL-WL::SET-DATA NEXT-DATA-ID
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
                                     CL-WL::*GLOBAL-TRACKER*)

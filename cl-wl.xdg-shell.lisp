@@ -120,7 +120,7 @@
 
 (IN-PACKAGE :XDG_WM_BASE)
 
-(DEFCLASS DISPATCH (CL-WL::OBJECT) NIL (:DEFAULT-INITARGS :VERSION 6)
+(DEFCLASS DISPATCH (CL-WL:OBJECT) NIL (:DEFAULT-INITARGS :VERSION 6)
           (:DOCUMENTATION "create desktop-style surfaces
 
 The xdg_wm_base interface is exposed as a global object enabling clients
@@ -144,8 +144,8 @@ The xdg_wm_base interface is exposed as a global object enabling clients
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "xdg_wm_base")
-  (WHEN (SLOT-BOUNDP DISPATCH 'DESTROY)
-    (FUNCALL (SLOT-VALUE DISPATCH 'DESTROY) DISPATCH)))
+  (WHEN (SLOT-BOUNDP DISPATCH 'CL-WL:DESTROY)
+    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH)))
 
 (PUSHNEW
  (LIST "xdg_wm_base" (LIST "xdg_positioner" "xdg_surface" "wl_surface")
@@ -280,12 +280,12 @@ The xdg_wm_base interface is exposed as a global object enabling clients
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
   (LET* ((RESOURCE
-          (CL-WL::CREATE-RESOURCE (CL-WL::PTR (CL-WL::CLIENT INSTANCE))
+          (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                   *INTERFACE* (VERSION INSTANCE)
-                                  (CL-WL::ID INSTANCE))))
+                                  (CL-WL:ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) CL-WL::*RESOURCE-TRACKER*)
             INSTANCE)
-    (SETF (CL-WL::PTR INSTANCE) RESOURCE)
+    (SETF (CL-WL:PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -296,9 +296,9 @@ The xdg_wm_base interface is exposed as a global object enabling clients
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
             SERIAL)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 0 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 0 ARG-LIST)))
 
-(DEFCLASS GLOBAL (CL-WL::GLOBAL) NIL
+(DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 6 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "create desktop-style surfaces
 
@@ -314,9 +314,9 @@ The xdg_wm_base interface is exposed as a global object enabling clients
 This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "xdg_wm_base")
   (LET ((BOUND
-         (MAKE-INSTANCE (CL-WL::DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL::DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
-    (SETF (CL-WL::IFACE CLIENT ID) BOUND)))
+         (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
+                        (CL-WL:DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+    (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -330,9 +330,9 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Initializing global object: ~a~%" "xdg_wm_base")
   (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (CL-WL::DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
+          (GLOBAL-CREATE (CL-WL:DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
-    (SETF (CL-WL::PTR GLOBAL) GLOBAL-PTR)
+    (SETF (CL-WL:PTR GLOBAL) GLOBAL-PTR)
     (CL-WL::SET-DATA NEXT-DATA-ID
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
                                     CL-WL::*GLOBAL-TRACKER*)
@@ -340,7 +340,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
 (IN-PACKAGE :XDG_POSITIONER)
 
-(DEFCLASS DISPATCH (CL-WL::OBJECT) NIL (:DEFAULT-INITARGS :VERSION 6)
+(DEFCLASS DISPATCH (CL-WL:OBJECT) NIL (:DEFAULT-INITARGS :VERSION 6)
           (:DOCUMENTATION "child surface positioner
 
 The xdg_positioner provides a collection of rules for the placement of a
@@ -396,8 +396,8 @@ The xdg_positioner provides a collection of rules for the placement of a
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "xdg_positioner")
-  (WHEN (SLOT-BOUNDP DISPATCH 'DESTROY)
-    (FUNCALL (SLOT-VALUE DISPATCH 'DESTROY) DISPATCH)))
+  (WHEN (SLOT-BOUNDP DISPATCH 'CL-WL:DESTROY)
+    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH)))
 
 (PUSHNEW
  (LIST "xdg_positioner" (LIST)
@@ -653,16 +653,16 @@ The xdg_positioner provides a collection of rules for the placement of a
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
   (LET* ((RESOURCE
-          (CL-WL::CREATE-RESOURCE (CL-WL::PTR (CL-WL::CLIENT INSTANCE))
+          (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                   *INTERFACE* (VERSION INSTANCE)
-                                  (CL-WL::ID INSTANCE))))
+                                  (CL-WL:ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) CL-WL::*RESOURCE-TRACKER*)
             INSTANCE)
-    (SETF (CL-WL::PTR INSTANCE) RESOURCE)
+    (SETF (CL-WL:PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
-(DEFCLASS GLOBAL (CL-WL::GLOBAL) NIL
+(DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 6 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "child surface positioner
 
@@ -692,9 +692,9 @@ The xdg_positioner provides a collection of rules for the placement of a
 This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "xdg_positioner")
   (LET ((BOUND
-         (MAKE-INSTANCE (CL-WL::DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL::DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
-    (SETF (CL-WL::IFACE CLIENT ID) BOUND)))
+         (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
+                        (CL-WL:DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+    (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -708,9 +708,9 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Initializing global object: ~a~%" "xdg_positioner")
   (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (CL-WL::DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
+          (GLOBAL-CREATE (CL-WL:DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
-    (SETF (CL-WL::PTR GLOBAL) GLOBAL-PTR)
+    (SETF (CL-WL:PTR GLOBAL) GLOBAL-PTR)
     (CL-WL::SET-DATA NEXT-DATA-ID
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
                                     CL-WL::*GLOBAL-TRACKER*)
@@ -718,7 +718,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
 (IN-PACKAGE :XDG_SURFACE)
 
-(DEFCLASS DISPATCH (CL-WL::OBJECT) NIL (:DEFAULT-INITARGS :VERSION 6)
+(DEFCLASS DISPATCH (CL-WL:OBJECT) NIL (:DEFAULT-INITARGS :VERSION 6)
           (:DOCUMENTATION "desktop user interface surface base interface
 
 An interface that may be implemented by a wl_surface, for
@@ -787,8 +787,8 @@ An interface that may be implemented by a wl_surface, for
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "xdg_surface")
-  (WHEN (SLOT-BOUNDP DISPATCH 'DESTROY)
-    (FUNCALL (SLOT-VALUE DISPATCH 'DESTROY) DISPATCH)))
+  (WHEN (SLOT-BOUNDP DISPATCH 'CL-WL:DESTROY)
+    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH)))
 
 (PUSHNEW
  (LIST "xdg_surface"
@@ -965,12 +965,12 @@ An interface that may be implemented by a wl_surface, for
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
   (LET* ((RESOURCE
-          (CL-WL::CREATE-RESOURCE (CL-WL::PTR (CL-WL::CLIENT INSTANCE))
+          (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                   *INTERFACE* (VERSION INSTANCE)
-                                  (CL-WL::ID INSTANCE))))
+                                  (CL-WL:ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) CL-WL::*RESOURCE-TRACKER*)
             INSTANCE)
-    (SETF (CL-WL::PTR INSTANCE) RESOURCE)
+    (SETF (CL-WL:PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -981,9 +981,9 @@ An interface that may be implemented by a wl_surface, for
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
             SERIAL)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 0 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 0 ARG-LIST)))
 
-(DEFCLASS GLOBAL (CL-WL::GLOBAL) NIL
+(DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 6 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "desktop user interface surface base interface
 
@@ -1041,9 +1041,9 @@ An interface that may be implemented by a wl_surface, for
 This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "xdg_surface")
   (LET ((BOUND
-         (MAKE-INSTANCE (CL-WL::DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL::DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
-    (SETF (CL-WL::IFACE CLIENT ID) BOUND)))
+         (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
+                        (CL-WL:DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+    (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -1057,9 +1057,9 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Initializing global object: ~a~%" "xdg_surface")
   (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (CL-WL::DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
+          (GLOBAL-CREATE (CL-WL:DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
-    (SETF (CL-WL::PTR GLOBAL) GLOBAL-PTR)
+    (SETF (CL-WL:PTR GLOBAL) GLOBAL-PTR)
     (CL-WL::SET-DATA NEXT-DATA-ID
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
                                     CL-WL::*GLOBAL-TRACKER*)
@@ -1067,7 +1067,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
 (IN-PACKAGE :XDG_TOPLEVEL)
 
-(DEFCLASS DISPATCH (CL-WL::OBJECT) NIL (:DEFAULT-INITARGS :VERSION 6)
+(DEFCLASS DISPATCH (CL-WL:OBJECT) NIL (:DEFAULT-INITARGS :VERSION 6)
           (:DOCUMENTATION "toplevel surface
 
 This interface defines an xdg_surface role which allows a surface to,
@@ -1137,8 +1137,8 @@ This interface defines an xdg_surface role which allows a surface to,
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "xdg_toplevel")
-  (WHEN (SLOT-BOUNDP DISPATCH 'DESTROY)
-    (FUNCALL (SLOT-VALUE DISPATCH 'DESTROY) DISPATCH)))
+  (WHEN (SLOT-BOUNDP DISPATCH 'CL-WL:DESTROY)
+    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH)))
 
 (PUSHNEW
  (LIST "xdg_toplevel" (LIST "xdg_toplevel" "wl_seat" "wl_output")
@@ -1532,12 +1532,12 @@ This interface defines an xdg_surface role which allows a surface to,
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
   (LET* ((RESOURCE
-          (CL-WL::CREATE-RESOURCE (CL-WL::PTR (CL-WL::CLIENT INSTANCE))
+          (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                   *INTERFACE* (VERSION INSTANCE)
-                                  (CL-WL::ID INSTANCE))))
+                                  (CL-WL:ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) CL-WL::*RESOURCE-TRACKER*)
             INSTANCE)
-    (SETF (CL-WL::PTR INSTANCE) RESOURCE)
+    (SETF (CL-WL:PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -1573,12 +1573,12 @@ This interface defines an xdg_surface role which allows a surface to,
                      'CL-WL.FFI::DATA)
                       DATA)
               STRUCT))
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 0 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 0 ARG-LIST)))
 
 (DEFMETHOD SEND-CLOSE ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Event: ~a~%" "close")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 0)))
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 1 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 1 ARG-LIST)))
 
 (DEFMETHOD SEND-CONFIGURE-BOUNDS
            ((DISPATCH DISPATCH) WIDTH HEIGHT)
@@ -1592,7 +1592,7 @@ This interface defines an xdg_surface role which allows a surface to,
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I)
             HEIGHT)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 2 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 2 ARG-LIST)))
 
 (DEFMETHOD SEND-WM-CAPABILITIES
            ((DISPATCH DISPATCH) CAPABILITIES)
@@ -1617,9 +1617,9 @@ This interface defines an xdg_surface role which allows a surface to,
                      'CL-WL.FFI::DATA)
                       DATA)
               STRUCT))
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 3 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 3 ARG-LIST)))
 
-(DEFCLASS GLOBAL (CL-WL::GLOBAL) NIL
+(DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 6 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "toplevel surface
 
@@ -1651,9 +1651,9 @@ This interface defines an xdg_surface role which allows a surface to,
 This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "xdg_toplevel")
   (LET ((BOUND
-         (MAKE-INSTANCE (CL-WL::DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL::DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
-    (SETF (CL-WL::IFACE CLIENT ID) BOUND)))
+         (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
+                        (CL-WL:DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+    (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -1667,9 +1667,9 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Initializing global object: ~a~%" "xdg_toplevel")
   (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (CL-WL::DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
+          (GLOBAL-CREATE (CL-WL:DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
-    (SETF (CL-WL::PTR GLOBAL) GLOBAL-PTR)
+    (SETF (CL-WL:PTR GLOBAL) GLOBAL-PTR)
     (CL-WL::SET-DATA NEXT-DATA-ID
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
                                     CL-WL::*GLOBAL-TRACKER*)
@@ -1677,7 +1677,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
 
 (IN-PACKAGE :XDG_POPUP)
 
-(DEFCLASS DISPATCH (CL-WL::OBJECT) NIL (:DEFAULT-INITARGS :VERSION 6)
+(DEFCLASS DISPATCH (CL-WL:OBJECT) NIL (:DEFAULT-INITARGS :VERSION 6)
           (:DOCUMENTATION "short-lived, popup surfaces for menus
 
 A popup surface is a short-lived, temporary surface. It can be used to
@@ -1717,8 +1717,8 @@ A popup surface is a short-lived, temporary surface. It can be used to
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "xdg_popup")
-  (WHEN (SLOT-BOUNDP DISPATCH 'DESTROY)
-    (FUNCALL (SLOT-VALUE DISPATCH 'DESTROY) DISPATCH)))
+  (WHEN (SLOT-BOUNDP DISPATCH 'CL-WL:DESTROY)
+    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH)))
 
 (PUSHNEW
  (LIST "xdg_popup" (LIST "wl_seat" "xdg_positioner")
@@ -1864,12 +1864,12 @@ A popup surface is a short-lived, temporary surface. It can be used to
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
   (LET* ((RESOURCE
-          (CL-WL::CREATE-RESOURCE (CL-WL::PTR (CL-WL::CLIENT INSTANCE))
+          (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                   *INTERFACE* (VERSION INSTANCE)
-                                  (CL-WL::ID INSTANCE))))
+                                  (CL-WL:ID INSTANCE))))
     (SETF (GETHASH (POINTER-ADDRESS RESOURCE) CL-WL::*RESOURCE-TRACKER*)
             INSTANCE)
-    (SETF (CL-WL::PTR INSTANCE) RESOURCE)
+    (SETF (CL-WL:PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
@@ -1894,12 +1894,12 @@ A popup surface is a short-lived, temporary surface. It can be used to
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I)
             HEIGHT)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 0 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 0 ARG-LIST)))
 
 (DEFMETHOD SEND-POPUP-DONE ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Event: ~a~%" "popup_done")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 0)))
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 1 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 1 ARG-LIST)))
 
 (DEFMETHOD SEND-REPOSITIONED
            ((DISPATCH DISPATCH) TOKEN)
@@ -1909,9 +1909,9 @@ A popup surface is a short-lived, temporary surface. It can be used to
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
             TOKEN)
-    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 2 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 2 ARG-LIST)))
 
-(DEFCLASS GLOBAL (CL-WL::GLOBAL) NIL
+(DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 6 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "short-lived, popup surfaces for menus
 
@@ -1946,9 +1946,9 @@ A popup surface is a short-lived, temporary surface. It can be used to
 This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "xdg_popup")
   (LET ((BOUND
-         (MAKE-INSTANCE (CL-WL::DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL::DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
-    (SETF (CL-WL::IFACE CLIENT ID) BOUND)))
+         (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
+                        (CL-WL:DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+    (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
@@ -1962,9 +1962,9 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Initializing global object: ~a~%" "xdg_popup")
   (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (CL-WL::DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
+          (GLOBAL-CREATE (CL-WL:DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
            (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
-    (SETF (CL-WL::PTR GLOBAL) GLOBAL-PTR)
+    (SETF (CL-WL:PTR GLOBAL) GLOBAL-PTR)
     (CL-WL::SET-DATA NEXT-DATA-ID
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
                                     CL-WL::*GLOBAL-TRACKER*)
