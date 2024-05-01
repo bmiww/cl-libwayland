@@ -12,12 +12,7 @@
 	   object get-display client version id ptr destroy
 	   global dispatch-impl
 	   client objects get-display ptr
-	   display dispatch-event-loop event-loop-fd flush-clients display-ptr
-
-	   ;; TODO: These are coming directly from wl-ffi - wrap around them?
-	   ;; TODO: A bit nasty to expose something this internal - needs a better way to handle this
-	   *client-tracker*
-	   ))
+	   display dispatch-event-loop event-loop-fd flush-clients display-ptr all-clients))
 
 (in-package :cl-wl)
 
@@ -29,7 +24,8 @@
   ((ptr :accessor display-ptr)
    (socket-fd :initarg :fd :accessor socket-fd)
    (event-loop :accessor event-loop)
-   (event-loop-fd :accessor event-loop-fd)))
+   (event-loop-fd :accessor event-loop-fd)
+   (clients :accessor clients :initform (make-hash-table :test 'equal))))
 
 (defmethod initialize-instance :before ((display display) &key)
   (restart-case (when *display-singleton* (error "There can only be one!... display."))
@@ -44,6 +40,7 @@
 
 (defmethod dispatch-event-loop ((display display)) (event-loop-dispatch (event-loop display) 0))
 (defmethod flush-clients ((display display)) (display-flush-clients (display-ptr display)))
+(defmethod all-clients ((display display)) (alexandria:hash-table-values (clients display)))
 
 ;; ┌─┐┌┐  ┬┌─┐┌─┐┌┬┐
 ;; │ │├┴┐ │├┤ │   │
@@ -80,9 +77,6 @@
    (display :initarg :display :reader get-display)
    (ptr :initarg :ptr :reader ptr)))
 
-;; TODO: Clear this out once a client is destroyed or a restart is done
-(defvar *client-tracker* (make-hash-table :test 'equal))
-
 (defun client-get-credentials (client)
   (with-foreign-objects ((pid :int) (uid :int) (gid :int))
     (wl-ffi::client-get-credentials client pid uid gid)
@@ -90,7 +84,7 @@
 
 (defun get-client (client)
   (let* ((pid (client-get-credentials client))
-	 (client (gethash pid *client-tracker*)))
+	 (client (gethash pid (clients *display-singleton*))))
     (unless client (error (format nil "No client found for pid ~a" pid)))
     client))
 
@@ -100,7 +94,7 @@ This will in essence forward the client to the libwayland implementation
 and set up the client object in the lisp world for further referencing."
   (let* ((client (client-create (display-ptr display) fd))
 	 (pid (client-get-credentials client)))
-    (setf (gethash pid *client-tracker*) (make-instance 'client :display display :ptr client))
+    (setf (gethash pid (clients display)) (make-instance 'client :display display :ptr client))
     client))
 
 (defmethod iface ((client client) interface)

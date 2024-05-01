@@ -13,6 +13,7 @@
   :version "0.0.1"
   :depends-on (#:str
 	       #:cffi
+	       #:alexandria
 	       ;; NOTE: Primarily for the define-c-callback macro
 	       #:cl-async
 	       #:cl-wl.ffi)
