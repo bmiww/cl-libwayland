@@ -5,7 +5,8 @@
 ;; ██╔══╝  ██╔══╝  ██║
 ;; ██║     ██║     ██║
 ;; ╚═╝     ╚═╝     ╚═╝
-(defpackage :libwayland-ffi
+;; Contains cffi definitions towards the libwayland-server library.
+(defpackage :cl-wl.ffi
   (:use :cl :cffi)
   (:nicknames :wl-ffi)
   (:export display-create global-create global-get-name resource-get-id resource-create
@@ -14,7 +15,7 @@
 	   wl_argument resource-post-event-array name version method_count methods event_count events
 	   signature types wl_array))
 
-(in-package :libwayland-ffi)
+(in-package :cl-wl.ffi)
 (define-foreign-library wayland-server
   (t (:default "libwayland-server")))
 

@@ -10,9 +10,9 @@
 ;; (generate-wayland-classes 'xdg-shell "xmls/xdg-shell.xml" :deps '("wayland-core"))
 ;; TODO: Get rid of the cl-async dependency. defccallback is the only thing we use from it.
 
-(defpackage :bm-cl-wayland.compiler
-  (:use :cl :xmls :bm-cl-wayland.parser))
-(in-package :bm-cl-wayland.compiler)
+(defpackage :cl-wl.compiler
+  (:use :cl :xmls :cl-wl.parser))
+(in-package :cl-wl.compiler)
 
 
 (defvar *message-array-args*
@@ -38,10 +38,10 @@
   `((defmethod initialize-instance :after ((instance dispatch) &key)
      ;; Bound is instance
      ;; Maybe we can move the hash-table insertion to the constructor here
-     (let* ((resource (create-resource (ptr (client instance)) ,(symbolify "*interface*")
-				       (version instance) (id instance))))
-       (setf (gethash (pointer-address resource) *resource-tracker*) instance)
-       (setf (ptr instance) resource)
+     (let* ((resource (wl::create-resource (wl::ptr (wl::client instance)) ,(symbolify "*interface*")
+					   (version instance) (wl::id instance))))
+       (setf (gethash (pointer-address resource) wl::*resource-tracker*) instance)
+       (setf (wl::ptr instance) resource)
        (resource-set-dispatcher resource ,(symbolify "*dispatcher*") (null-pointer) (null-pointer) (null-pointer))))))
 
 
@@ -49,14 +49,14 @@
   `((defmethod dispatch-bind ((global global) client data version id)
       ,(format nil "Default bind implementation for the ~a global object.
 This can be overriden by inheritance in case if custom behaviour is required." (name interface))
-      (debug-log! "Binding ~a~%" ,(name interface))
-      (let ((bound (make-instance (dispatch-impl global) :display (display client) :client client :id id)))
-	(setf (iface client id) bound)))))
+      (wl::debug-log! "Binding ~a~%" ,(name interface))
+      (let ((bound (make-instance (wl::dispatch-impl global) :display (wl::display client) :client client :id id)))
+	(setf (wl::iface client id) bound)))))
 
 (defun gen-bind-c-callback ()
   `((cl-async::define-c-callback dispatch-bind-ffi :void ((client :pointer) (data :pointer) (version :uint) (id :uint))
-	(let* ((client (get-client client))
-	       (global (get-data data)))
+	(let* ((client (wl::get-client client))
+	       (global (wl::get-data data)))
 	  (funcall 'dispatch-bind global client (null-pointer) version id)))))
 
 ;; TODO: This is a bit annoying - since it loosly refers to the args symbol
@@ -81,7 +81,7 @@ This can be overriden by inheritance in case if custom behaviour is required." (
       ;; TODO: You wanted to create a lisp list with keywords. For now just leaving as is/or as uint
       ;; ("enum" `(error "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
       ("enum" `(values ,selector))
-      ("object" `(gethash (pointer-address ,selector) *resource-tracker*))
+      ("object" `(gethash (pointer-address ,selector) wl::*resource-tracker*))
       ;; TODO: You don't know yet how to handle the darn arrays - so just error out here :)
       ("array" `(error "WL C ARRAY PARSING NOT IMPLEMENTED")))))
 
@@ -90,7 +90,7 @@ This can be overriden by inheritance in case if custom behaviour is required." (
   "A case form to match an opcode to a method to be called upon a resource and it's
 argument feed."
   `(,opcode
-    (debug-log! "Dispatching ~a:~a~%" ,ifname ,(dash-name request))
+    (wl::debug-log! "Dispatching ~a:~a~%" ,ifname ,(dash-name request))
     (funcall ',(symbolify (dash-name request)) resource
 	     ,@(loop for index below (length (args request))
 		     for arg = (nth index (args request))
@@ -116,7 +116,7 @@ argument feed."
 	  ((data :pointer) (target :pointer) (opcode :uint) (message :pointer) (args :pointer))
 	(declare (ignore data message ,@ignore-list))
 	,(if (requests interface)
-	     `(let ((resource (gethash (pointer-address target) *resource-tracker*)))
+	     `(let ((resource (gethash (pointer-address target) wl::*resource-tracker*)))
 		(ecase opcode ,@matchers))
 	     `(error (format nil "A dispatcher without requests has been called for interface: ~a~%" ,(name interface))))
 	  0))))
@@ -124,14 +124,14 @@ argument feed."
 
 (defun gen-c-struct-filler (methods)
   (let ((interface-deps nil))
-    (values `(let ((messages (cffi:foreign-alloc '(:struct wl_message)
+    (values `(let ((messages (cffi:foreign-alloc '(:struct wl-ffi:wl_message)
 						 :count ,(length methods))))
 	       ,@(loop for opcode below (length methods)
 		       for method = (nth opcode methods)
 		       collect
 		       `(let ((interface-array (cffi:foreign-alloc '(:pointer (:pointer :void))
 								   :count ,(length (args method))))
-			      (msg-ptr (mem-aptr messages '(:struct wl_message) ,opcode)))
+			      (msg-ptr (mem-aptr messages '(:struct wl-ffi:wl_message) ,opcode)))
 			  ,@(append
 			     ;; Code to fill the interface array with references to interface definitions
 			     (loop for index below (length (args method))
@@ -142,7 +142,7 @@ argument feed."
 							   (pushnew (interface arg) interface-deps :test #'string=)
 							   (symbolify "~a::*interface*" (interface arg)))
 							 `(null-pointer)))))
-			     `((with-foreign-slots ((name signature types) msg-ptr (:struct wl_message))
+			     `((with-foreign-slots ((name signature types) msg-ptr (:struct wl-ffi:wl_message))
 				 (setf name (foreign-string-alloc ,(name method))
 				       signature ,(signature method)
 				       types interface-array))))))
@@ -165,7 +165,7 @@ argument feed."
 		       event_count ,(length (events interface))
 		       events events-ptr)))))
      wl::*interface-init-list*
-     :test #'interface-exists-test)))
+     :test #'wl::interface-exists-test)))
 
 (defun gen-interface-c-structs (interface)
   (let ((interface-deps nil)
@@ -181,15 +181,15 @@ argument feed."
 
 (defun gen-global-init (interface)
   `((defmethod initialize-instance :after ((global global) &key)
-      (debug-log! "Initializing global object: ~a~%" ,(name interface))
-      (let* ((next-data-id (reserve-data))
-	     (global-ptr (global-create (display global) *interface*
-					(version global) (data-ptr next-data-id)
+      (wl::debug-log! "Initializing global object: ~a~%" ,(name interface))
+      (let* ((next-data-id (wl::reserve-data))
+	     (global-ptr (global-create (wl::display global) *interface*
+					(version global) (wl::data-ptr next-data-id)
 					*dispatch-bind*)))
-	(setf (wl:ptr global) global-ptr)
+	(setf (wl::ptr global) global-ptr)
 	;; TODO: not sure i really need to keep track of the globals.
 	;; The *global-tracker* set might be unnecessary
-	(set-data next-data-id (setf (gethash (pointer-address global-ptr) *global-tracker*) global))))))
+	(wl::set-data next-data-id (setf (gethash (pointer-address global-ptr) wl::*global-tracker*) global))))))
 
 (defun gen-c-arg-setter-inner (arg index value-form)
   `(setf
@@ -209,45 +209,30 @@ argument feed."
        ;; TODO: You wanted to create a lisp list with keywords. For now just leaving as is/or as uint
        ;; ("enum" `(error "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
        ("enum" name)
-       ("object" `(wl:ptr ,name))
-       ;; ("array" `(error "NOPE"))
+       ("object" `(wl::ptr ,name))
        ("array"
 	;; NOTE: For some reason - the pywayland implementation sets alloc to equal the size of the array
 	(let ((c-type (find-array-type (parent-interface arg) (parent-message arg) index)))
 	  `(let* ((length (length ,name))
 		  (struct (foreign-alloc '(:struct wl_array)))
-		  ;; (data (foreign-alloc '(:pointer :void) :count length)))
 		  (data (foreign-alloc ,c-type :count length)))
 
 	     (loop for index below length do
-	       ;; (setf (mem-aref data '(:pointer ,c-type) index)
-	       (setf (mem-aref data ,c-type index)
-	       ;; (setf (mem-aref data '(:pointer :void) index)
-		     ;; (foreign-alloc ,c-type :initial-element (nth index ,name))))
-		     (nth index ,name)))
+	       (setf (mem-aref data ,c-type index) (nth index ,name)))
 
-	     (setf (foreign-slot-value struct '(:struct wl_array) 'wl-ffi::size)
-		   length
-		   ;; (* (foreign-type-size ,c-type) length)
-
-		   ;; (foreign-slot-value struct '(:struct wl_array) 'wl-ffi::alloc)
-		   ;; (* (foreign-type-size ,c-type) length)
-		   (foreign-slot-value struct '(:struct wl_array) 'wl-ffi::alloc)
-		   length
-		   ;; (* (foreign-type-size ,c-type) length)
-
-		   (foreign-slot-value struct '(:struct wl_array) 'wl-ffi::data)
-		   data)
+	     (setf (foreign-slot-value struct '(:struct wl_array) 'wl-ffi::size) length
+		   (foreign-slot-value struct '(:struct wl_array) 'wl-ffi::alloc) length
+		   (foreign-slot-value struct '(:struct wl_array) 'wl-ffi::data) data)
 	     struct)))))))
 
 (defun gen-event (event opcode)
   `(defmethod ,(symbolify "send-~a" (dash-name event)) ((dispatch dispatch) ,@(mapcar 'gen-generic-arg (args event)))
-     (debug-log! "Event: ~a~%" ,(name event))
+     (wl::debug-log! "Event: ~a~%" ,(name event))
      (let ((arg-list (foreign-alloc '(:union wl_argument) :count ,(length (args event)))))
        ,@(loop for index below (length (args event))
 	       for arg = (nth index (args event))
 	       collect (gen-c-arg-setter arg index))
-       (resource-post-event-array (ptr dispatch) ,opcode arg-list))))
+       (resource-post-event-array (wl::ptr dispatch) ,opcode arg-list))))
 
 (defun gen-events (interface)
   (let ((events (events interface)))
@@ -267,13 +252,13 @@ argument feed."
   (let ((pkg-name (pkg-name interface)))
     (append
      `((in-package ,pkg-name))
-     `((defclass dispatch (wl:object) ()
+     `((defclass dispatch (wl::object) ()
 	 (:default-initargs :version ,(version interface))
 	 (:documentation ,(description interface))))
      (mapcar 'gen-request-generic (requests interface))
      (if (has-destroy-request interface)
        `((defmethod destroy ((dispatch dispatch))
-	   (debug-log! "Destroying dispatch object: ~a~%" ,(name interface))
+	   (wl::debug-log! "Destroying dispatch object: ~a~%" ,(name interface))
 	   (when (slot-boundp dispatch 'destroy) (funcall (slot-value dispatch 'destroy) dispatch))))
        nil)
      (gen-interface-c-structs interface)
@@ -297,7 +282,7 @@ argument feed."
   (let ((pkg-name (pkg-name interface)))
     (append
      `((defpackage ,pkg-name
-	 (:use :cl :wl :wl-ffi :cffi)
+	 (:use :cl :cffi :cl-wl.ffi)
 	 (:nicknames ,(symbolify ":~a" (dash-name interface)))
 	 (:export dispatch global dispatch-bind
 		  ,@(mapcar 'symbolify (mapcar 'dash-name (requests interface)))
@@ -307,9 +292,9 @@ argument feed."
 	 (name :string)
 	 (version :int)
 	 (method_count :int)
-	 (methods (:pointer (:struct wl_message)))
+	 (methods (:pointer (:struct wl-ffi:wl_message)))
 	 (event_count :int)
-	 (events (:pointer (:struct wl_message)))))
+	 (events (:pointer (:struct wl-ffi:wl_message)))))
      `((defvar *interface* nil)))))
 
 
@@ -326,11 +311,11 @@ argument feed."
 	(make-package package-name))))
 
 (defun gen-asd (package file deps)
-  `((asdf:defsystem ,(symbolify "#:bm-cl-wayland.~a" package)
+  `((asdf:defsystem ,(symbolify "#:cl-wl.~a" package)
      :serial t
      :license "GPLv3"
      :version "0.0.1"
-     :depends-on (#:cffi #:cl-async #:bm-cl-wayland ,@(mapcar (lambda (dep) (symbolify "#:bm-cl-wayland.~a" dep)) deps))
+     :depends-on (#:cffi #:cl-async #:cl-wl #:cl-wl.ffi ,@(mapcar (lambda (dep) (symbolify "#:cl-wl.~a" dep)) deps))
      :components ((:file ,file)))))
 
 (defun symbolify-extract (target-string start end match-start match-end reg-starts reg-ends)
@@ -347,7 +332,7 @@ argument feed."
   (let* ((xml (with-open-file (s xml-file :if-does-not-exist :error) (xmls:parse s)))
 	 (protocol (read-protocol xml))
 	 (code (gen-code protocol))
-	 (file (format nil "bm-cl-wayland.~a" (string-downcase package)))
+	 (file (format nil "cl-wl.~a" (string-downcase package)))
 	 (asd (gen-asd package file deps)))
     (with-open-file (stream (format nil "~a.lisp" file) :direction :output :if-exists :supersede)
       (write-sexps code stream))

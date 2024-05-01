@@ -5,7 +5,7 @@
 ;; ██╔═══╝ ██╔══██╗██║   ██║   ██║   ██║   ██║██║     ██║   ██║██║
 ;; ██║     ██║  ██║╚██████╔╝   ██║   ╚██████╔╝╚██████╗╚██████╔╝███████╗
 ;; ╚═╝     ╚═╝  ╚═╝ ╚═════╝    ╚═╝    ╚═════╝  ╚═════╝ ╚═════╝ ╚══════╝
-(asdf:defsystem #:bm-cl-wayland.protocol
+(asdf:defsystem #:cl-wl.protocol
   :serial t
   :description "Parser/Compiler for wayland xml files -> lisp"
   :author "bmiww <bmiww@bky.one>"
@@ -15,6 +15,7 @@
 	       #:str
 	       #:split-sequence
 	       #:alexandria
-	       #:bm-cl-wayland)
-  :components ((:file "wl-protocol-parser")
-	       (:file "wl-protocol-compiler")))
+	       #:cl-wl
+	       #:cl-wl.ffi)
+  :components ((:file "parser")
+	       (:file "compiler")))

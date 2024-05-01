@@ -1,5 +1,5 @@
 (DEFPACKAGE :XDG_WM_BASE
-  (:USE :CL :WL :WL-FFI :CFFI)
+  (:USE :CL :CFFI :CL-WL.FFI)
   (:NICKNAMES :XDG-WM-BASE)
   (:EXPORT DISPATCH
            GLOBAL
@@ -13,13 +13,13 @@
 (IN-PACKAGE :XDG_WM_BASE)
 
 (DEFCSTRUCT INTERFACE (NAME :STRING) (VERSION :INT) (METHOD_COUNT :INT)
- (METHODS (:POINTER (:STRUCT WL_MESSAGE))) (EVENT_COUNT :INT)
- (EVENTS (:POINTER (:STRUCT WL_MESSAGE))))
+ (METHODS (:POINTER (:STRUCT CL-WL.FFI:WL_MESSAGE))) (EVENT_COUNT :INT)
+ (EVENTS (:POINTER (:STRUCT CL-WL.FFI:WL_MESSAGE))))
 
 (DEFVAR *INTERFACE* NIL)
 
 (DEFPACKAGE :XDG_POSITIONER
-  (:USE :CL :WL :WL-FFI :CFFI)
+  (:USE :CL :CFFI :CL-WL.FFI)
   (:NICKNAMES :XDG-POSITIONER)
   (:EXPORT DISPATCH
            GLOBAL
@@ -38,13 +38,13 @@
 (IN-PACKAGE :XDG_POSITIONER)
 
 (DEFCSTRUCT INTERFACE (NAME :STRING) (VERSION :INT) (METHOD_COUNT :INT)
- (METHODS (:POINTER (:STRUCT WL_MESSAGE))) (EVENT_COUNT :INT)
- (EVENTS (:POINTER (:STRUCT WL_MESSAGE))))
+ (METHODS (:POINTER (:STRUCT CL-WL.FFI:WL_MESSAGE))) (EVENT_COUNT :INT)
+ (EVENTS (:POINTER (:STRUCT CL-WL.FFI:WL_MESSAGE))))
 
 (DEFVAR *INTERFACE* NIL)
 
 (DEFPACKAGE :XDG_SURFACE
-  (:USE :CL :WL :WL-FFI :CFFI)
+  (:USE :CL :CFFI :CL-WL.FFI)
   (:NICKNAMES :XDG-SURFACE)
   (:EXPORT DISPATCH
            GLOBAL
@@ -59,13 +59,13 @@
 (IN-PACKAGE :XDG_SURFACE)
 
 (DEFCSTRUCT INTERFACE (NAME :STRING) (VERSION :INT) (METHOD_COUNT :INT)
- (METHODS (:POINTER (:STRUCT WL_MESSAGE))) (EVENT_COUNT :INT)
- (EVENTS (:POINTER (:STRUCT WL_MESSAGE))))
+ (METHODS (:POINTER (:STRUCT CL-WL.FFI:WL_MESSAGE))) (EVENT_COUNT :INT)
+ (EVENTS (:POINTER (:STRUCT CL-WL.FFI:WL_MESSAGE))))
 
 (DEFVAR *INTERFACE* NIL)
 
 (DEFPACKAGE :XDG_TOPLEVEL
-  (:USE :CL :WL :WL-FFI :CFFI)
+  (:USE :CL :CFFI :CL-WL.FFI)
   (:NICKNAMES :XDG-TOPLEVEL)
   (:EXPORT DISPATCH
            GLOBAL
@@ -92,13 +92,13 @@
 (IN-PACKAGE :XDG_TOPLEVEL)
 
 (DEFCSTRUCT INTERFACE (NAME :STRING) (VERSION :INT) (METHOD_COUNT :INT)
- (METHODS (:POINTER (:STRUCT WL_MESSAGE))) (EVENT_COUNT :INT)
- (EVENTS (:POINTER (:STRUCT WL_MESSAGE))))
+ (METHODS (:POINTER (:STRUCT CL-WL.FFI:WL_MESSAGE))) (EVENT_COUNT :INT)
+ (EVENTS (:POINTER (:STRUCT CL-WL.FFI:WL_MESSAGE))))
 
 (DEFVAR *INTERFACE* NIL)
 
 (DEFPACKAGE :XDG_POPUP
-  (:USE :CL :WL :WL-FFI :CFFI)
+  (:USE :CL :CFFI :CL-WL.FFI)
   (:NICKNAMES :XDG-POPUP)
   (:EXPORT DISPATCH
            GLOBAL
@@ -113,14 +113,14 @@
 (IN-PACKAGE :XDG_POPUP)
 
 (DEFCSTRUCT INTERFACE (NAME :STRING) (VERSION :INT) (METHOD_COUNT :INT)
- (METHODS (:POINTER (:STRUCT WL_MESSAGE))) (EVENT_COUNT :INT)
- (EVENTS (:POINTER (:STRUCT WL_MESSAGE))))
+ (METHODS (:POINTER (:STRUCT CL-WL.FFI:WL_MESSAGE))) (EVENT_COUNT :INT)
+ (EVENTS (:POINTER (:STRUCT CL-WL.FFI:WL_MESSAGE))))
 
 (DEFVAR *INTERFACE* NIL)
 
 (IN-PACKAGE :XDG_WM_BASE)
 
-(DEFCLASS DISPATCH (BM-CL-WAYLAND:OBJECT) NIL (:DEFAULT-INITARGS :VERSION 6)
+(DEFCLASS DISPATCH (CL-WL::OBJECT) NIL (:DEFAULT-INITARGS :VERSION 6)
           (:DOCUMENTATION "create desktop-style surfaces
 
 The xdg_wm_base interface is exposed as a global object enabling clients
@@ -143,7 +143,7 @@ The xdg_wm_base interface is exposed as a global object enabling clients
     (RESOURCE SERIAL))
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH))
-  (DEBUG-LOG! "Destroying dispatch object: ~a~%" "xdg_wm_base")
+  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "xdg_wm_base")
   (WHEN (SLOT-BOUNDP DISPATCH 'DESTROY)
     (FUNCALL (SLOT-VALUE DISPATCH 'DESTROY) DISPATCH)))
 
@@ -153,61 +153,73 @@ The xdg_wm_base interface is exposed as a global object enabling clients
          (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
          (LET ((REQUESTS-PTR
                 (LET ((MESSAGES
-                       (CFFI:FOREIGN-ALLOC '(:STRUCT WL_MESSAGE) :COUNT 4)))
+                       (CFFI:FOREIGN-ALLOC '(:STRUCT CL-WL.FFI:WL_MESSAGE)
+                                           :COUNT 4)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 0))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 0)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 0)))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "destroy")
                            SIGNATURE ""
                            TYPES INTERFACE-ARRAY)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 1))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 1)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 1)))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 0)
                             XDG_POSITIONER::*INTERFACE*)
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "create_positioner")
                            SIGNATURE "n"
                            TYPES INTERFACE-ARRAY)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 2))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 2)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 2)))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 0)
                             XDG_SURFACE::*INTERFACE*)
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 1)
                             WL_SURFACE::*INTERFACE*)
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "get_xdg_surface")
                            SIGNATURE "no"
                            TYPES INTERFACE-ARRAY)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 1))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 3)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 3)))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 0) (NULL-POINTER))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "pong")
                            SIGNATURE "u"
                            TYPES INTERFACE-ARRAY)))
                   MESSAGES))
                (EVENTS-PTR
                 (LET ((MESSAGES
-                       (CFFI:FOREIGN-ALLOC '(:STRUCT WL_MESSAGE) :COUNT 1)))
+                       (CFFI:FOREIGN-ALLOC '(:STRUCT CL-WL.FFI:WL_MESSAGE)
+                                           :COUNT 1)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 1))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 0)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 0)))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 0) (NULL-POINTER))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "ping")
                            SIGNATURE "u"
                            TYPES INTERFACE-ARRAY)))
@@ -221,72 +233,72 @@ The xdg_wm_base interface is exposed as a global object enabling clients
                   METHODS REQUESTS-PTR
                   EVENT_COUNT 1
                   EVENTS EVENTS-PTR)))))
- BM-CL-WAYLAND::*INTERFACE-INIT-LIST* :TEST #'INTERFACE-EXISTS-TEST)
+ CL-WL::*INTERFACE-INIT-LIST* :TEST #'CL-WL::INTERFACE-EXISTS-TEST)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
     :INT
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
-  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
+  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
-       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_wm_base" "destroy")
+       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_wm_base" "destroy")
        (FUNCALL 'DESTROY RESOURCE))
       (1
-       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_wm_base" "create-positioner")
+       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_wm_base"
+                          "create-positioner")
        (FUNCALL 'CREATE-POSITIONER RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::N))))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))))
       (2
-       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_wm_base" "get-xdg-surface")
+       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_wm_base"
+                          "get-xdg-surface")
        (FUNCALL 'GET-XDG-SURFACE RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::N))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))
                 (GETHASH
                  (POINTER-ADDRESS
                   (FOREIGN-SLOT-VALUE
-                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
-                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                   'WL-FFI::O))
-                 *RESOURCE-TRACKER*)))
+                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                   '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
+                 CL-WL::*RESOURCE-TRACKER*)))
       (3
-       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_wm_base" "pong")
+       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_wm_base" "pong")
        (FUNCALL 'PONG RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::U))))))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))))
   0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
   (LET* ((RESOURCE
-          (CREATE-RESOURCE (PTR (CLIENT INSTANCE)) *INTERFACE*
-           (VERSION INSTANCE) (ID INSTANCE))))
-    (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
-    (SETF (PTR INSTANCE) RESOURCE)
+          (CL-WL::CREATE-RESOURCE (CL-WL::PTR (CL-WL::CLIENT INSTANCE))
+                                  *INTERFACE* (VERSION INSTANCE)
+                                  (CL-WL::ID INSTANCE))))
+    (SETF (GETHASH (POINTER-ADDRESS RESOURCE) CL-WL::*RESOURCE-TRACKER*)
+            INSTANCE)
+    (SETF (CL-WL::PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
 (DEFMETHOD SEND-PING ((DISPATCH DISPATCH) SERIAL)
-  (DEBUG-LOG! "Event: ~a~%" "ping")
+  (CL-WL::DEBUG-LOG! "Event: ~a~%" "ping")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 1)))
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
-           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'WL-FFI::U)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
             SERIAL)
-    (RESOURCE-POST-EVENT-ARRAY (PTR DISPATCH) 0 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 0 ARG-LIST)))
 
-(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
+(DEFCLASS GLOBAL (CL-WL::GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 6 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "create desktop-style surfaces
 
@@ -300,33 +312,35 @@ The xdg_wm_base interface is exposed as a global object enabling clients
 (DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
   "Default bind implementation for the xdg_wm_base global object.
 This can be overriden by inheritance in case if custom behaviour is required."
-  (DEBUG-LOG! "Binding ~a~%" "xdg_wm_base")
+  (CL-WL::DEBUG-LOG! "Binding ~a~%" "xdg_wm_base")
   (LET ((BOUND
-         (MAKE-INSTANCE (DISPATCH-IMPL GLOBAL) :DISPLAY (DISPLAY CLIENT)
-                        :CLIENT CLIENT :ID ID)))
-    (SETF (IFACE CLIENT ID) BOUND)))
+         (MAKE-INSTANCE (CL-WL::DISPATCH-IMPL GLOBAL) :DISPLAY
+                        (CL-WL::DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+    (SETF (CL-WL::IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (GET-DATA DATA)))
+  (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((GLOBAL GLOBAL) &KEY)
-  (DEBUG-LOG! "Initializing global object: ~a~%" "xdg_wm_base")
-  (LET* ((NEXT-DATA-ID (RESERVE-DATA))
+  (CL-WL::DEBUG-LOG! "Initializing global object: ~a~%" "xdg_wm_base")
+  (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
-           (DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
-    (SETF (BM-CL-WAYLAND:PTR GLOBAL) GLOBAL-PTR)
-    (SET-DATA NEXT-DATA-ID
-     (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR) *GLOBAL-TRACKER*) GLOBAL))))
+          (GLOBAL-CREATE (CL-WL::DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
+           (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
+    (SETF (CL-WL::PTR GLOBAL) GLOBAL-PTR)
+    (CL-WL::SET-DATA NEXT-DATA-ID
+                     (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
+                                    CL-WL::*GLOBAL-TRACKER*)
+                             GLOBAL))))
 
 (IN-PACKAGE :XDG_POSITIONER)
 
-(DEFCLASS DISPATCH (BM-CL-WAYLAND:OBJECT) NIL (:DEFAULT-INITARGS :VERSION 6)
+(DEFCLASS DISPATCH (CL-WL::OBJECT) NIL (:DEFAULT-INITARGS :VERSION 6)
           (:DOCUMENTATION "child surface positioner
 
 The xdg_positioner provides a collection of rules for the placement of a
@@ -381,7 +395,7 @@ The xdg_positioner provides a collection of rules for the placement of a
     (RESOURCE SERIAL))
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH))
-  (DEBUG-LOG! "Destroying dispatch object: ~a~%" "xdg_positioner")
+  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "xdg_positioner")
   (WHEN (SLOT-BOUNDP DISPATCH 'DESTROY)
     (FUNCALL (SLOT-VALUE DISPATCH 'DESTROY) DISPATCH)))
 
@@ -391,67 +405,80 @@ The xdg_positioner provides a collection of rules for the placement of a
          (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
          (LET ((REQUESTS-PTR
                 (LET ((MESSAGES
-                       (CFFI:FOREIGN-ALLOC '(:STRUCT WL_MESSAGE) :COUNT 10)))
+                       (CFFI:FOREIGN-ALLOC '(:STRUCT CL-WL.FFI:WL_MESSAGE)
+                                           :COUNT 10)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 0))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 0)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 0)))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "destroy")
                            SIGNATURE ""
                            TYPES INTERFACE-ARRAY)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 2))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 1)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 1)))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 0) (NULL-POINTER))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 1) (NULL-POINTER))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "set_size")
                            SIGNATURE "ii"
                            TYPES INTERFACE-ARRAY)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 4))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 2)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 2)))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 0) (NULL-POINTER))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 1) (NULL-POINTER))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 2) (NULL-POINTER))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 3) (NULL-POINTER))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "set_anchor_rect")
                            SIGNATURE "iiii"
                            TYPES INTERFACE-ARRAY)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 1))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 3)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 3)))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 0) (NULL-POINTER))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "set_anchor")
                            SIGNATURE "u"
                            TYPES INTERFACE-ARRAY)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 1))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 4)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 4)))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 0) (NULL-POINTER))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "set_gravity")
                            SIGNATURE "u"
                            TYPES INTERFACE-ARRAY)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 1))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 5)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 5)))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 0) (NULL-POINTER))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME
                              (FOREIGN-STRING-ALLOC "set_constraint_adjustment")
                            SIGNATURE "u"
@@ -459,48 +486,57 @@ The xdg_positioner provides a collection of rules for the placement of a
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 2))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 6)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 6)))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 0) (NULL-POINTER))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 1) (NULL-POINTER))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "set_offset")
                            SIGNATURE "ii"
                            TYPES INTERFACE-ARRAY)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 0))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 7)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 7)))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "set_reactive")
                            SIGNATURE "3"
                            TYPES INTERFACE-ARRAY)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 2))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 8)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 8)))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 0) (NULL-POINTER))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 1) (NULL-POINTER))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "set_parent_size")
                            SIGNATURE "3ii"
                            TYPES INTERFACE-ARRAY)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 1))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 9)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 9)))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 0) (NULL-POINTER))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "set_parent_configure")
                            SIGNATURE "3u"
                            TYPES INTERFACE-ARRAY)))
                   MESSAGES))
                (EVENTS-PTR
                 (LET ((MESSAGES
-                       (CFFI:FOREIGN-ALLOC '(:STRUCT WL_MESSAGE) :COUNT 0)))
+                       (CFFI:FOREIGN-ALLOC '(:STRUCT CL-WL.FFI:WL_MESSAGE)
+                                           :COUNT 0)))
                   MESSAGES)))
            (WITH-FOREIGN-SLOTS
             ((NAME VERSION METHOD_COUNT METHODS EVENT_COUNT EVENTS) *INTERFACE*
@@ -511,131 +547,122 @@ The xdg_positioner provides a collection of rules for the placement of a
                   METHODS REQUESTS-PTR
                   EVENT_COUNT 0
                   EVENTS EVENTS-PTR)))))
- BM-CL-WAYLAND::*INTERFACE-INIT-LIST* :TEST #'INTERFACE-EXISTS-TEST)
+ CL-WL::*INTERFACE-INIT-LIST* :TEST #'CL-WL::INTERFACE-EXISTS-TEST)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
     :INT
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
-  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
+  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
-       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner" "destroy")
+       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner" "destroy")
        (FUNCALL 'DESTROY RESOURCE))
       (1
-       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner" "set-size")
+       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner" "set-size")
        (FUNCALL 'SET-SIZE RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::I))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::I))))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))
       (2
-       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner" "set-anchor-rect")
+       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner"
+                          "set-anchor-rect")
        (FUNCALL 'SET-ANCHOR-RECT RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::I))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::I))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::I))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 3)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::I))))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))
       (3
-       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner" "set-anchor")
+       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner" "set-anchor")
        (FUNCALL 'SET-ANCHOR RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::U))))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
       (4
-       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner" "set-gravity")
+       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner" "set-gravity")
        (FUNCALL 'SET-GRAVITY RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::U))))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
       (5
-       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner"
-        "set-constraint-adjustment")
+       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner"
+                          "set-constraint-adjustment")
        (FUNCALL 'SET-CONSTRAINT-ADJUSTMENT RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::U))))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
       (6
-       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner" "set-offset")
+       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner" "set-offset")
        (FUNCALL 'SET-OFFSET RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::I))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::I))))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))
       (7
-       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner" "set-reactive")
+       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner"
+                          "set-reactive")
        (FUNCALL 'SET-REACTIVE RESOURCE))
       (8
-       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner" "set-parent-size")
+       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner"
+                          "set-parent-size")
        (FUNCALL 'SET-PARENT-SIZE RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::I))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::I))))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))
       (9
-       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner"
-        "set-parent-configure")
+       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner"
+                          "set-parent-configure")
        (FUNCALL 'SET-PARENT-CONFIGURE RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::U))))))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))))
   0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
   (LET* ((RESOURCE
-          (CREATE-RESOURCE (PTR (CLIENT INSTANCE)) *INTERFACE*
-           (VERSION INSTANCE) (ID INSTANCE))))
-    (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
-    (SETF (PTR INSTANCE) RESOURCE)
+          (CL-WL::CREATE-RESOURCE (CL-WL::PTR (CL-WL::CLIENT INSTANCE))
+                                  *INTERFACE* (VERSION INSTANCE)
+                                  (CL-WL::ID INSTANCE))))
+    (SETF (GETHASH (POINTER-ADDRESS RESOURCE) CL-WL::*RESOURCE-TRACKER*)
+            INSTANCE)
+    (SETF (CL-WL::PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
-(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
+(DEFCLASS GLOBAL (CL-WL::GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 6 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "child surface positioner
 
@@ -663,33 +690,35 @@ The xdg_positioner provides a collection of rules for the placement of a
 (DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
   "Default bind implementation for the xdg_positioner global object.
 This can be overriden by inheritance in case if custom behaviour is required."
-  (DEBUG-LOG! "Binding ~a~%" "xdg_positioner")
+  (CL-WL::DEBUG-LOG! "Binding ~a~%" "xdg_positioner")
   (LET ((BOUND
-         (MAKE-INSTANCE (DISPATCH-IMPL GLOBAL) :DISPLAY (DISPLAY CLIENT)
-                        :CLIENT CLIENT :ID ID)))
-    (SETF (IFACE CLIENT ID) BOUND)))
+         (MAKE-INSTANCE (CL-WL::DISPATCH-IMPL GLOBAL) :DISPLAY
+                        (CL-WL::DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+    (SETF (CL-WL::IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (GET-DATA DATA)))
+  (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((GLOBAL GLOBAL) &KEY)
-  (DEBUG-LOG! "Initializing global object: ~a~%" "xdg_positioner")
-  (LET* ((NEXT-DATA-ID (RESERVE-DATA))
+  (CL-WL::DEBUG-LOG! "Initializing global object: ~a~%" "xdg_positioner")
+  (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
-           (DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
-    (SETF (BM-CL-WAYLAND:PTR GLOBAL) GLOBAL-PTR)
-    (SET-DATA NEXT-DATA-ID
-     (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR) *GLOBAL-TRACKER*) GLOBAL))))
+          (GLOBAL-CREATE (CL-WL::DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
+           (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
+    (SETF (CL-WL::PTR GLOBAL) GLOBAL-PTR)
+    (CL-WL::SET-DATA NEXT-DATA-ID
+                     (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
+                                    CL-WL::*GLOBAL-TRACKER*)
+                             GLOBAL))))
 
 (IN-PACKAGE :XDG_SURFACE)
 
-(DEFCLASS DISPATCH (BM-CL-WAYLAND:OBJECT) NIL (:DEFAULT-INITARGS :VERSION 6)
+(DEFCLASS DISPATCH (CL-WL::OBJECT) NIL (:DEFAULT-INITARGS :VERSION 6)
           (:DOCUMENTATION "desktop user interface surface base interface
 
 An interface that may be implemented by a wl_surface, for
@@ -757,7 +786,7 @@ An interface that may be implemented by a wl_surface, for
     (RESOURCE SERIAL))
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH))
-  (DEBUG-LOG! "Destroying dispatch object: ~a~%" "xdg_surface")
+  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "xdg_surface")
   (WHEN (SLOT-BOUNDP DISPATCH 'DESTROY)
     (FUNCALL (SLOT-VALUE DISPATCH 'DESTROY) DISPATCH)))
 
@@ -768,31 +797,37 @@ An interface that may be implemented by a wl_surface, for
          (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
          (LET ((REQUESTS-PTR
                 (LET ((MESSAGES
-                       (CFFI:FOREIGN-ALLOC '(:STRUCT WL_MESSAGE) :COUNT 5)))
+                       (CFFI:FOREIGN-ALLOC '(:STRUCT CL-WL.FFI:WL_MESSAGE)
+                                           :COUNT 5)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 0))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 0)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 0)))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "destroy")
                            SIGNATURE ""
                            TYPES INTERFACE-ARRAY)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 1))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 1)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 1)))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 0)
                             XDG_TOPLEVEL::*INTERFACE*)
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "get_toplevel")
                            SIGNATURE "n"
                            TYPES INTERFACE-ARRAY)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 3))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 2)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 2)))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 0)
                             XDG_POPUP::*INTERFACE*)
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 1)
@@ -800,44 +835,52 @@ An interface that may be implemented by a wl_surface, for
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 2)
                             XDG_POSITIONER::*INTERFACE*)
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "get_popup")
                            SIGNATURE "n?oo"
                            TYPES INTERFACE-ARRAY)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 4))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 3)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 3)))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 0) (NULL-POINTER))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 1) (NULL-POINTER))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 2) (NULL-POINTER))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 3) (NULL-POINTER))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "set_window_geometry")
                            SIGNATURE "iiii"
                            TYPES INTERFACE-ARRAY)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 1))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 4)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 4)))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 0) (NULL-POINTER))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "ack_configure")
                            SIGNATURE "u"
                            TYPES INTERFACE-ARRAY)))
                   MESSAGES))
                (EVENTS-PTR
                 (LET ((MESSAGES
-                       (CFFI:FOREIGN-ALLOC '(:STRUCT WL_MESSAGE) :COUNT 1)))
+                       (CFFI:FOREIGN-ALLOC '(:STRUCT CL-WL.FFI:WL_MESSAGE)
+                                           :COUNT 1)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 1))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 0)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 0)))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 0) (NULL-POINTER))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "configure")
                            SIGNATURE "u"
                            TYPES INTERFACE-ARRAY)))
@@ -851,102 +894,96 @@ An interface that may be implemented by a wl_surface, for
                   METHODS REQUESTS-PTR
                   EVENT_COUNT 1
                   EVENTS EVENTS-PTR)))))
- BM-CL-WAYLAND::*INTERFACE-INIT-LIST* :TEST #'INTERFACE-EXISTS-TEST)
+ CL-WL::*INTERFACE-INIT-LIST* :TEST #'CL-WL::INTERFACE-EXISTS-TEST)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
     :INT
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
-  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
+  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
-       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_surface" "destroy")
+       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_surface" "destroy")
        (FUNCALL 'DESTROY RESOURCE))
       (1
-       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_surface" "get-toplevel")
+       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_surface" "get-toplevel")
        (FUNCALL 'GET-TOPLEVEL RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::N))))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))))
       (2
-       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_surface" "get-popup")
+       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_surface" "get-popup")
        (FUNCALL 'GET-POPUP RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::N))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))
                 (GETHASH
                  (POINTER-ADDRESS
                   (FOREIGN-SLOT-VALUE
-                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
-                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                   'WL-FFI::O))
-                 *RESOURCE-TRACKER*)
+                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                   '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
+                 CL-WL::*RESOURCE-TRACKER*)
                 (GETHASH
                  (POINTER-ADDRESS
                   (FOREIGN-SLOT-VALUE
-                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
-                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                   'WL-FFI::O))
-                 *RESOURCE-TRACKER*)))
+                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
+                   '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
+                 CL-WL::*RESOURCE-TRACKER*)))
       (3
-       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_surface" "set-window-geometry")
+       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_surface"
+                          "set-window-geometry")
        (FUNCALL 'SET-WINDOW-GEOMETRY RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::I))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::I))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::I))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 3)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::I))))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))
       (4
-       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_surface" "ack-configure")
+       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_surface" "ack-configure")
        (FUNCALL 'ACK-CONFIGURE RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::U))))))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))))
   0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
   (LET* ((RESOURCE
-          (CREATE-RESOURCE (PTR (CLIENT INSTANCE)) *INTERFACE*
-           (VERSION INSTANCE) (ID INSTANCE))))
-    (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
-    (SETF (PTR INSTANCE) RESOURCE)
+          (CL-WL::CREATE-RESOURCE (CL-WL::PTR (CL-WL::CLIENT INSTANCE))
+                                  *INTERFACE* (VERSION INSTANCE)
+                                  (CL-WL::ID INSTANCE))))
+    (SETF (GETHASH (POINTER-ADDRESS RESOURCE) CL-WL::*RESOURCE-TRACKER*)
+            INSTANCE)
+    (SETF (CL-WL::PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
 (DEFMETHOD SEND-CONFIGURE ((DISPATCH DISPATCH) SERIAL)
-  (DEBUG-LOG! "Event: ~a~%" "configure")
+  (CL-WL::DEBUG-LOG! "Event: ~a~%" "configure")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 1)))
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
-           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'WL-FFI::U)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
             SERIAL)
-    (RESOURCE-POST-EVENT-ARRAY (PTR DISPATCH) 0 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 0 ARG-LIST)))
 
-(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
+(DEFCLASS GLOBAL (CL-WL::GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 6 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "desktop user interface surface base interface
 
@@ -1002,33 +1039,35 @@ An interface that may be implemented by a wl_surface, for
 (DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
   "Default bind implementation for the xdg_surface global object.
 This can be overriden by inheritance in case if custom behaviour is required."
-  (DEBUG-LOG! "Binding ~a~%" "xdg_surface")
+  (CL-WL::DEBUG-LOG! "Binding ~a~%" "xdg_surface")
   (LET ((BOUND
-         (MAKE-INSTANCE (DISPATCH-IMPL GLOBAL) :DISPLAY (DISPLAY CLIENT)
-                        :CLIENT CLIENT :ID ID)))
-    (SETF (IFACE CLIENT ID) BOUND)))
+         (MAKE-INSTANCE (CL-WL::DISPATCH-IMPL GLOBAL) :DISPLAY
+                        (CL-WL::DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+    (SETF (CL-WL::IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (GET-DATA DATA)))
+  (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((GLOBAL GLOBAL) &KEY)
-  (DEBUG-LOG! "Initializing global object: ~a~%" "xdg_surface")
-  (LET* ((NEXT-DATA-ID (RESERVE-DATA))
+  (CL-WL::DEBUG-LOG! "Initializing global object: ~a~%" "xdg_surface")
+  (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
-           (DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
-    (SETF (BM-CL-WAYLAND:PTR GLOBAL) GLOBAL-PTR)
-    (SET-DATA NEXT-DATA-ID
-     (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR) *GLOBAL-TRACKER*) GLOBAL))))
+          (GLOBAL-CREATE (CL-WL::DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
+           (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
+    (SETF (CL-WL::PTR GLOBAL) GLOBAL-PTR)
+    (CL-WL::SET-DATA NEXT-DATA-ID
+                     (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
+                                    CL-WL::*GLOBAL-TRACKER*)
+                             GLOBAL))))
 
 (IN-PACKAGE :XDG_TOPLEVEL)
 
-(DEFCLASS DISPATCH (BM-CL-WAYLAND:OBJECT) NIL (:DEFAULT-INITARGS :VERSION 6)
+(DEFCLASS DISPATCH (CL-WL::OBJECT) NIL (:DEFAULT-INITARGS :VERSION 6)
           (:DOCUMENTATION "toplevel surface
 
 This interface defines an xdg_surface role which allows a surface to,
@@ -1097,7 +1136,7 @@ This interface defines an xdg_surface role which allows a surface to,
     (RESOURCE))
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH))
-  (DEBUG-LOG! "Destroying dispatch object: ~a~%" "xdg_toplevel")
+  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "xdg_toplevel")
   (WHEN (SLOT-BOUNDP DISPATCH 'DESTROY)
     (FUNCALL (SLOT-VALUE DISPATCH 'DESTROY) DISPATCH)))
 
@@ -1107,198 +1146,240 @@ This interface defines an xdg_surface role which allows a surface to,
          (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
          (LET ((REQUESTS-PTR
                 (LET ((MESSAGES
-                       (CFFI:FOREIGN-ALLOC '(:STRUCT WL_MESSAGE) :COUNT 14)))
+                       (CFFI:FOREIGN-ALLOC '(:STRUCT CL-WL.FFI:WL_MESSAGE)
+                                           :COUNT 14)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 0))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 0)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 0)))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "destroy")
                            SIGNATURE ""
                            TYPES INTERFACE-ARRAY)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 1))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 1)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 1)))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 0)
                             XDG_TOPLEVEL::*INTERFACE*)
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "set_parent")
                            SIGNATURE "?o"
                            TYPES INTERFACE-ARRAY)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 1))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 2)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 2)))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 0) (NULL-POINTER))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "set_title")
                            SIGNATURE "s"
                            TYPES INTERFACE-ARRAY)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 1))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 3)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 3)))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 0) (NULL-POINTER))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "set_app_id")
                            SIGNATURE "s"
                            TYPES INTERFACE-ARRAY)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 4))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 4)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 4)))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 0)
                             WL_SEAT::*INTERFACE*)
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 1) (NULL-POINTER))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 2) (NULL-POINTER))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 3) (NULL-POINTER))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "show_window_menu")
                            SIGNATURE "ouii"
                            TYPES INTERFACE-ARRAY)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 2))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 5)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 5)))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 0)
                             WL_SEAT::*INTERFACE*)
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 1) (NULL-POINTER))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "move")
                            SIGNATURE "ou"
                            TYPES INTERFACE-ARRAY)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 3))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 6)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 6)))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 0)
                             WL_SEAT::*INTERFACE*)
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 1) (NULL-POINTER))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 2) (NULL-POINTER))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "resize")
                            SIGNATURE "ouu"
                            TYPES INTERFACE-ARRAY)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 2))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 7)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 7)))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 0) (NULL-POINTER))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 1) (NULL-POINTER))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "set_max_size")
                            SIGNATURE "ii"
                            TYPES INTERFACE-ARRAY)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 2))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 8)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 8)))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 0) (NULL-POINTER))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 1) (NULL-POINTER))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "set_min_size")
                            SIGNATURE "ii"
                            TYPES INTERFACE-ARRAY)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 0))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 9)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 9)))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "set_maximized")
                            SIGNATURE ""
                            TYPES INTERFACE-ARRAY)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 0))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 10)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE)
+                          10)))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "unset_maximized")
                            SIGNATURE ""
                            TYPES INTERFACE-ARRAY)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 1))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 11)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE)
+                          11)))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 0)
                             WL_OUTPUT::*INTERFACE*)
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "set_fullscreen")
                            SIGNATURE "?o"
                            TYPES INTERFACE-ARRAY)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 0))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 12)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE)
+                          12)))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "unset_fullscreen")
                            SIGNATURE ""
                            TYPES INTERFACE-ARRAY)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 0))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 13)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE)
+                          13)))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "set_minimized")
                            SIGNATURE ""
                            TYPES INTERFACE-ARRAY)))
                   MESSAGES))
                (EVENTS-PTR
                 (LET ((MESSAGES
-                       (CFFI:FOREIGN-ALLOC '(:STRUCT WL_MESSAGE) :COUNT 4)))
+                       (CFFI:FOREIGN-ALLOC '(:STRUCT CL-WL.FFI:WL_MESSAGE)
+                                           :COUNT 4)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 3))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 0)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 0)))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 0) (NULL-POINTER))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 1) (NULL-POINTER))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 2) (NULL-POINTER))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "configure")
                            SIGNATURE "iia"
                            TYPES INTERFACE-ARRAY)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 0))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 1)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 1)))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "close")
                            SIGNATURE ""
                            TYPES INTERFACE-ARRAY)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 2))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 2)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 2)))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 0) (NULL-POINTER))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 1) (NULL-POINTER))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "configure_bounds")
                            SIGNATURE "4ii"
                            TYPES INTERFACE-ARRAY)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 1))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 3)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 3)))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 0) (NULL-POINTER))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "wm_capabilities")
                            SIGNATURE "5a"
                            TYPES INTERFACE-ARRAY)))
@@ -1312,151 +1393,138 @@ This interface defines an xdg_surface role which allows a surface to,
                   METHODS REQUESTS-PTR
                   EVENT_COUNT 4
                   EVENTS EVENTS-PTR)))))
- BM-CL-WAYLAND::*INTERFACE-INIT-LIST* :TEST #'INTERFACE-EXISTS-TEST)
+ CL-WL::*INTERFACE-INIT-LIST* :TEST #'CL-WL::INTERFACE-EXISTS-TEST)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
     :INT
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
-  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
+  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
-       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "destroy")
+       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "destroy")
        (FUNCALL 'DESTROY RESOURCE))
       (1
-       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "set-parent")
+       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "set-parent")
        (FUNCALL 'SET-PARENT RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
                   (FOREIGN-SLOT-VALUE
-                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
-                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                   'WL-FFI::O))
-                 *RESOURCE-TRACKER*)))
+                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                   '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
+                 CL-WL::*RESOURCE-TRACKER*)))
       (2
-       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "set-title")
+       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "set-title")
        (FUNCALL 'SET-TITLE RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::S))))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::S))))
       (3
-       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "set-app-id")
+       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "set-app-id")
        (FUNCALL 'SET-APP-ID RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::S))))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::S))))
       (4
-       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "show-window-menu")
+       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel"
+                          "show-window-menu")
        (FUNCALL 'SHOW-WINDOW-MENU RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
                   (FOREIGN-SLOT-VALUE
-                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
-                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                   'WL-FFI::O))
-                 *RESOURCE-TRACKER*)
+                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                   '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
+                 CL-WL::*RESOURCE-TRACKER*)
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::U))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::I))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 3)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::I))))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))
       (5
-       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "move")
+       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "move")
        (FUNCALL 'MOVE RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
                   (FOREIGN-SLOT-VALUE
-                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
-                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                   'WL-FFI::O))
-                 *RESOURCE-TRACKER*)
+                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                   '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
+                 CL-WL::*RESOURCE-TRACKER*)
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::U))))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
       (6
-       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "resize")
+       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "resize")
        (FUNCALL 'RESIZE RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
                   (FOREIGN-SLOT-VALUE
-                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
-                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                   'WL-FFI::O))
-                 *RESOURCE-TRACKER*)
+                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                   '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
+                 CL-WL::*RESOURCE-TRACKER*)
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::U))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::U))))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
       (7
-       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "set-max-size")
+       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "set-max-size")
        (FUNCALL 'SET-MAX-SIZE RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::I))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::I))))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))
       (8
-       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "set-min-size")
+       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "set-min-size")
        (FUNCALL 'SET-MIN-SIZE RESOURCE
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::I))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::I))))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))
       (9
-       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "set-maximized")
+       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "set-maximized")
        (FUNCALL 'SET-MAXIMIZED RESOURCE))
       (10
-       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "unset-maximized")
+       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel"
+                          "unset-maximized")
        (FUNCALL 'UNSET-MAXIMIZED RESOURCE))
       (11
-       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "set-fullscreen")
+       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel"
+                          "set-fullscreen")
        (FUNCALL 'SET-FULLSCREEN RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
                   (FOREIGN-SLOT-VALUE
-                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
-                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                   'WL-FFI::O))
-                 *RESOURCE-TRACKER*)))
+                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                   '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
+                 CL-WL::*RESOURCE-TRACKER*)))
       (12
-       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "unset-fullscreen")
+       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel"
+                          "unset-fullscreen")
        (FUNCALL 'UNSET-FULLSCREEN RESOURCE))
       (13
-       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "set-minimized")
+       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "set-minimized")
        (FUNCALL 'SET-MINIMIZED RESOURCE))))
   0)
 
@@ -1464,29 +1532,31 @@ This interface defines an xdg_surface role which allows a surface to,
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
   (LET* ((RESOURCE
-          (CREATE-RESOURCE (PTR (CLIENT INSTANCE)) *INTERFACE*
-           (VERSION INSTANCE) (ID INSTANCE))))
-    (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
-    (SETF (PTR INSTANCE) RESOURCE)
+          (CL-WL::CREATE-RESOURCE (CL-WL::PTR (CL-WL::CLIENT INSTANCE))
+                                  *INTERFACE* (VERSION INSTANCE)
+                                  (CL-WL::ID INSTANCE))))
+    (SETF (GETHASH (POINTER-ADDRESS RESOURCE) CL-WL::*RESOURCE-TRACKER*)
+            INSTANCE)
+    (SETF (CL-WL::PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
 (DEFMETHOD SEND-CONFIGURE
            ((DISPATCH DISPATCH) WIDTH HEIGHT
             STATES)
-  (DEBUG-LOG! "Event: ~a~%" "configure")
+  (CL-WL::DEBUG-LOG! "Event: ~a~%" "configure")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 3)))
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
-           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'WL-FFI::I)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I)
             WIDTH)
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
-           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'WL-FFI::I)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I)
             HEIGHT)
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
-           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'WL-FFI::A)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::A)
             (LET* ((LENGTH (LENGTH STATES))
                    (STRUCT (FOREIGN-ALLOC '(:STRUCT WL_ARRAY)))
                    (DATA (FOREIGN-ALLOC :UINT32 :COUNT LENGTH)))
@@ -1494,43 +1564,43 @@ This interface defines an xdg_surface role which allows a surface to,
                     DO (SETF (MEM-AREF DATA :UINT32 INDEX)
                                (NTH INDEX STATES)))
               (SETF (FOREIGN-SLOT-VALUE STRUCT '(:STRUCT WL_ARRAY)
-                     'BM-CL-LIBWAYLAND::SIZE)
+                     'CL-WL.FFI::SIZE)
                       LENGTH
                     (FOREIGN-SLOT-VALUE STRUCT '(:STRUCT WL_ARRAY)
-                     'BM-CL-LIBWAYLAND::ALLOC)
+                     'CL-WL.FFI::ALLOC)
                       LENGTH
                     (FOREIGN-SLOT-VALUE STRUCT '(:STRUCT WL_ARRAY)
-                     'BM-CL-LIBWAYLAND::DATA)
+                     'CL-WL.FFI::DATA)
                       DATA)
               STRUCT))
-    (RESOURCE-POST-EVENT-ARRAY (PTR DISPATCH) 0 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 0 ARG-LIST)))
 
 (DEFMETHOD SEND-CLOSE ((DISPATCH DISPATCH))
-  (DEBUG-LOG! "Event: ~a~%" "close")
+  (CL-WL::DEBUG-LOG! "Event: ~a~%" "close")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 0)))
-    (RESOURCE-POST-EVENT-ARRAY (PTR DISPATCH) 1 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 1 ARG-LIST)))
 
 (DEFMETHOD SEND-CONFIGURE-BOUNDS
            ((DISPATCH DISPATCH) WIDTH HEIGHT)
-  (DEBUG-LOG! "Event: ~a~%" "configure_bounds")
+  (CL-WL::DEBUG-LOG! "Event: ~a~%" "configure_bounds")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 2)))
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
-           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'WL-FFI::I)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I)
             WIDTH)
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
-           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'WL-FFI::I)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I)
             HEIGHT)
-    (RESOURCE-POST-EVENT-ARRAY (PTR DISPATCH) 2 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 2 ARG-LIST)))
 
 (DEFMETHOD SEND-WM-CAPABILITIES
            ((DISPATCH DISPATCH) CAPABILITIES)
-  (DEBUG-LOG! "Event: ~a~%" "wm_capabilities")
+  (CL-WL::DEBUG-LOG! "Event: ~a~%" "wm_capabilities")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 1)))
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
-           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'WL-FFI::A)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::A)
             (LET* ((LENGTH (LENGTH CAPABILITIES))
                    (STRUCT (FOREIGN-ALLOC '(:STRUCT WL_ARRAY)))
                    (DATA (FOREIGN-ALLOC :UINT32 :COUNT LENGTH)))
@@ -1538,18 +1608,18 @@ This interface defines an xdg_surface role which allows a surface to,
                     DO (SETF (MEM-AREF DATA :UINT32 INDEX)
                                (NTH INDEX CAPABILITIES)))
               (SETF (FOREIGN-SLOT-VALUE STRUCT '(:STRUCT WL_ARRAY)
-                     'BM-CL-LIBWAYLAND::SIZE)
+                     'CL-WL.FFI::SIZE)
                       LENGTH
                     (FOREIGN-SLOT-VALUE STRUCT '(:STRUCT WL_ARRAY)
-                     'BM-CL-LIBWAYLAND::ALLOC)
+                     'CL-WL.FFI::ALLOC)
                       LENGTH
                     (FOREIGN-SLOT-VALUE STRUCT '(:STRUCT WL_ARRAY)
-                     'BM-CL-LIBWAYLAND::DATA)
+                     'CL-WL.FFI::DATA)
                       DATA)
               STRUCT))
-    (RESOURCE-POST-EVENT-ARRAY (PTR DISPATCH) 3 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 3 ARG-LIST)))
 
-(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
+(DEFCLASS GLOBAL (CL-WL::GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 6 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "toplevel surface
 
@@ -1579,33 +1649,35 @@ This interface defines an xdg_surface role which allows a surface to,
 (DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
   "Default bind implementation for the xdg_toplevel global object.
 This can be overriden by inheritance in case if custom behaviour is required."
-  (DEBUG-LOG! "Binding ~a~%" "xdg_toplevel")
+  (CL-WL::DEBUG-LOG! "Binding ~a~%" "xdg_toplevel")
   (LET ((BOUND
-         (MAKE-INSTANCE (DISPATCH-IMPL GLOBAL) :DISPLAY (DISPLAY CLIENT)
-                        :CLIENT CLIENT :ID ID)))
-    (SETF (IFACE CLIENT ID) BOUND)))
+         (MAKE-INSTANCE (CL-WL::DISPATCH-IMPL GLOBAL) :DISPLAY
+                        (CL-WL::DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+    (SETF (CL-WL::IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (GET-DATA DATA)))
+  (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((GLOBAL GLOBAL) &KEY)
-  (DEBUG-LOG! "Initializing global object: ~a~%" "xdg_toplevel")
-  (LET* ((NEXT-DATA-ID (RESERVE-DATA))
+  (CL-WL::DEBUG-LOG! "Initializing global object: ~a~%" "xdg_toplevel")
+  (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
-           (DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
-    (SETF (BM-CL-WAYLAND:PTR GLOBAL) GLOBAL-PTR)
-    (SET-DATA NEXT-DATA-ID
-     (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR) *GLOBAL-TRACKER*) GLOBAL))))
+          (GLOBAL-CREATE (CL-WL::DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
+           (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
+    (SETF (CL-WL::PTR GLOBAL) GLOBAL-PTR)
+    (CL-WL::SET-DATA NEXT-DATA-ID
+                     (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
+                                    CL-WL::*GLOBAL-TRACKER*)
+                             GLOBAL))))
 
 (IN-PACKAGE :XDG_POPUP)
 
-(DEFCLASS DISPATCH (BM-CL-WAYLAND:OBJECT) NIL (:DEFAULT-INITARGS :VERSION 6)
+(DEFCLASS DISPATCH (CL-WL::OBJECT) NIL (:DEFAULT-INITARGS :VERSION 6)
           (:DOCUMENTATION "short-lived, popup surfaces for menus
 
 A popup surface is a short-lived, temporary surface. It can be used to
@@ -1644,7 +1716,7 @@ A popup surface is a short-lived, temporary surface. It can be used to
     (RESOURCE POSITIONER TOKEN))
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH))
-  (DEBUG-LOG! "Destroying dispatch object: ~a~%" "xdg_popup")
+  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "xdg_popup")
   (WHEN (SLOT-BOUNDP DISPATCH 'DESTROY)
     (FUNCALL (SLOT-VALUE DISPATCH 'DESTROY) DISPATCH)))
 
@@ -1654,73 +1726,87 @@ A popup surface is a short-lived, temporary surface. It can be used to
          (SETF *INTERFACE* (FOREIGN-ALLOC '(:STRUCT INTERFACE)))
          (LET ((REQUESTS-PTR
                 (LET ((MESSAGES
-                       (CFFI:FOREIGN-ALLOC '(:STRUCT WL_MESSAGE) :COUNT 3)))
+                       (CFFI:FOREIGN-ALLOC '(:STRUCT CL-WL.FFI:WL_MESSAGE)
+                                           :COUNT 3)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 0))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 0)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 0)))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "destroy")
                            SIGNATURE ""
                            TYPES INTERFACE-ARRAY)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 2))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 1)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 1)))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 0)
                             WL_SEAT::*INTERFACE*)
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 1) (NULL-POINTER))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "grab")
                            SIGNATURE "ou"
                            TYPES INTERFACE-ARRAY)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 2))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 2)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 2)))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 0)
                             XDG_POSITIONER::*INTERFACE*)
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 1) (NULL-POINTER))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "reposition")
                            SIGNATURE "3ou"
                            TYPES INTERFACE-ARRAY)))
                   MESSAGES))
                (EVENTS-PTR
                 (LET ((MESSAGES
-                       (CFFI:FOREIGN-ALLOC '(:STRUCT WL_MESSAGE) :COUNT 3)))
+                       (CFFI:FOREIGN-ALLOC '(:STRUCT CL-WL.FFI:WL_MESSAGE)
+                                           :COUNT 3)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 4))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 0)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 0)))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 0) (NULL-POINTER))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 1) (NULL-POINTER))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 2) (NULL-POINTER))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 3) (NULL-POINTER))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "configure")
                            SIGNATURE "iiii"
                            TYPES INTERFACE-ARRAY)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 0))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 1)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 1)))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "popup_done")
                            SIGNATURE ""
                            TYPES INTERFACE-ARRAY)))
                   (LET ((INTERFACE-ARRAY
                          (CFFI:FOREIGN-ALLOC '(:POINTER (:POINTER :VOID))
                                              :COUNT 1))
-                        (MSG-PTR (MEM-APTR MESSAGES '(:STRUCT WL_MESSAGE) 2)))
+                        (MSG-PTR
+                         (MEM-APTR MESSAGES '(:STRUCT CL-WL.FFI:WL_MESSAGE) 2)))
                     (SETF (MEM-AREF INTERFACE-ARRAY :POINTER 0) (NULL-POINTER))
                     (WITH-FOREIGN-SLOTS
-                     ((NAME SIGNATURE TYPES) MSG-PTR (:STRUCT WL_MESSAGE))
+                     ((NAME SIGNATURE TYPES) MSG-PTR
+                      (:STRUCT CL-WL.FFI:WL_MESSAGE))
                      (SETF NAME (FOREIGN-STRING-ALLOC "repositioned")
                            SIGNATURE "3u"
                            TYPES INTERFACE-ARRAY)))
@@ -1734,100 +1820,98 @@ A popup surface is a short-lived, temporary surface. It can be used to
                   METHODS REQUESTS-PTR
                   EVENT_COUNT 3
                   EVENTS EVENTS-PTR)))))
- BM-CL-WAYLAND::*INTERFACE-INIT-LIST* :TEST #'INTERFACE-EXISTS-TEST)
+ CL-WL::*INTERFACE-INIT-LIST* :TEST #'CL-WL::INTERFACE-EXISTS-TEST)
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
     :INT
     ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
      (ARGS :POINTER))
   (DECLARE (IGNORE DATA MESSAGE))
-  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) *RESOURCE-TRACKER*)))
+  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
     (ECASE OPCODE
       (0
-       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_popup" "destroy")
+       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_popup" "destroy")
        (FUNCALL 'DESTROY RESOURCE))
       (1
-       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_popup" "grab")
+       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_popup" "grab")
        (FUNCALL 'GRAB RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
                   (FOREIGN-SLOT-VALUE
-                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
-                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                   'WL-FFI::O))
-                 *RESOURCE-TRACKER*)
+                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                   '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
+                 CL-WL::*RESOURCE-TRACKER*)
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::U))))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
       (2
-       (DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_popup" "reposition")
+       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_popup" "reposition")
        (FUNCALL 'REPOSITION RESOURCE
                 (GETHASH
                  (POINTER-ADDRESS
                   (FOREIGN-SLOT-VALUE
-                   (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
-                   '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                   'WL-FFI::O))
-                 *RESOURCE-TRACKER*)
+                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                   '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
+                 CL-WL::*RESOURCE-TRACKER*)
                 (VALUES
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
-                  '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT)
-                  'WL-FFI::U))))))
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))))
   0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((INSTANCE DISPATCH) &KEY)
   (LET* ((RESOURCE
-          (CREATE-RESOURCE (PTR (CLIENT INSTANCE)) *INTERFACE*
-           (VERSION INSTANCE) (ID INSTANCE))))
-    (SETF (GETHASH (POINTER-ADDRESS RESOURCE) *RESOURCE-TRACKER*) INSTANCE)
-    (SETF (PTR INSTANCE) RESOURCE)
+          (CL-WL::CREATE-RESOURCE (CL-WL::PTR (CL-WL::CLIENT INSTANCE))
+                                  *INTERFACE* (VERSION INSTANCE)
+                                  (CL-WL::ID INSTANCE))))
+    (SETF (GETHASH (POINTER-ADDRESS RESOURCE) CL-WL::*RESOURCE-TRACKER*)
+            INSTANCE)
+    (SETF (CL-WL::PTR INSTANCE) RESOURCE)
     (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
      (NULL-POINTER) (NULL-POINTER))))
 
 (DEFMETHOD SEND-CONFIGURE
            ((DISPATCH DISPATCH) X Y WIDTH
             HEIGHT)
-  (DEBUG-LOG! "Event: ~a~%" "configure")
+  (CL-WL::DEBUG-LOG! "Event: ~a~%" "configure")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 4)))
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
-           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'WL-FFI::I)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I)
             X)
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 1)
-           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'WL-FFI::I)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I)
             Y)
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 2)
-           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'WL-FFI::I)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I)
             WIDTH)
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 3)
-           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'WL-FFI::I)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I)
             HEIGHT)
-    (RESOURCE-POST-EVENT-ARRAY (PTR DISPATCH) 0 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 0 ARG-LIST)))
 
 (DEFMETHOD SEND-POPUP-DONE ((DISPATCH DISPATCH))
-  (DEBUG-LOG! "Event: ~a~%" "popup_done")
+  (CL-WL::DEBUG-LOG! "Event: ~a~%" "popup_done")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 0)))
-    (RESOURCE-POST-EVENT-ARRAY (PTR DISPATCH) 1 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 1 ARG-LIST)))
 
 (DEFMETHOD SEND-REPOSITIONED
            ((DISPATCH DISPATCH) TOKEN)
-  (DEBUG-LOG! "Event: ~a~%" "repositioned")
+  (CL-WL::DEBUG-LOG! "Event: ~a~%" "repositioned")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 1)))
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 0)
-           '(:UNION BM-CL-LIBWAYLAND:WL_ARGUMENT) 'WL-FFI::U)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
             TOKEN)
-    (RESOURCE-POST-EVENT-ARRAY (PTR DISPATCH) 2 ARG-LIST)))
+    (RESOURCE-POST-EVENT-ARRAY (CL-WL::PTR DISPATCH) 2 ARG-LIST)))
 
-(DEFCLASS GLOBAL (BM-CL-WAYLAND::GLOBAL) NIL
+(DEFCLASS GLOBAL (CL-WL::GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 6 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "short-lived, popup surfaces for menus
 
@@ -1860,27 +1944,29 @@ A popup surface is a short-lived, temporary surface. It can be used to
 (DEFMETHOD DISPATCH-BIND ((GLOBAL GLOBAL) CLIENT DATA VERSION ID)
   "Default bind implementation for the xdg_popup global object.
 This can be overriden by inheritance in case if custom behaviour is required."
-  (DEBUG-LOG! "Binding ~a~%" "xdg_popup")
+  (CL-WL::DEBUG-LOG! "Binding ~a~%" "xdg_popup")
   (LET ((BOUND
-         (MAKE-INSTANCE (DISPATCH-IMPL GLOBAL) :DISPLAY (DISPLAY CLIENT)
-                        :CLIENT CLIENT :ID ID)))
-    (SETF (IFACE CLIENT ID) BOUND)))
+         (MAKE-INSTANCE (CL-WL::DISPATCH-IMPL GLOBAL) :DISPLAY
+                        (CL-WL::DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+    (SETF (CL-WL::IFACE CLIENT ID) BOUND)))
 
 (CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
     :VOID
     ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (GET-CLIENT CLIENT)) (GLOBAL (GET-DATA DATA)))
+  (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
     (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
 (DEFMETHOD INITIALIZE-INSTANCE :AFTER ((GLOBAL GLOBAL) &KEY)
-  (DEBUG-LOG! "Initializing global object: ~a~%" "xdg_popup")
-  (LET* ((NEXT-DATA-ID (RESERVE-DATA))
+  (CL-WL::DEBUG-LOG! "Initializing global object: ~a~%" "xdg_popup")
+  (LET* ((NEXT-DATA-ID (CL-WL::RESERVE-DATA))
          (GLOBAL-PTR
-          (GLOBAL-CREATE (DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
-           (DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
-    (SETF (BM-CL-WAYLAND:PTR GLOBAL) GLOBAL-PTR)
-    (SET-DATA NEXT-DATA-ID
-     (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR) *GLOBAL-TRACKER*) GLOBAL))))
+          (GLOBAL-CREATE (CL-WL::DISPLAY GLOBAL) *INTERFACE* (VERSION GLOBAL)
+           (CL-WL::DATA-PTR NEXT-DATA-ID) *DISPATCH-BIND*)))
+    (SETF (CL-WL::PTR GLOBAL) GLOBAL-PTR)
+    (CL-WL::SET-DATA NEXT-DATA-ID
+                     (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
+                                    CL-WL::*GLOBAL-TRACKER*)
+                             GLOBAL))))
 

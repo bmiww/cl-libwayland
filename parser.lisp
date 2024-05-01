@@ -5,12 +5,12 @@
 ;; ██╔═══╝ ██╔══██║██╔══██╗╚════██║██╔══╝  ██╔══██╗
 ;; ██║     ██║  ██║██║  ██║███████║███████╗██║  ██║
 ;; ╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝
-(defpackage :bm-cl-wayland.parser
+(defpackage :cl-wl.parser
   (:use :cl :xmls :split-sequence)
   (:export name enum description arg-type args value entries enum-name bitfield-p requests events
 	   version enums read-protocol event interface signature arg-type-char
 	   parent-interface parent-message))
-(in-package :bm-cl-wayland.parser)
+(in-package :cl-wl.parser)
 
 ;; ┌─┐┌┐┌┌┬┐┬─┐┬ ┬
 ;; ├┤ │││ │ ├┬┘└┬┘
