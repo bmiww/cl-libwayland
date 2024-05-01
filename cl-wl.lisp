@@ -93,13 +93,13 @@
     (unless client (error (format nil "No client found for pid ~a" pid)))
     client))
 
-(defun create-client (display fd)
+(defun create-client (display fd &key (class 'client))
   "This function should be called when a new client connects to the socket.
 This will in essence forward the client to the libwayland implementation
 and set up the client object in the lisp world for further referencing."
   (let* ((client (client-create (display-ptr display) fd))
 	 (pid (client-get-credentials client)))
-    (setf (gethash pid (clients display)) (make-instance 'client :display display :ptr client))
+    (setf (gethash pid (clients display)) (make-instance class :display display :ptr client))
     client))
 
 (defmethod iface ((client client) interface)
