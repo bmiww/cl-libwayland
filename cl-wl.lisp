@@ -12,7 +12,7 @@
 	   object get-display client version id ptr destroy
 	   global dispatch-impl
 	   client objects get-display ptr
-	   display dispatch-event-loop event-loop-fd flush-clients display-ptr all-clients))
+	   display dispatch-event-loop event-loop-fd flush-clients display-ptr all-clients destroy))
 
 (in-package :cl-wl)
 
@@ -41,6 +41,11 @@
 (defmethod dispatch-event-loop ((display display)) (event-loop-dispatch (event-loop display) 0))
 (defmethod flush-clients ((display display)) (display-flush-clients (display-ptr display)))
 (defmethod all-clients ((display display)) (alexandria:hash-table-values (clients display)))
+
+;; TODO: This could also clean up some of the resources and close client connections
+;; Gracefully. Maybe need to also do a notify for all globals/objects that they are being
+;; destroyed.
+(defmethod destroy ((display display)) (setf *display-singleton* nil))
 
 ;; ┌─┐┌┐  ┬┌─┐┌─┐┌┬┐
 ;; │ │├┴┐ │├┤ │   │
