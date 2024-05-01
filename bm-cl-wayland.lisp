@@ -9,17 +9,6 @@
 ;; NOTE: SWC compositor reference: https://github.com/michaelforney/swc
 ;; TODO: create another package entry file - which exports the functions that could be used by the end user
 ;; Currently exporting things that the generated files can use
-(defpackage #:bm-cl-wayland
-  (:use #:cl #:bm-cl-libwayland #:cffi)
-  (:nicknames :wl)
-  (:export display-create create-client *global-tracker* resource-get-id object get-client iface
-	   get-data pop-data display create-resource reserve-data global-create version data-ptr set-data
-	   global-get-name wl_message display-add-socket-fd display-run display-get-event-loop event-loop-get-fd
-	   event-loop-dispatch display-flush-clients ptr debug-log! resource-set-dispatcher dispatch-impl
-	   wl_resource *resource-tracker* wl_argument id client mk-if resource-post-event-array
-	   init-interface-definitions interface-exists-test
-	   name version method_count methods event_count events
-	   signature types destroy wl_array *client-tracker* objects))
 (in-package :bm-cl-wayland)
 
 (defclass object ()
@@ -35,30 +24,9 @@
   (apply #'make-instance class :display (display object) :client (client object) :id id args))
 
 ;; Uses integer value pointer addresses as keys
+;; TODO: Maybe clear this out once a client is destroyed or a restart is done
+;; Might be unnecessary - since it's id based - and usually new restart ids will overwrite what is already here
 (defvar *global-tracker* (make-hash-table :test 'eq))
-
-(defvar *interface-init-list* nil)
-(defvar *inited-interfaces* nil)
-(defun interface-exists-test (a b) (string= (car a) (car b)))
-(defun hierarchical-init (interfaces)
-  (let ((needs-processing nil))
-    (dolist (interface interfaces)
-      (let ((name (car interface)) (deps (cadr interface)) (init (caddr interface)))
-	(when (not (find name *inited-interfaces* :test #'string=))
-	  (if (every (lambda (dep)
-		       (if (string= dep name) t
-			   (find dep *inited-interfaces* :test #'string=)))
-		     deps)
-	      (progn (funcall init) (push name *inited-interfaces*))
-	      (push interface needs-processing)))))
-    (when (eq (length needs-processing) (length interfaces))
-      (error "Circular dependency detected in interface initialization"))
-    (when needs-processing (hierarchical-init needs-processing))))
-
-(defun init-interface-definitions ()
-  (when *interface-init-list*
-    (hierarchical-init *interface-init-list*) (setf *interface-init-list* nil)))
-
 
 (defclass global (object)
   ((dispatch-impl :initarg :dispatch-impl :reader dispatch-impl)))
@@ -75,6 +43,7 @@
    (display :initarg :display :reader display)
    (ptr :initarg :ptr :reader ptr)))
 
+;; TODO: Clear this out once a client is destroyed or a restart is done
 (defvar *client-tracker* (make-hash-table :test 'equal))
 
 (defun client-get-credentials (client)
@@ -139,3 +108,30 @@ and set up the client object in the lisp world for further referencing."
 
 (defvar *debug* t)
 (defmacro debug-log! (&rest args) (when *debug* `(format t "⭐: ~a" (format nil ,@args))))
+
+
+;; ┌─┐┌┬┐┌─┐┌┬┐┬┌─┐  ┌─┐┌─┐┬  ┬┌┐┌┬┌┬┐
+;; └─┐ │ ├─┤ │ ││    ├┤ ├┤ │  │││││ │
+;; └─┘ ┴ ┴ ┴ ┴ ┴└─┘  └  └  ┴  ┴┘└┘┴ ┴
+;; Keeps track of protocol global dispatch signatures required by libwayland
+(defvar *interface-init-list* nil)
+(defvar *inited-interfaces* nil)
+(defun interface-exists-test (a b) (string= (car a) (car b)))
+(defun hierarchical-init (interfaces)
+  (let ((needs-processing nil))
+    (dolist (interface interfaces)
+      (let ((name (car interface)) (deps (cadr interface)) (init (caddr interface)))
+	(when (not (find name *inited-interfaces* :test #'string=))
+	  (if (every (lambda (dep)
+		       (if (string= dep name) t
+			   (find dep *inited-interfaces* :test #'string=)))
+		     deps)
+	      (progn (funcall init) (push name *inited-interfaces*))
+	      (push interface needs-processing)))))
+    (when (eq (length needs-processing) (length interfaces))
+      (error "Circular dependency detected in interface initialization"))
+    (when needs-processing (hierarchical-init needs-processing))))
+
+(defun init-interface-definitions ()
+  (when *interface-init-list*
+    (hierarchical-init *interface-init-list*) (setf *interface-init-list* nil)))

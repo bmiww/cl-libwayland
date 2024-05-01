@@ -15,5 +15,6 @@
 	       #:cffi
 	       ;; NOTE: Primarily for the define-c-callback macro
 	       #:cl-async)
-  :components ((:file "libwayland-ffi")
+  :components ((:file "package")
+	       (:file "libwayland-ffi")
 	       (:file "bm-cl-wayland")))
