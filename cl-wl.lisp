@@ -9,27 +9,46 @@
   (:use #:cl #:cffi #:wl-ffi)
   (:nicknames :wl)
   (:export create-client mk-if iface init-interface-definitions
-	   object display client version id ptr destroy
+	   object get-display client version id ptr destroy
 	   global dispatch-impl
 	   client objects display ptr
-	   ;; TODO: These are coming directly from wl-ffi - wrap around them?
-	   ;; TODO: All in the next line could be one export handling all of this
-	   display-create display-add-socket-fd display-get-event-loop event-loop-get-fd
+	   display dispatch-event-loop event-loop-fd flush-clients ptr
 
+	   ;; TODO: These are coming directly from wl-ffi - wrap around them?
 	   ;; TODO: A bit nasty to expose something this internal - needs a better way to handle this
 	   *client-tracker*
-
-	   display-flush-clients ;; TODO: Wrap in a display method
-	   event-loop-dispatch ;; TODO: Wrap in a display method
 	   ))
 
 (in-package :cl-wl)
+
+;; ┌┬┐┬┌─┐┌─┐┬  ┌─┐┬ ┬
+;;  │││└─┐├─┘│  ├─┤└┬┘
+;; ─┴┘┴└─┘┴  ┴─┘┴ ┴ ┴
+(defvar *display-singleton* nil)
+(defclass display ()
+  ((ptr :accessor display-ptr)
+   (socket-fd :initarg :fd :accessor socket-fd)
+   (event-loop :accessor event-loop)
+   (event-loop-fd :accessor event-loop-fd)))
+
+(defmethod initialize-instance :before ((display display) &key)
+  (when *display-singleton* (error "There can only be one!... display.")))
+
+(defmethod initialize-instance :after ((display display) &key)
+  (setf (ptr display) (display-create))
+  (display-add-socket-fd (ptr display) (socket-fd display))
+  (setf (event-loop display) (display-get-event-loop (ptr display)))
+  (setf (event-loop-fd display) (event-loop-get-fd (event-loop display)))
+  (setf *display-singleton* display))
+
+(defmethod dispatch-event-loop ((display display)) (event-loop-dispatch (event-loop display) 0))
+(defmethod flush-clients ((display display)) (display-flush-clients (ptr display)))
 
 ;; ┌─┐┌┐  ┬┌─┐┌─┐┌┬┐
 ;; │ │├┴┐ │├┤ │   │
 ;; └─┘└─┘└┘└─┘└─┘ ┴
 (defclass object ()
-  ((display :initarg :display :reader display)
+  ((display :initarg :display :reader get-display)
    (client :initarg :client :reader client)
    (version :initarg :version :reader version)
    (id :initarg :id :reader id)
@@ -78,7 +97,7 @@
   "This function should be called when a new client connects to the socket.
 This will in essence forward the client to the libwayland implementation
 and set up the client object in the lisp world for further referencing."
-  (let* ((client (client-create display fd))
+  (let* ((client (client-create (ptr display) fd))
 	 (pid (client-get-credentials client)))
     (setf (gethash pid *client-tracker*) (make-instance 'client :display display :ptr client))
     client))

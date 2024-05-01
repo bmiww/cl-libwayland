@@ -183,7 +183,7 @@ argument feed."
   `((defmethod initialize-instance :after ((global global) &key)
       (wl::debug-log! "Initializing global object: ~a~%" ,(name interface))
       (let* ((next-data-id (wl::reserve-data))
-	     (global-ptr (global-create (wl::display global) *interface*
+	     (global-ptr (global-create (wl::ptr (wl::display global)) *interface*
 					(version global) (wl::data-ptr next-data-id)
 					*dispatch-bind*)))
 	(setf (wl::ptr global) global-ptr)
