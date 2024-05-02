@@ -46,6 +46,7 @@
 ;; Gracefully. Maybe need to also do a notify for all globals/objects that they are being
 ;; destroyed.
 (defmethod destroy ((display display))
+  (display-destroy-clients (display-ptr display))
   (display-destroy (display-ptr display))
   (setf *display-singleton* nil))
 

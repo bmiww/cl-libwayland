@@ -11,9 +11,10 @@
   (:nicknames :wl-ffi)
   (:export display-create display-destroy global-create global-get-name resource-get-id resource-create
 	   client-create wl_message display-add-socket-fd display-run display-get-event-loop event-loop-get-fd
-	   event-loop-dispatch display-flush-clients resource-set-dispatcher wl_resource
+	   event-loop-dispatch resource-set-dispatcher wl_resource
 	   wl_argument resource-post-event-array name version method_count methods event_count events
-	   signature types wl_array))
+	   signature types wl_array
+	   display-flush-clients display-destroy-clients))
 
 (in-package :cl-wl.ffi)
 (define-foreign-library wayland-server
@@ -76,6 +77,9 @@
   (display :pointer))
 
 (defcfun ("wl_display_flush_clients" display-flush-clients) :void
+  (display :pointer))
+
+(defcfun ("wl_display_destroy_clients" display-destroy-clients) :void
   (display :pointer))
 
 (defcfun ("wl_event_loop_get_fd" event-loop-get-fd) :int
