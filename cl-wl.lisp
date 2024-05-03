@@ -49,6 +49,7 @@
 (defmethod destroy ((display display))
   (display-destroy-clients (display-ptr display))
   (display-destroy (display-ptr display))
+  (setf *resource-tracker* (make-hash-table :test 'eq))
   (setf *display-singleton* nil))
 
 ;; ┌─┐┌┐  ┬┌─┐┌─┐┌┬┐
