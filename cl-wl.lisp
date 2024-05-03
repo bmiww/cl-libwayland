@@ -11,7 +11,7 @@
   (:export create-client mk-if iface init-interface-definitions
 	   object get-display client version id ptr destroy
 	   global dispatch-impl
-	   client objects get-display ptr
+	   client objects get-display ptr rem-client
 	   display dispatch-event-loop event-loop-fd flush-clients display-ptr all-clients destroy))
 
 (in-package :cl-wl)
@@ -41,6 +41,7 @@
 (defmethod dispatch-event-loop ((display display)) (event-loop-dispatch (event-loop display) 0))
 (defmethod flush-clients ((display display)) (display-flush-clients (display-ptr display)))
 (defmethod all-clients ((display display)) (alexandria:hash-table-values (clients display)))
+(defmethod rem-client ((display display) client) (remhash (pid client) (clients display)))
 
 ;; TODO: This could also clean up some of the resources and close client connections
 ;; Gracefully. Maybe need to also do a notify for all globals/objects that they are being
@@ -83,6 +84,7 @@
 (defclass client ()
   ((objects :initform (make-hash-table :test 'eq) :accessor objects)
    (display :initarg :display :reader get-display)
+   (pid :initarg :pid :reader pid)
    (ptr :initarg :ptr :reader ptr)))
 
 (defun client-get-credentials (client)
@@ -96,14 +98,32 @@
     (unless client (error (format nil "No client found for pid ~a" pid)))
     client))
 
+;; I have no idea what the second argument to this is. Wouldn't touch any more than necessary.
+(cl-async-util:define-c-callback client-destroy-cb :void ((listener :pointer) (client :pointer))
+  (declare (ignore listener))
+  (let* ((client (gethash (pointer-address listener) *destroy-client-tracker*)))
+    (rem-client (get-display client) client)
+    (remhash (pointer-address listener) *destroy-client-tracker*)
+    (foreign-free listener)))
+
+(defvar *destroy-client-tracker* (make-hash-table :test 'eq))
+
 (defun create-client (display fd &key (class 'client))
   "This function should be called when a new client connects to the socket.
 This will in essence forward the client to the libwayland implementation
 and set up the client object in the lisp world for further referencing."
   (let* ((client (client-create (display-ptr display) fd))
-	 (pid (client-get-credentials client)))
-    (setf (gethash pid (clients display)) (make-instance class :display display :ptr client))
-    client))
+	 (pid (client-get-credentials client))
+	 (destructo-struct (foreign-alloc '(:struct wl_listener))))
+
+    (setf (foreign-slot-value destructo-struct '(:struct wl_listener) 'wl-ffi::link)
+	  (foreign-alloc '(:struct wl_list)))
+    (setf (foreign-slot-value destructo-struct '(:struct wl_listener) 'wl-ffi::notify)
+	  (callback client-destroy-cb))
+
+    (client-add-destroy-listener client destructo-struct)
+    (let ((client (setf (gethash pid (clients display)) (make-instance class :display display :ptr client :pid pid))))
+      (setf (gethash (pointer-address destructo-struct) *destroy-client-tracker*) client))))
 
 (defmethod iface ((client client) interface)
   (let ((iface (gethash interface (objects client))))

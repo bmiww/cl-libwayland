@@ -10,10 +10,12 @@
   (:use :cl :cffi)
   (:nicknames :wl-ffi)
   (:export display-create display-destroy global-create global-get-name resource-get-id resource-create
-	   client-create wl_message display-add-socket-fd display-run display-get-event-loop event-loop-get-fd
+	   wl_message display-add-socket-fd display-run display-get-event-loop event-loop-get-fd
 	   event-loop-dispatch resource-set-dispatcher wl_resource
-	   wl_argument resource-post-event-array name version method_count methods event_count events
+	   wl_list wl_argument wl_listener
+	   resource-post-event-array name version method_count methods event_count events
 	   signature types wl_array
+	   client-create client-add-destroy-listener
 	   display-flush-clients display-destroy-clients))
 
 (in-package :cl-wl.ffi)
@@ -43,6 +45,14 @@
   (size :size)
   (alloc :size)
   (data :pointer))
+
+(defcstruct wl_list
+  (prev :pointer)
+  (next :pointer))
+
+(defcstruct wl_listener
+  (link (:struct wl_list))
+  (notify :pointer))
 
 (defcunion wl_argument
   (i :int)                          ;; integer
@@ -110,6 +120,9 @@
   (display :pointer)
   (fd :int32))
 
+(defcfun ("wl_client_add_destroy_listener" client-add-destroy-listener) :void
+  (client :pointer)
+  (listener (:pointer (:struct wl_listener))))
 
 (defcfun ("wl_resource_create" resource-create) :pointer
   (client :pointer)
