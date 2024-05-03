@@ -16,10 +16,25 @@
 
 (in-package :cl-wl)
 
+;; ┌┬┐┬─┐┌─┐┌─┐┬┌─┌─┐┬─┐┌─┐
+;;  │ ├┬┘├─┤│  ├┴┐├┤ ├┬┘└─┐
+;;  ┴ ┴└─┴ ┴└─┘┴ ┴└─┘┴└─└─┘
+;; Global tables to help deal with the libwayland - pointing back and forth problem
+(defvar *display-singleton* nil)
+;; Uses integer value pointer addresses as keys
+;; TODO: Maybe clear this out once a client is destroyed or a restart is done
+;; Might be unnecessary - since it's id based - and usually new restart ids will overwrite what is already here
+(defvar *global-tracker* (make-hash-table :test 'eq))
+;; TODO: Might not need to be a hash-table since i intend this to be ephemeral
+(defvar *data-tracker* (make-hash-table :test 'equal))
+(defvar *data-counter* 0)
+;; Keeps a table of addresses for destruction listener objects connected to particular resources
+(defvar *destroy-tracker* (make-hash-table :test 'eq))
+(defvar *resource-tracker* (make-hash-table :test 'eq))
+
 ;; ┌┬┐┬┌─┐┌─┐┬  ┌─┐┬ ┬
 ;;  │││└─┐├─┘│  ├─┤└┬┘
 ;; ─┴┘┴└─┘┴  ┴─┘┴ ┴ ┴
-(defvar *display-singleton* nil)
 (defclass display ()
   ((ptr :accessor display-ptr)
    (socket-fd :initarg :fd :accessor socket-fd)
@@ -67,17 +82,33 @@
   "Convenience method to create a new interface using the context of the creating object as reference"
   (apply #'make-instance class :display (get-display object) :client (client object) :id id args))
 
-;; Uses integer value pointer addresses as keys
-;; TODO: Maybe clear this out once a client is destroyed or a restart is done
-;; Might be unnecessary - since it's id based - and usually new restart ids will overwrite what is already here
-(defvar *global-tracker* (make-hash-table :test 'eq))
-
 (defclass global (object)
   ((dispatch-impl :initarg :dispatch-impl :reader dispatch-impl)))
 (defgeneric bind (client resource id))
 
-(defvar *resource-tracker* (make-hash-table :test 'eq))
-(defun create-resource (client interface version id) (resource-create client interface version id))
+;; I have no idea what the second argument to this is. Wouldn't touch any more than necessary.
+(cl-async-util:define-c-callback resource-destroy-cb :void ((listener :pointer) (data :pointer))
+  (declare (ignore data))
+  (print "Was")
+  (let* ((resource-ptr (gethash (pointer-address listener) *destroy-tracker*)))
+    (remhash resource-ptr *resource-tracker*)
+    ;; TODO: libayland might have already killed off the pointer. Check if this is valid.
+    (foreign-free resource-ptr)
+    (remhash (pointer-address listener) *destroy-tracker*)
+    (foreign-free listener)))
+
+(defun create-resource (client interface version id)
+  ;; (let ((destructo-struct (foreign-alloc '(:struct wl_listener)))
+	;; (resource-ptr (resource-create client interface version id)))
+  (let ((resource-ptr (resource-create client interface version id)))
+    ;; (setf (foreign-slot-value destructo-struct '(:struct wl_listener) 'wl-ffi::link)
+	  ;; (foreign-alloc '(:struct wl_list)))
+    ;; (setf (foreign-slot-value destructo-struct '(:struct wl_listener) 'wl-ffi::notify)
+	  ;; (callback resource-destroy-cb))
+
+    ;; (setf (gethash (pointer-address destructo-struct) *destroy-tracker*) resource-ptr)
+    ;; (resource-add-destroy-listener resource-ptr destructo-struct)
+    resource-ptr))
 
 ;; ┌─┐┬  ┬┌─┐┌┐┌┌┬┐
 ;; │  │  │├┤ │││ │
@@ -100,14 +131,12 @@
     client))
 
 ;; I have no idea what the second argument to this is. Wouldn't touch any more than necessary.
-(cl-async-util:define-c-callback client-destroy-cb :void ((listener :pointer) (client :pointer))
-  (declare (ignore listener))
-  (let* ((client (gethash (pointer-address listener) *destroy-client-tracker*)))
+(cl-async-util:define-c-callback client-destroy-cb :void ((listener :pointer) (data :pointer))
+  (declare (ignore data))
+  (let* ((client (gethash (pointer-address listener) *destroy-tracker*)))
     (rem-client (get-display client) client)
-    (remhash (pointer-address listener) *destroy-client-tracker*)
+    (remhash (pointer-address listener) *destroy-tracker*)
     (foreign-free listener)))
-
-(defvar *destroy-client-tracker* (make-hash-table :test 'eq))
 
 (defun create-client (display fd &key (class 'client))
   "This function should be called when a new client connects to the socket.
@@ -124,7 +153,7 @@ and set up the client object in the lisp world for further referencing."
 
     (client-add-destroy-listener client destructo-struct)
     (let ((client (setf (gethash pid (clients display)) (make-instance class :display display :ptr client :pid pid))))
-      (setf (gethash (pointer-address destructo-struct) *destroy-client-tracker*) client))))
+      (setf (gethash (pointer-address destructo-struct) *destroy-tracker*) client))))
 
 (defmethod iface ((client client) interface)
   (let ((iface (gethash interface (objects client))))
@@ -138,11 +167,6 @@ and set up the client object in the lisp world for further referencing."
 ;; ┌┬┐┌─┐┌┬┐┌─┐
 ;;  ││├─┤ │ ├─┤
 ;; ─┴┘┴ ┴ ┴ ┴ ┴
-;; TODO: Might not need to be a hash-table since i intend this to be ephemeral
-(defvar *data-tracker* (make-hash-table :test 'equal))
-;; TODO: This could technically run out - so reserve data should possibly check for C uint32 limits
-(defvar *data-counter* 0)
-
 (defun reserve-data (&optional data)
   (let ((new-data-id (incf *data-counter*)))
     (when data (setf (gethash new-data-id *data-tracker*) data))

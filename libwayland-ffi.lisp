@@ -9,14 +9,21 @@
 (defpackage :cl-wl.ffi
   (:use :cl :cffi)
   (:nicknames :wl-ffi)
-  (:export display-create display-destroy global-create global-get-name resource-get-id resource-create
-	   wl_message display-add-socket-fd display-run display-get-event-loop event-loop-get-fd
-	   event-loop-dispatch resource-set-dispatcher wl_resource
-	   wl_list wl_argument wl_listener
-	   resource-post-event-array name version method_count methods event_count events
-	   signature types wl_array
-	   client-create client-add-destroy-listener
-	   display-flush-clients display-destroy-clients))
+  (:export
+   global-create global-get-name
+   event-loop-get-fd event-loop-dispatch
+   client-create client-add-destroy-listener
+
+   resource-post-event-array resource-add-destroy-listener
+   resource-get-id resource-create resource-set-dispatcher
+
+   display-run display-flush-clients display-destroy-clients display-get-event-loop
+   display-create display-destroy display-add-socket-fd
+
+   wl_resource wl_list wl_argument wl_listener wl_array wl_message
+
+   name version method_count methods event_count events
+   signature types))
 
 (in-package :cl-wl.ffi)
 (define-foreign-library wayland-server
@@ -144,3 +151,7 @@
   (resource :pointer)
   (opcode :uint32)
   (args :pointer))
+
+(defcfun ("wl_resource_add_destroy_listener" resource-add-destroy-listener) :void
+  (resource :pointer)
+  (listener (:pointer (:struct wl_listener))))
