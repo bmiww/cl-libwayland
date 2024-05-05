@@ -155,13 +155,13 @@ and set up the client object in the lisp world for further referencing."
     (let ((client (setf (gethash pid (clients display)) (make-instance class :display display :ptr client :pid pid))))
       (setf (gethash (pointer-address destructo-struct) *destroy-tracker*) client))))
 
-(defmethod iface ((client client) interface)
-  (let ((iface (gethash interface (objects client))))
-    (unless iface (error (format nil "No interface found for ~a" interface)))
+(defmethod iface ((client client) id)
+  (let ((iface (gethash id (objects client))))
+    (unless iface (error (format nil "No interface found for object id: ~a" id)))
     iface))
 
-(defmethod (setf iface) (iface (client client) interface)
-  (setf (gethash interface (objects client)) iface))
+(defmethod (setf iface) (iface (client client) id)
+  (setf (gethash id (objects client)) iface))
 
 
 ;; ┌┬┐┌─┐┌┬┐┌─┐
