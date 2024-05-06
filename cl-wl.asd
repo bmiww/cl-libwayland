@@ -14,8 +14,6 @@
   :depends-on (#:str
 	       #:cffi
 	       #:alexandria
-	       ;; NOTE: Primarily for the define-c-callback macro
-	       #:cl-async
 	       #:cl-wl.ffi)
   :components ((:file "cl-wl")
 	       (:file "util")))

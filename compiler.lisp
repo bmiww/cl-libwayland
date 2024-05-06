@@ -54,7 +54,7 @@ This can be overriden by inheritance in case if custom behaviour is required." (
 	(setf (wl::iface client id) bound)))))
 
 (defun gen-bind-c-callback ()
-  `((cl-async::define-c-callback dispatch-bind-ffi :void ((client :pointer) (data :pointer) (version :uint) (id :uint))
+  `((defcallback dispatch-bind-ffi :void ((client :pointer) (data :pointer) (version :uint) (id :uint))
 	(let* ((client (wl::get-client client))
 	       (global (wl::get-data data)))
 	  (funcall 'dispatch-bind global client (null-pointer) version id)))))
@@ -112,7 +112,7 @@ argument feed."
 			  (if (= 0 arg-usage) '(args) nil)
 			  '(args target opcode))))
 
-    `((cl-async::define-c-callback dispatcher-ffi :int
+    `((defcallback dispatcher-ffi :int
 	  ((data :pointer) (target :pointer) (opcode :uint) (message :pointer) (args :pointer))
 	(declare (ignore data message ,@ignore-list))
 	,(if (requests interface)

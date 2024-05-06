@@ -87,7 +87,7 @@
 (defgeneric bind (client resource id))
 
 ;; I have no idea what the second argument to this is. Wouldn't touch any more than necessary.
-(cl-async-util:define-c-callback resource-destroy-cb :void ((listener :pointer) (data :pointer))
+(defcallback resource-destroy-cb :void ((listener :pointer) (data :pointer))
   (declare (ignore data))
   (print "Was")
   (let* ((resource-ptr (gethash (pointer-address listener) *destroy-tracker*)))
@@ -131,7 +131,7 @@
     client))
 
 ;; I have no idea what the second argument to this is. Wouldn't touch any more than necessary.
-(cl-async-util:define-c-callback client-destroy-cb :void ((listener :pointer) (data :pointer))
+(defcallback client-destroy-cb :void ((listener :pointer) (data :pointer))
   (declare (ignore data))
   (let* ((client (gethash (pointer-address listener) *destroy-tracker*)))
     (rem-client (get-display client) client)

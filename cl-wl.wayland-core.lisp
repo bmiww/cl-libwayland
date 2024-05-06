@@ -540,28 +540,27 @@ The core global object.  This is a special singleton object.  It
                   EVENTS EVENTS-PTR)))))
  CL-WL::*INTERFACE-INIT-LIST* :TEST #'CL-WL::INTERFACE-EXISTS-TEST)
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :INT
-    ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
-     (ARGS :POINTER))
-  (DECLARE (IGNORE DATA MESSAGE))
-  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-    (ECASE OPCODE
-      (0
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_display" "sync")
-       (FUNCALL 'SYNC RESOURCE
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))))
-      (1
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_display" "get-registry")
-       (FUNCALL 'GET-REGISTRY RESOURCE
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))))))
-  0)
+(DEFCALLBACK DISPATCHER-FFI :INT
+ ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
+  (ARGS :POINTER))
+ (DECLARE (IGNORE DATA MESSAGE))
+ (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
+   (ECASE OPCODE
+     (0
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_display" "sync")
+      (FUNCALL 'SYNC RESOURCE
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))))
+     (1
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_display" "get-registry")
+      (FUNCALL 'GET-REGISTRY RESOURCE
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))))))
+ 0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -621,11 +620,10 @@ This can be overriden by inheritance in case if custom behaviour is required."
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
-    :VOID
-    ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
-    (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
+(DEFCALLBACK DISPATCH-BIND-FFI :VOID
+ ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+ (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
+   (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
@@ -736,25 +734,24 @@ The singleton global registry object.  The server has a number of
                   EVENTS EVENTS-PTR)))))
  CL-WL::*INTERFACE-INIT-LIST* :TEST #'CL-WL::INTERFACE-EXISTS-TEST)
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :INT
-    ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
-     (ARGS :POINTER))
-  (DECLARE (IGNORE DATA MESSAGE))
-  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-    (ECASE OPCODE
-      (0
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_registry" "bind")
-       (FUNCALL 'BIND RESOURCE
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))))))
-  0)
+(DEFCALLBACK DISPATCHER-FFI :INT
+ ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
+  (ARGS :POINTER))
+ (DECLARE (IGNORE DATA MESSAGE))
+ (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
+   (ECASE OPCODE
+     (0
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_registry" "bind")
+      (FUNCALL 'BIND RESOURCE
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))))))
+ 0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -833,11 +830,10 @@ This can be overriden by inheritance in case if custom behaviour is required."
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
-    :VOID
-    ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
-    (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
+(DEFCALLBACK DISPATCH-BIND-FFI :VOID
+ ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+ (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
+   (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
@@ -903,16 +899,15 @@ Clients can handle the 'done' event to get notified when
                   EVENTS EVENTS-PTR)))))
  CL-WL::*INTERFACE-INIT-LIST* :TEST #'CL-WL::INTERFACE-EXISTS-TEST)
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :INT
-    ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
-     (ARGS :POINTER))
-  (DECLARE (IGNORE DATA MESSAGE ARGS TARGET OPCODE))
-  (ERROR
-   (FORMAT NIL
-           "A dispatcher without requests has been called for interface: ~a~%"
-           "wl_callback"))
-  0)
+(DEFCALLBACK DISPATCHER-FFI :INT
+ ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
+  (ARGS :POINTER))
+ (DECLARE (IGNORE DATA MESSAGE ARGS TARGET OPCODE))
+ (ERROR
+  (FORMAT NIL
+          "A dispatcher without requests has been called for interface: ~a~%"
+          "wl_callback"))
+ 0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -957,11 +952,10 @@ This can be overriden by inheritance in case if custom behaviour is required."
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
-    :VOID
-    ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
-    (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
+(DEFCALLBACK DISPATCH-BIND-FFI :VOID
+ ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+ (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
+   (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
@@ -1045,30 +1039,28 @@ A compositor.  This object is a singleton global.  The
                   EVENTS EVENTS-PTR)))))
  CL-WL::*INTERFACE-INIT-LIST* :TEST #'CL-WL::INTERFACE-EXISTS-TEST)
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :INT
-    ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
-     (ARGS :POINTER))
-  (DECLARE (IGNORE DATA MESSAGE))
-  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-    (ECASE OPCODE
-      (0
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_compositor"
-                          "create-surface")
-       (FUNCALL 'CREATE-SURFACE RESOURCE
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))))
-      (1
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_compositor"
-                          "create-region")
-       (FUNCALL 'CREATE-REGION RESOURCE
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))))))
-  0)
+(DEFCALLBACK DISPATCHER-FFI :INT
+ ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
+  (ARGS :POINTER))
+ (DECLARE (IGNORE DATA MESSAGE))
+ (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
+   (ECASE OPCODE
+     (0
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_compositor"
+                         "create-surface")
+      (FUNCALL 'CREATE-SURFACE RESOURCE
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))))
+     (1
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_compositor" "create-region")
+      (FUNCALL 'CREATE-REGION RESOURCE
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))))))
+ 0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -1101,11 +1093,10 @@ This can be overriden by inheritance in case if custom behaviour is required."
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
-    :VOID
-    ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
-    (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
+(DEFCALLBACK DISPATCH-BIND-FFI :VOID
+ ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+ (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
+   (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
@@ -1217,51 +1208,50 @@ The wl_shm_pool object encapsulates a piece of memory shared
                   EVENTS EVENTS-PTR)))))
  CL-WL::*INTERFACE-INIT-LIST* :TEST #'CL-WL::INTERFACE-EXISTS-TEST)
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :INT
-    ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
-     (ARGS :POINTER))
-  (DECLARE (IGNORE DATA MESSAGE))
-  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-    (ECASE OPCODE
-      (0
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shm_pool" "create-buffer")
-       (FUNCALL 'CREATE-BUFFER RESOURCE
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 4)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 5)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
-      (1
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shm_pool" "destroy")
-       (FUNCALL 'DESTROY RESOURCE))
-      (2
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shm_pool" "resize")
-       (FUNCALL 'RESIZE RESOURCE
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))))
-  0)
+(DEFCALLBACK DISPATCHER-FFI :INT
+ ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
+  (ARGS :POINTER))
+ (DECLARE (IGNORE DATA MESSAGE))
+ (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
+   (ECASE OPCODE
+     (0
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shm_pool" "create-buffer")
+      (FUNCALL 'CREATE-BUFFER RESOURCE
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 4)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 5)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
+     (1
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shm_pool" "destroy")
+      (FUNCALL 'DESTROY RESOURCE))
+     (2
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shm_pool" "resize")
+      (FUNCALL 'RESIZE RESOURCE
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))))
+ 0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -1298,11 +1288,10 @@ This can be overriden by inheritance in case if custom behaviour is required."
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
-    :VOID
-    ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
-    (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
+(DEFCALLBACK DISPATCH-BIND-FFI :VOID
+ ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+ (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
+   (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
@@ -1390,29 +1379,28 @@ A singleton global object that provides support for shared
                   EVENTS EVENTS-PTR)))))
  CL-WL::*INTERFACE-INIT-LIST* :TEST #'CL-WL::INTERFACE-EXISTS-TEST)
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :INT
-    ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
-     (ARGS :POINTER))
-  (DECLARE (IGNORE DATA MESSAGE))
-  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-    (ECASE OPCODE
-      (0
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shm" "create-pool")
-       (FUNCALL 'CREATE-POOL RESOURCE
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::H))
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))))
-  0)
+(DEFCALLBACK DISPATCHER-FFI :INT
+ ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
+  (ARGS :POINTER))
+ (DECLARE (IGNORE DATA MESSAGE))
+ (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
+   (ECASE OPCODE
+     (0
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shm" "create-pool")
+      (FUNCALL 'CREATE-POOL RESOURCE
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::H))
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))))
+ 0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -1460,11 +1448,10 @@ This can be overriden by inheritance in case if custom behaviour is required."
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
-    :VOID
-    ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
-    (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
+(DEFCALLBACK DISPATCH-BIND-FFI :VOID
+ ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+ (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
+   (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
@@ -1556,17 +1543,16 @@ A buffer provides the content for a wl_surface. Buffers are
                   EVENTS EVENTS-PTR)))))
  CL-WL::*INTERFACE-INIT-LIST* :TEST #'CL-WL::INTERFACE-EXISTS-TEST)
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :INT
-    ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
-     (ARGS :POINTER))
-  (DECLARE (IGNORE DATA MESSAGE ARGS))
-  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-    (ECASE OPCODE
-      (0
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_buffer" "destroy")
-       (FUNCALL 'DESTROY RESOURCE))))
-  0)
+(DEFCALLBACK DISPATCHER-FFI :INT
+ ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
+  (ARGS :POINTER))
+ (DECLARE (IGNORE DATA MESSAGE ARGS))
+ (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
+   (ECASE OPCODE
+     (0
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_buffer" "destroy")
+      (FUNCALL 'DESTROY RESOURCE))))
+ 0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -1614,11 +1600,10 @@ This can be overriden by inheritance in case if custom behaviour is required."
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
-    :VOID
-    ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
-    (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
+(DEFCALLBACK DISPATCH-BIND-FFI :VOID
+ ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+ (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
+   (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
@@ -1790,53 +1775,52 @@ A wl_data_offer represents a piece of data offered for transfer
                   EVENTS EVENTS-PTR)))))
  CL-WL::*INTERFACE-INIT-LIST* :TEST #'CL-WL::INTERFACE-EXISTS-TEST)
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :INT
-    ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
-     (ARGS :POINTER))
-  (DECLARE (IGNORE DATA MESSAGE))
-  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-    (ECASE OPCODE
-      (0
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_offer" "accept")
-       (FUNCALL 'ACCEPT RESOURCE
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::S))))
-      (1
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_offer" "receive")
-       (FUNCALL 'RECEIVE RESOURCE
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::S))
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::H))))
-      (2
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_offer" "destroy")
-       (FUNCALL 'DESTROY RESOURCE))
-      (3
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_offer" "finish")
-       (FUNCALL 'FINISH RESOURCE))
-      (4
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_offer" "set-actions")
-       (FUNCALL 'SET-ACTIONS RESOURCE
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))))
-  0)
+(DEFCALLBACK DISPATCHER-FFI :INT
+ ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
+  (ARGS :POINTER))
+ (DECLARE (IGNORE DATA MESSAGE))
+ (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
+   (ECASE OPCODE
+     (0
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_offer" "accept")
+      (FUNCALL 'ACCEPT RESOURCE
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::S))))
+     (1
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_offer" "receive")
+      (FUNCALL 'RECEIVE RESOURCE
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::S))
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::H))))
+     (2
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_offer" "destroy")
+      (FUNCALL 'DESTROY RESOURCE))
+     (3
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_offer" "finish")
+      (FUNCALL 'FINISH RESOURCE))
+     (4
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_offer" "set-actions")
+      (FUNCALL 'SET-ACTIONS RESOURCE
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))))
+ 0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -1900,11 +1884,10 @@ This can be overriden by inheritance in case if custom behaviour is required."
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
-    :VOID
-    ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
-    (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
+(DEFCALLBACK DISPATCH-BIND-FFI :VOID
+ ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+ (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
+   (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
@@ -2076,31 +2059,30 @@ The wl_data_source object is the source side of a wl_data_offer.
                   EVENTS EVENTS-PTR)))))
  CL-WL::*INTERFACE-INIT-LIST* :TEST #'CL-WL::INTERFACE-EXISTS-TEST)
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :INT
-    ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
-     (ARGS :POINTER))
-  (DECLARE (IGNORE DATA MESSAGE))
-  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-    (ECASE OPCODE
-      (0
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_source" "offer")
-       (FUNCALL 'OFFER RESOURCE
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::S))))
-      (1
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_source" "destroy")
-       (FUNCALL 'DESTROY RESOURCE))
-      (2
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_source" "set-actions")
-       (FUNCALL 'SET-ACTIONS RESOURCE
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))))
-  0)
+(DEFCALLBACK DISPATCHER-FFI :INT
+ ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
+  (ARGS :POINTER))
+ (DECLARE (IGNORE DATA MESSAGE))
+ (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
+   (ECASE OPCODE
+     (0
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_source" "offer")
+      (FUNCALL 'OFFER RESOURCE
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::S))))
+     (1
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_source" "destroy")
+      (FUNCALL 'DESTROY RESOURCE))
+     (2
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_source" "set-actions")
+      (FUNCALL 'SET-ACTIONS RESOURCE
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))))
+ 0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -2181,11 +2163,10 @@ This can be overriden by inheritance in case if custom behaviour is required."
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
-    :VOID
-    ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
-    (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
+(DEFCALLBACK DISPATCH-BIND-FFI :VOID
+ ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+ (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
+   (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
@@ -2372,56 +2353,55 @@ There is one wl_data_device per seat which can be obtained
                   EVENTS EVENTS-PTR)))))
  CL-WL::*INTERFACE-INIT-LIST* :TEST #'CL-WL::INTERFACE-EXISTS-TEST)
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :INT
-    ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
-     (ARGS :POINTER))
-  (DECLARE (IGNORE DATA MESSAGE))
-  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-    (ECASE OPCODE
-      (0
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_device" "start-drag")
-       (FUNCALL 'START-DRAG RESOURCE
-                (GETHASH
-                 (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE
-                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                   '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                 CL-WL::*RESOURCE-TRACKER*)
-                (GETHASH
-                 (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE
-                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                   '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                 CL-WL::*RESOURCE-TRACKER*)
-                (GETHASH
-                 (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE
-                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
-                   '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                 CL-WL::*RESOURCE-TRACKER*)
-                (VALUES
+(DEFCALLBACK DISPATCHER-FFI :INT
+ ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
+  (ARGS :POINTER))
+ (DECLARE (IGNORE DATA MESSAGE))
+ (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
+   (ECASE OPCODE
+     (0
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_device" "start-drag")
+      (FUNCALL 'START-DRAG RESOURCE
+               (GETHASH
+                (POINTER-ADDRESS
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
-      (1
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_device"
-                          "set-selection")
-       (FUNCALL 'SET-SELECTION RESOURCE
-                (GETHASH
-                 (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE
-                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                   '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                 CL-WL::*RESOURCE-TRACKER*)
-                (VALUES
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
+                CL-WL::*RESOURCE-TRACKER*)
+               (GETHASH
+                (POINTER-ADDRESS
                  (FOREIGN-SLOT-VALUE
                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
-      (2
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_device" "release")
-       (FUNCALL 'RELEASE RESOURCE))))
-  0)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
+                CL-WL::*RESOURCE-TRACKER*)
+               (GETHASH
+                (POINTER-ADDRESS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
+                CL-WL::*RESOURCE-TRACKER*)
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
+     (1
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_device"
+                         "set-selection")
+      (FUNCALL 'SET-SELECTION RESOURCE
+               (GETHASH
+                (POINTER-ADDRESS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
+                CL-WL::*RESOURCE-TRACKER*)
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
+     (2
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_device" "release")
+      (FUNCALL 'RELEASE RESOURCE))))
+ 0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -2529,11 +2509,10 @@ This can be overriden by inheritance in case if custom behaviour is required."
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
-    :VOID
-    ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
-    (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
+(DEFCALLBACK DISPATCH-BIND-FFI :VOID
+ ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+ (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
+   (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
@@ -2627,36 +2606,35 @@ The wl_data_device_manager is a singleton global object that
                   EVENTS EVENTS-PTR)))))
  CL-WL::*INTERFACE-INIT-LIST* :TEST #'CL-WL::INTERFACE-EXISTS-TEST)
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :INT
-    ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
-     (ARGS :POINTER))
-  (DECLARE (IGNORE DATA MESSAGE))
-  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-    (ECASE OPCODE
-      (0
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_device_manager"
-                          "create-data-source")
-       (FUNCALL 'CREATE-DATA-SOURCE RESOURCE
-                (VALUES
+(DEFCALLBACK DISPATCHER-FFI :INT
+ ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
+  (ARGS :POINTER))
+ (DECLARE (IGNORE DATA MESSAGE))
+ (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
+   (ECASE OPCODE
+     (0
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_device_manager"
+                         "create-data-source")
+      (FUNCALL 'CREATE-DATA-SOURCE RESOURCE
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))))
+     (1
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_device_manager"
+                         "get-data-device")
+      (FUNCALL 'GET-DATA-DEVICE RESOURCE
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))
+               (GETHASH
+                (POINTER-ADDRESS
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))))
-      (1
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_device_manager"
-                          "get-data-device")
-       (FUNCALL 'GET-DATA-DEVICE RESOURCE
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))
-                (GETHASH
-                 (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE
-                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                   '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                 CL-WL::*RESOURCE-TRACKER*)))))
-  0)
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
+                CL-WL::*RESOURCE-TRACKER*)))))
+ 0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -2696,11 +2674,10 @@ This can be overriden by inheritance in case if custom behaviour is required."
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
-    :VOID
-    ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
-    (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
+(DEFCALLBACK DISPATCH-BIND-FFI :VOID
+ ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+ (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
+   (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
@@ -2777,27 +2754,26 @@ This interface is implemented by servers that provide
                   EVENTS EVENTS-PTR)))))
  CL-WL::*INTERFACE-INIT-LIST* :TEST #'CL-WL::INTERFACE-EXISTS-TEST)
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :INT
-    ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
-     (ARGS :POINTER))
-  (DECLARE (IGNORE DATA MESSAGE))
-  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-    (ECASE OPCODE
-      (0
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shell" "get-shell-surface")
-       (FUNCALL 'GET-SHELL-SURFACE RESOURCE
-                (VALUES
+(DEFCALLBACK DISPATCHER-FFI :INT
+ ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
+  (ARGS :POINTER))
+ (DECLARE (IGNORE DATA MESSAGE))
+ (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
+   (ECASE OPCODE
+     (0
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shell" "get-shell-surface")
+      (FUNCALL 'GET-SHELL-SURFACE RESOURCE
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))
+               (GETHASH
+                (POINTER-ADDRESS
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))
-                (GETHASH
-                 (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE
-                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                   '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                 CL-WL::*RESOURCE-TRACKER*)))))
-  0)
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
+                CL-WL::*RESOURCE-TRACKER*)))))
+ 0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -2836,11 +2812,10 @@ This can be overriden by inheritance in case if custom behaviour is required."
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
-    :VOID
-    ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
-    (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
+(DEFCALLBACK DISPATCH-BIND-FFI :VOID
+ ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+ (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
+   (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
@@ -3107,150 +3082,149 @@ An interface that may be implemented by a wl_surface, for
                   EVENTS EVENTS-PTR)))))
  CL-WL::*INTERFACE-INIT-LIST* :TEST #'CL-WL::INTERFACE-EXISTS-TEST)
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :INT
-    ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
-     (ARGS :POINTER))
-  (DECLARE (IGNORE DATA MESSAGE))
-  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-    (ECASE OPCODE
-      (0
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shell_surface" "pong")
-       (FUNCALL 'PONG RESOURCE
-                (VALUES
+(DEFCALLBACK DISPATCHER-FFI :INT
+ ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
+  (ARGS :POINTER))
+ (DECLARE (IGNORE DATA MESSAGE))
+ (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
+   (ECASE OPCODE
+     (0
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shell_surface" "pong")
+      (FUNCALL 'PONG RESOURCE
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
+     (1
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shell_surface" "move")
+      (FUNCALL 'MOVE RESOURCE
+               (GETHASH
+                (POINTER-ADDRESS
                  (FOREIGN-SLOT-VALUE
                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
-      (1
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shell_surface" "move")
-       (FUNCALL 'MOVE RESOURCE
-                (GETHASH
-                 (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE
-                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                   '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                 CL-WL::*RESOURCE-TRACKER*)
-                (VALUES
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
+                CL-WL::*RESOURCE-TRACKER*)
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
+     (2
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shell_surface" "resize")
+      (FUNCALL 'RESIZE RESOURCE
+               (GETHASH
+                (POINTER-ADDRESS
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
-      (2
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shell_surface" "resize")
-       (FUNCALL 'RESIZE RESOURCE
-                (GETHASH
-                 (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE
-                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                   '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                 CL-WL::*RESOURCE-TRACKER*)
-                (VALUES
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
+                CL-WL::*RESOURCE-TRACKER*)
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
+     (3
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shell_surface"
+                         "set-toplevel")
+      (FUNCALL 'SET-TOPLEVEL RESOURCE))
+     (4
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shell_surface"
+                         "set-transient")
+      (FUNCALL 'SET-TRANSIENT RESOURCE
+               (GETHASH
+                (POINTER-ADDRESS
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))
-                (VALUES
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
+                CL-WL::*RESOURCE-TRACKER*)
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
+     (5
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shell_surface"
+                         "set-fullscreen")
+      (FUNCALL 'SET-FULLSCREEN RESOURCE
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))
+               (GETHASH
+                (POINTER-ADDRESS
                  (FOREIGN-SLOT-VALUE
                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
-      (3
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shell_surface"
-                          "set-toplevel")
-       (FUNCALL 'SET-TOPLEVEL RESOURCE))
-      (4
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shell_surface"
-                          "set-transient")
-       (FUNCALL 'SET-TRANSIENT RESOURCE
-                (GETHASH
-                 (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE
-                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                   '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                 CL-WL::*RESOURCE-TRACKER*)
-                (VALUES
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
+                CL-WL::*RESOURCE-TRACKER*)))
+     (6
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shell_surface" "set-popup")
+      (FUNCALL 'SET-POPUP RESOURCE
+               (GETHASH
+                (POINTER-ADDRESS
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-                (VALUES
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
+                CL-WL::*RESOURCE-TRACKER*)
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))
+               (GETHASH
+                (POINTER-ADDRESS
                  (FOREIGN-SLOT-VALUE
                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
-      (5
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shell_surface"
-                          "set-fullscreen")
-       (FUNCALL 'SET-FULLSCREEN RESOURCE
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))
-                (GETHASH
-                 (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE
-                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
-                   '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                 CL-WL::*RESOURCE-TRACKER*)))
-      (6
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shell_surface" "set-popup")
-       (FUNCALL 'SET-POPUP RESOURCE
-                (GETHASH
-                 (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE
-                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                   '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                 CL-WL::*RESOURCE-TRACKER*)
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))
-                (GETHASH
-                 (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE
-                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
-                   '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                 CL-WL::*RESOURCE-TRACKER*)
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 4)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 5)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
-      (7
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shell_surface"
-                          "set-maximized")
-       (FUNCALL 'SET-MAXIMIZED RESOURCE
-                (GETHASH
-                 (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE
-                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                   '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                 CL-WL::*RESOURCE-TRACKER*)))
-      (8
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shell_surface" "set-title")
-       (FUNCALL 'SET-TITLE RESOURCE
-                (VALUES
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
+                CL-WL::*RESOURCE-TRACKER*)
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 4)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 5)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
+     (7
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shell_surface"
+                         "set-maximized")
+      (FUNCALL 'SET-MAXIMIZED RESOURCE
+               (GETHASH
+                (POINTER-ADDRESS
                  (FOREIGN-SLOT-VALUE
                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::S))))
-      (9
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shell_surface" "set-class")
-       (FUNCALL 'SET-CLASS RESOURCE
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::S))))))
-  0)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
+                CL-WL::*RESOURCE-TRACKER*)))
+     (8
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shell_surface" "set-title")
+      (FUNCALL 'SET-TITLE RESOURCE
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::S))))
+     (9
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shell_surface" "set-class")
+      (FUNCALL 'SET-CLASS RESOURCE
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::S))))))
+ 0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -3324,11 +3298,10 @@ This can be overriden by inheritance in case if custom behaviour is required."
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
-    :VOID
-    ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
-    (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
+(DEFCALLBACK DISPATCH-BIND-FFI :VOID
+ ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+ (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
+   (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
@@ -3653,129 +3626,126 @@ A surface is a rectangular area that may be displayed on zero
                   EVENTS EVENTS-PTR)))))
  CL-WL::*INTERFACE-INIT-LIST* :TEST #'CL-WL::INTERFACE-EXISTS-TEST)
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :INT
-    ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
-     (ARGS :POINTER))
-  (DECLARE (IGNORE DATA MESSAGE))
-  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-    (ECASE OPCODE
-      (0
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_surface" "destroy")
-       (FUNCALL 'DESTROY RESOURCE))
-      (1
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_surface" "attach")
-       (FUNCALL 'ATTACH RESOURCE
-                (GETHASH
-                 (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE
-                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                   '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                 CL-WL::*RESOURCE-TRACKER*)
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))
-      (2
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_surface" "damage")
-       (FUNCALL 'DAMAGE RESOURCE
-                (VALUES
+(DEFCALLBACK DISPATCHER-FFI :INT
+ ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
+  (ARGS :POINTER))
+ (DECLARE (IGNORE DATA MESSAGE))
+ (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
+   (ECASE OPCODE
+     (0
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_surface" "destroy")
+      (FUNCALL 'DESTROY RESOURCE))
+     (1
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_surface" "attach")
+      (FUNCALL 'ATTACH RESOURCE
+               (GETHASH
+                (POINTER-ADDRESS
                  (FOREIGN-SLOT-VALUE
                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))
-      (3
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_surface" "frame")
-       (FUNCALL 'FRAME RESOURCE
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))))
-      (4
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_surface"
-                          "set-opaque-region")
-       (FUNCALL 'SET-OPAQUE-REGION RESOURCE
-                (GETHASH
-                 (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE
-                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                   '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                 CL-WL::*RESOURCE-TRACKER*)))
-      (5
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_surface"
-                          "set-input-region")
-       (FUNCALL 'SET-INPUT-REGION RESOURCE
-                (GETHASH
-                 (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE
-                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                   '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                 CL-WL::*RESOURCE-TRACKER*)))
-      (6
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_surface" "commit")
-       (FUNCALL 'COMMIT RESOURCE))
-      (7
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_surface"
-                          "set-buffer-transform")
-       (FUNCALL 'SET-BUFFER-TRANSFORM RESOURCE
-                (VALUES
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
+                CL-WL::*RESOURCE-TRACKER*)
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))
+     (2
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_surface" "damage")
+      (FUNCALL 'DAMAGE RESOURCE
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))
+     (3
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_surface" "frame")
+      (FUNCALL 'FRAME RESOURCE
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))))
+     (4
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_surface"
+                         "set-opaque-region")
+      (FUNCALL 'SET-OPAQUE-REGION RESOURCE
+               (GETHASH
+                (POINTER-ADDRESS
                  (FOREIGN-SLOT-VALUE
                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
-      (8
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_surface"
-                          "set-buffer-scale")
-       (FUNCALL 'SET-BUFFER-SCALE RESOURCE
-                (VALUES
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
+                CL-WL::*RESOURCE-TRACKER*)))
+     (5
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_surface" "set-input-region")
+      (FUNCALL 'SET-INPUT-REGION RESOURCE
+               (GETHASH
+                (POINTER-ADDRESS
                  (FOREIGN-SLOT-VALUE
                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))
-      (9
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_surface" "damage-buffer")
-       (FUNCALL 'DAMAGE-BUFFER RESOURCE
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))
-      (10
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_surface" "offset")
-       (FUNCALL 'OFFSET RESOURCE
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))))
-  0)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
+                CL-WL::*RESOURCE-TRACKER*)))
+     (6
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_surface" "commit")
+      (FUNCALL 'COMMIT RESOURCE))
+     (7
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_surface"
+                         "set-buffer-transform")
+      (FUNCALL 'SET-BUFFER-TRANSFORM RESOURCE
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
+     (8
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_surface" "set-buffer-scale")
+      (FUNCALL 'SET-BUFFER-SCALE RESOURCE
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))
+     (9
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_surface" "damage-buffer")
+      (FUNCALL 'DAMAGE-BUFFER RESOURCE
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))
+     (10
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_surface" "offset")
+      (FUNCALL 'OFFSET RESOURCE
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))))
+ 0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -3885,11 +3855,10 @@ This can be overriden by inheritance in case if custom behaviour is required."
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
-    :VOID
-    ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
-    (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
+(DEFCALLBACK DISPATCH-BIND-FFI :VOID
+ ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+ (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
+   (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
@@ -4028,38 +3997,37 @@ A seat is a group of keyboards, pointer and touch devices. This
                   EVENTS EVENTS-PTR)))))
  CL-WL::*INTERFACE-INIT-LIST* :TEST #'CL-WL::INTERFACE-EXISTS-TEST)
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :INT
-    ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
-     (ARGS :POINTER))
-  (DECLARE (IGNORE DATA MESSAGE))
-  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-    (ECASE OPCODE
-      (0
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_seat" "get-pointer")
-       (FUNCALL 'GET-POINTER RESOURCE
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))))
-      (1
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_seat" "get-keyboard")
-       (FUNCALL 'GET-KEYBOARD RESOURCE
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))))
-      (2
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_seat" "get-touch")
-       (FUNCALL 'GET-TOUCH RESOURCE
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))))
-      (3
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_seat" "release")
-       (FUNCALL 'RELEASE RESOURCE))))
-  0)
+(DEFCALLBACK DISPATCHER-FFI :INT
+ ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
+  (ARGS :POINTER))
+ (DECLARE (IGNORE DATA MESSAGE))
+ (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
+   (ECASE OPCODE
+     (0
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_seat" "get-pointer")
+      (FUNCALL 'GET-POINTER RESOURCE
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))))
+     (1
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_seat" "get-keyboard")
+      (FUNCALL 'GET-KEYBOARD RESOURCE
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))))
+     (2
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_seat" "get-touch")
+      (FUNCALL 'GET-TOUCH RESOURCE
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))))
+     (3
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_seat" "release")
+      (FUNCALL 'RELEASE RESOURCE))))
+ 0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -4112,11 +4080,10 @@ This can be overriden by inheritance in case if custom behaviour is required."
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
-    :VOID
-    ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
-    (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
+(DEFCALLBACK DISPATCH-BIND-FFI :VOID
+ ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+ (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
+   (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
@@ -4357,38 +4324,37 @@ The wl_pointer interface represents one or more input devices,
                   EVENTS EVENTS-PTR)))))
  CL-WL::*INTERFACE-INIT-LIST* :TEST #'CL-WL::INTERFACE-EXISTS-TEST)
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :INT
-    ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
-     (ARGS :POINTER))
-  (DECLARE (IGNORE DATA MESSAGE))
-  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-    (ECASE OPCODE
-      (0
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_pointer" "set-cursor")
-       (FUNCALL 'SET-CURSOR RESOURCE
-                (VALUES
+(DEFCALLBACK DISPATCHER-FFI :INT
+ ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
+  (ARGS :POINTER))
+ (DECLARE (IGNORE DATA MESSAGE))
+ (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
+   (ECASE OPCODE
+     (0
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_pointer" "set-cursor")
+      (FUNCALL 'SET-CURSOR RESOURCE
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))
+               (GETHASH
+                (POINTER-ADDRESS
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))
-                (GETHASH
-                 (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE
-                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                   '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                 CL-WL::*RESOURCE-TRACKER*)
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))
-      (1
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_pointer" "release")
-       (FUNCALL 'RELEASE RESOURCE))))
-  0)
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
+                CL-WL::*RESOURCE-TRACKER*)
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))
+     (1
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_pointer" "release")
+      (FUNCALL 'RELEASE RESOURCE))))
+ 0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -4595,11 +4561,10 @@ This can be overriden by inheritance in case if custom behaviour is required."
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
-    :VOID
-    ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
-    (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
+(DEFCALLBACK DISPATCH-BIND-FFI :VOID
+ ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+ (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
+   (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
@@ -4751,17 +4716,16 @@ The wl_keyboard interface represents one or more keyboards
                   EVENTS EVENTS-PTR)))))
  CL-WL::*INTERFACE-INIT-LIST* :TEST #'CL-WL::INTERFACE-EXISTS-TEST)
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :INT
-    ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
-     (ARGS :POINTER))
-  (DECLARE (IGNORE DATA MESSAGE ARGS))
-  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-    (ECASE OPCODE
-      (0
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_keyboard" "release")
-       (FUNCALL 'RELEASE RESOURCE))))
-  0)
+(DEFCALLBACK DISPATCHER-FFI :INT
+ ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
+  (ARGS :POINTER))
+ (DECLARE (IGNORE DATA MESSAGE ARGS))
+ (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
+   (ECASE OPCODE
+     (0
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_keyboard" "release")
+      (FUNCALL 'RELEASE RESOURCE))))
+ 0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -4924,11 +4888,10 @@ This can be overriden by inheritance in case if custom behaviour is required."
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
-    :VOID
-    ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
-    (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
+(DEFCALLBACK DISPATCH-BIND-FFI :VOID
+ ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+ (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
+   (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
@@ -5095,17 +5058,16 @@ The wl_touch interface represents a touchscreen
                   EVENTS EVENTS-PTR)))))
  CL-WL::*INTERFACE-INIT-LIST* :TEST #'CL-WL::INTERFACE-EXISTS-TEST)
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :INT
-    ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
-     (ARGS :POINTER))
-  (DECLARE (IGNORE DATA MESSAGE ARGS))
-  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-    (ECASE OPCODE
-      (0
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_touch" "release")
-       (FUNCALL 'RELEASE RESOURCE))))
-  0)
+(DEFCALLBACK DISPATCHER-FFI :INT
+ ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
+  (ARGS :POINTER))
+ (DECLARE (IGNORE DATA MESSAGE ARGS))
+ (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
+   (ECASE OPCODE
+     (0
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_touch" "release")
+      (FUNCALL 'RELEASE RESOURCE))))
+ 0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -5259,11 +5221,10 @@ This can be overriden by inheritance in case if custom behaviour is required."
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
-    :VOID
-    ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
-    (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
+(DEFCALLBACK DISPATCH-BIND-FFI :VOID
+ ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+ (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
+   (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
@@ -5413,17 +5374,16 @@ An output describes part of the compositor geometry.  The
                   EVENTS EVENTS-PTR)))))
  CL-WL::*INTERFACE-INIT-LIST* :TEST #'CL-WL::INTERFACE-EXISTS-TEST)
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :INT
-    ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
-     (ARGS :POINTER))
-  (DECLARE (IGNORE DATA MESSAGE ARGS))
-  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-    (ECASE OPCODE
-      (0
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_output" "release")
-       (FUNCALL 'RELEASE RESOURCE))))
-  0)
+(DEFCALLBACK DISPATCHER-FFI :INT
+ ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
+  (ARGS :POINTER))
+ (DECLARE (IGNORE DATA MESSAGE ARGS))
+ (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
+   (ECASE OPCODE
+     (0
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_output" "release")
+      (FUNCALL 'RELEASE RESOURCE))))
+ 0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -5556,11 +5516,10 @@ This can be overriden by inheritance in case if custom behaviour is required."
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
-    :VOID
-    ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
-    (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
+(DEFCALLBACK DISPATCH-BIND-FFI :VOID
+ ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+ (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
+   (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
@@ -5668,55 +5627,54 @@ A region object describes an area.
                   EVENTS EVENTS-PTR)))))
  CL-WL::*INTERFACE-INIT-LIST* :TEST #'CL-WL::INTERFACE-EXISTS-TEST)
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :INT
-    ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
-     (ARGS :POINTER))
-  (DECLARE (IGNORE DATA MESSAGE))
-  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-    (ECASE OPCODE
-      (0
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_region" "destroy")
-       (FUNCALL 'DESTROY RESOURCE))
-      (1
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_region" "add")
-       (FUNCALL 'ADD RESOURCE
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))
-      (2
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_region" "subtract")
-       (FUNCALL 'SUBTRACT RESOURCE
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-                (VALUES
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))))
-  0)
+(DEFCALLBACK DISPATCHER-FFI :INT
+ ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
+  (ARGS :POINTER))
+ (DECLARE (IGNORE DATA MESSAGE))
+ (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
+   (ECASE OPCODE
+     (0
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_region" "destroy")
+      (FUNCALL 'DESTROY RESOURCE))
+     (1
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_region" "add")
+      (FUNCALL 'ADD RESOURCE
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))
+     (2
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_region" "subtract")
+      (FUNCALL 'SUBTRACT RESOURCE
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))))
+ 0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -5750,11 +5708,10 @@ This can be overriden by inheritance in case if custom behaviour is required."
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
-    :VOID
-    ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
-    (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
+(DEFCALLBACK DISPATCH-BIND-FFI :VOID
+ ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+ (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
+   (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
@@ -5861,37 +5818,36 @@ The global interface exposing sub-surface compositing capabilities.
                   EVENTS EVENTS-PTR)))))
  CL-WL::*INTERFACE-INIT-LIST* :TEST #'CL-WL::INTERFACE-EXISTS-TEST)
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :INT
-    ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
-     (ARGS :POINTER))
-  (DECLARE (IGNORE DATA MESSAGE))
-  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-    (ECASE OPCODE
-      (0
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_subcompositor" "destroy")
-       (FUNCALL 'DESTROY RESOURCE))
-      (1
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_subcompositor"
-                          "get-subsurface")
-       (FUNCALL 'GET-SUBSURFACE RESOURCE
-                (VALUES
+(DEFCALLBACK DISPATCHER-FFI :INT
+ ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
+  (ARGS :POINTER))
+ (DECLARE (IGNORE DATA MESSAGE))
+ (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
+   (ECASE OPCODE
+     (0
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_subcompositor" "destroy")
+      (FUNCALL 'DESTROY RESOURCE))
+     (1
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_subcompositor"
+                         "get-subsurface")
+      (FUNCALL 'GET-SUBSURFACE RESOURCE
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))
+               (GETHASH
+                (POINTER-ADDRESS
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))
-                (GETHASH
-                 (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE
-                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                   '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                 CL-WL::*RESOURCE-TRACKER*)
-                (GETHASH
-                 (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE
-                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
-                   '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                 CL-WL::*RESOURCE-TRACKER*)))))
-  0)
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
+                CL-WL::*RESOURCE-TRACKER*)
+               (GETHASH
+                (POINTER-ADDRESS
+                 (FOREIGN-SLOT-VALUE
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
+                CL-WL::*RESOURCE-TRACKER*)))))
+ 0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -5940,11 +5896,10 @@ This can be overriden by inheritance in case if custom behaviour is required."
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
-    :VOID
-    ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
-    (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
+(DEFCALLBACK DISPATCH-BIND-FFI :VOID
+ ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+ (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
+   (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
@@ -6135,52 +6090,51 @@ An additional interface to a wl_surface object, which has been
                   EVENTS EVENTS-PTR)))))
  CL-WL::*INTERFACE-INIT-LIST* :TEST #'CL-WL::INTERFACE-EXISTS-TEST)
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCHER-FFI
-    :INT
-    ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
-     (ARGS :POINTER))
-  (DECLARE (IGNORE DATA MESSAGE))
-  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-    (ECASE OPCODE
-      (0
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_subsurface" "destroy")
-       (FUNCALL 'DESTROY RESOURCE))
-      (1
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_subsurface" "set-position")
-       (FUNCALL 'SET-POSITION RESOURCE
-                (VALUES
+(DEFCALLBACK DISPATCHER-FFI :INT
+ ((DATA :POINTER) (TARGET :POINTER) (OPCODE :UINT) (MESSAGE :POINTER)
+  (ARGS :POINTER))
+ (DECLARE (IGNORE DATA MESSAGE))
+ (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
+   (ECASE OPCODE
+     (0
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_subsurface" "destroy")
+      (FUNCALL 'DESTROY RESOURCE))
+     (1
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_subsurface" "set-position")
+      (FUNCALL 'SET-POSITION RESOURCE
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
+               (VALUES
+                (FOREIGN-SLOT-VALUE
+                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
+                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))
+     (2
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_subsurface" "place-above")
+      (FUNCALL 'PLACE-ABOVE RESOURCE
+               (GETHASH
+                (POINTER-ADDRESS
                  (FOREIGN-SLOT-VALUE
                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-                (VALUES
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
+                CL-WL::*RESOURCE-TRACKER*)))
+     (3
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_subsurface" "place-below")
+      (FUNCALL 'PLACE-BELOW RESOURCE
+               (GETHASH
+                (POINTER-ADDRESS
                  (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))
-      (2
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_subsurface" "place-above")
-       (FUNCALL 'PLACE-ABOVE RESOURCE
-                (GETHASH
-                 (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE
-                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                   '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                 CL-WL::*RESOURCE-TRACKER*)))
-      (3
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_subsurface" "place-below")
-       (FUNCALL 'PLACE-BELOW RESOURCE
-                (GETHASH
-                 (POINTER-ADDRESS
-                  (FOREIGN-SLOT-VALUE
-                   (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                   '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                 CL-WL::*RESOURCE-TRACKER*)))
-      (4
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_subsurface" "set-sync")
-       (FUNCALL 'SET-SYNC RESOURCE))
-      (5
-       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_subsurface" "set-desync")
-       (FUNCALL 'SET-DESYNC RESOURCE))))
-  0)
+                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
+                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
+                CL-WL::*RESOURCE-TRACKER*)))
+     (4
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_subsurface" "set-sync")
+      (FUNCALL 'SET-SYNC RESOURCE))
+     (5
+      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_subsurface" "set-desync")
+      (FUNCALL 'SET-DESYNC RESOURCE))))
+ 0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
 
@@ -6257,11 +6211,10 @@ This can be overriden by inheritance in case if custom behaviour is required."
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
-(CL-ASYNC-UTIL:DEFINE-C-CALLBACK DISPATCH-BIND-FFI
-    :VOID
-    ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
-  (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
-    (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
+(DEFCALLBACK DISPATCH-BIND-FFI :VOID
+ ((CLIENT :POINTER) (DATA :POINTER) (VERSION :UINT) (ID :UINT))
+ (LET* ((CLIENT (CL-WL::GET-CLIENT CLIENT)) (GLOBAL (CL-WL::GET-DATA DATA)))
+   (FUNCALL 'DISPATCH-BIND GLOBAL CLIENT (NULL-POINTER) VERSION ID)))
 
 (DEFVAR *DISPATCH-BIND* (CALLBACK DISPATCH-BIND-FFI))
 
