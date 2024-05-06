@@ -2461,11 +2461,11 @@ There is one wl_data_device per seat which can be obtained
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::F)
-            X)
+            (CL-WL::TO-FIXNUM X))
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::F)
-            Y)
+            (CL-WL::TO-FIXNUM Y))
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 4)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O)
@@ -2488,11 +2488,11 @@ There is one wl_data_device per seat which can be obtained
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::F)
-            X)
+            (CL-WL::TO-FIXNUM X))
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::F)
-            Y)
+            (CL-WL::TO-FIXNUM Y))
     (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 3 ARG-LIST)))
 
 (DEFMETHOD SEND-DROP ((DISPATCH DISPATCH))
@@ -4419,11 +4419,11 @@ The wl_pointer interface represents one or more input devices,
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::F)
-            SURFACE_X)
+            (CL-WL::TO-FIXNUM SURFACE_X))
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::F)
-            SURFACE_Y)
+            (CL-WL::TO-FIXNUM SURFACE_Y))
     (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 0 ARG-LIST)))
 
 (DEFMETHOD SEND-LEAVE
@@ -4452,11 +4452,11 @@ The wl_pointer interface represents one or more input devices,
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::F)
-            SURFACE_X)
+            (CL-WL::TO-FIXNUM SURFACE_X))
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::F)
-            SURFACE_Y)
+            (CL-WL::TO-FIXNUM SURFACE_Y))
     (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 2 ARG-LIST)))
 
 (DEFMETHOD SEND-BUTTON
@@ -4498,7 +4498,7 @@ The wl_pointer interface represents one or more input devices,
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::F)
-            VALUE)
+            (CL-WL::TO-FIXNUM VALUE))
     (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 4 ARG-LIST)))
 
 (DEFMETHOD SEND-FRAME ((DISPATCH DISPATCH))
@@ -5144,11 +5144,11 @@ The wl_touch interface represents a touchscreen
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 4)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::F)
-            X)
+            (CL-WL::TO-FIXNUM X))
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 5)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::F)
-            Y)
+            (CL-WL::TO-FIXNUM Y))
     (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 0 ARG-LIST)))
 
 (DEFMETHOD SEND-UP
@@ -5186,11 +5186,11 @@ The wl_touch interface represents a touchscreen
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::F)
-            X)
+            (CL-WL::TO-FIXNUM X))
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::F)
-            Y)
+            (CL-WL::TO-FIXNUM Y))
     (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 2 ARG-LIST)))
 
 (DEFMETHOD SEND-FRAME ((DISPATCH DISPATCH))
@@ -5215,11 +5215,11 @@ The wl_touch interface represents a touchscreen
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::F)
-            MAJOR)
+            (CL-WL::TO-FIXNUM MAJOR))
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::F)
-            MINOR)
+            (CL-WL::TO-FIXNUM MINOR))
     (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 5 ARG-LIST)))
 
 (DEFMETHOD SEND-ORIENTATION
@@ -5233,7 +5233,7 @@ The wl_touch interface represents a touchscreen
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::F)
-            ORIENTATION)
+            (CL-WL::TO-FIXNUM ORIENTATION))
     (RESOURCE-POST-EVENT-ARRAY (CL-WL:PTR DISPATCH) 6 ARG-LIST)))
 
 (DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
@@ -6277,3 +6277,4 @@ This can be overriden by inheritance in case if custom behaviour is required."
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
                                     CL-WL::*GLOBAL-TRACKER*)
                              GLOBAL))))
+

@@ -205,11 +205,12 @@ argument feed."
      arg index
      (alexandria:eswitch ((arg-type arg) :test 'string=)
        ("int" name) ("uint" name) ("new_id" name)
-       ("fixed" name) ("fd" name) ("string" name)
+       ("fd" name) ("string" name)
        ;; TODO: You wanted to create a lisp list with keywords. For now just leaving as is/or as uint
        ;; ("enum" `(error "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
        ("enum" name)
        ("object" `(wl::ptr ,name))
+       ("fixed" `(wl::to-fixnum ,name))
        ("array"
 	;; NOTE: For some reason - the pywayland implementation sets alloc to equal the size of the array
 	(let ((c-type (find-array-type (parent-interface arg) (parent-message arg) index)))

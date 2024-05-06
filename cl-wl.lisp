@@ -216,3 +216,11 @@ and set up the client object in the lisp world for further referencing."
 ;; └─┘ ┴ ┴┴─┘
 (defvar *debug* nil)
 (defmacro debug-log! (&rest args) (when *debug* `(format t "⭐: ~a" (format nil ,@args))))
+
+;; Fixnum conversion
+;; NOTE: These are all assuming a Q24.8 fixed point format that wayland protocol uses
+;; Signed fixed number - 1 bit denoting the sign with 23 bits for the integer part and
+;; 8 bits for the fractional part
+;; The wayland conversion code was just this simple
+(defun to-fixnum (number) (coerce (floor (* number 256.0)) 'integer))
+(defun from-fixnum (number) (/ number 256.0))

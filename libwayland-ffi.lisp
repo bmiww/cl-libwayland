@@ -23,7 +23,9 @@
    wl_resource wl_list wl_argument wl_listener wl_array wl_message
 
    name version method_count methods event_count events
-   signature types))
+   signature types
+
+   fixed-from-double fixed-from-int))
 
 (in-package :cl-wl.ffi)
 (define-foreign-library wayland-server
@@ -64,7 +66,7 @@
 (defcunion wl_argument
   (i :int)                          ;; integer
   (u :uint)                         ;; unsigned integer
-  (f :float)                        ;; float maybe fixed -check and update this comment and type :)
+  (f :int32)                        ;; fixed numbers are represented with :int32
   (s :string)                       ;; string
   (o :pointer)                      ;; object - usually reference to some wl_resource
   (n :uint)                         ;; new_id
@@ -155,3 +157,11 @@
 (defcfun ("wl_resource_add_destroy_listener" resource-add-destroy-listener) :void
   (resource :pointer)
   (listener (:pointer (:struct wl_listener))))
+
+
+;; ┬ ┬┌┬┐┬┬
+;; │ │ │ ││
+;; └─┘ ┴ ┴┴─┘
+;; NOTE: Wayland uses :int32 to store its fixed point numbers
+(defcfun ("wl_fixed_from_int" fixed-from-int)       :int32 (i :int))
+(defcfun ("wl_fixed_from_double" fixed-from-double) :int32 (d :double))
