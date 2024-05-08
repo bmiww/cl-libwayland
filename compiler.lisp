@@ -14,12 +14,14 @@
   (:use :cl :xmls :cl-wl.parser))
 (in-package :cl-wl.compiler)
 
-
 (defvar *message-array-args*
   (list
    '("xdg_toplevel" "configure" 2 :uint32)
    '("wl_keyboard" "enter" 2 :uint32)
-   '("xdg_toplevel" "wm_capabilities" 0 :uint32)))
+   '("xdg_toplevel" "wm_capabilities" 0 :uint32)
+   '("zwp_linux_dmabuf_feedback_v1" "main_device" 0 :uint32)
+   '("zwp_linux_dmabuf_feedback_v1" "tranche_target_device" 0 :uint32)
+   '("zwp_linux_dmabuf_feedback_v1" "tranche_formats" 0 :uint16)))
 
 (defun find-array-type (interface-name message-name index)
   (let ((c-type (loop for (interface message arg-index argtype) in *message-array-args*
