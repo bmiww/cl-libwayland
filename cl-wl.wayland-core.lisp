@@ -1140,7 +1140,8 @@ The wl_shm_pool object encapsulates a piece of memory shared
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_shm_pool")
   (WHEN (SLOT-BOUNDP DISPATCH 'CL-WL:DESTROY)
-    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH)))
+    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH))
+  (CL-WL:DESTROY-RESOURCE DISPATCH))
 
 (PUSHNEW
  (LIST "wl_shm_pool" (LIST "wl_buffer")
@@ -1494,7 +1495,8 @@ A buffer provides the content for a wl_surface. Buffers are
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_buffer")
   (WHEN (SLOT-BOUNDP DISPATCH 'CL-WL:DESTROY)
-    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH)))
+    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH))
+  (CL-WL:DESTROY-RESOURCE DISPATCH))
 
 (PUSHNEW
  (LIST "wl_buffer" (LIST)
@@ -1651,7 +1653,8 @@ A wl_data_offer represents a piece of data offered for transfer
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_data_offer")
   (WHEN (SLOT-BOUNDP DISPATCH 'CL-WL:DESTROY)
-    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH)))
+    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH))
+  (CL-WL:DESTROY-RESOURCE DISPATCH))
 
 (PUSHNEW
  (LIST "wl_data_offer" (LIST)
@@ -1927,7 +1930,8 @@ The wl_data_source object is the source side of a wl_data_offer.
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_data_source")
   (WHEN (SLOT-BOUNDP DISPATCH 'CL-WL:DESTROY)
-    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH)))
+    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH))
+  (CL-WL:DESTROY-RESOURCE DISPATCH))
 
 (PUSHNEW
  (LIST "wl_data_source" (LIST)
@@ -3403,7 +3407,8 @@ A surface is a rectangular area that may be displayed on zero
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_surface")
   (WHEN (SLOT-BOUNDP DISPATCH 'CL-WL:DESTROY)
-    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH)))
+    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH))
+  (CL-WL:DESTROY-RESOURCE DISPATCH))
 
 (PUSHNEW
  (LIST "wl_surface" (LIST "wl_output" "wl_buffer" "wl_callback" "wl_region")
@@ -5559,7 +5564,8 @@ A region object describes an area.
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_region")
   (WHEN (SLOT-BOUNDP DISPATCH 'CL-WL:DESTROY)
-    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH)))
+    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH))
+  (CL-WL:DESTROY-RESOURCE DISPATCH))
 
 (PUSHNEW
  (LIST "wl_region" (LIST)
@@ -5763,7 +5769,8 @@ The global interface exposing sub-surface compositing capabilities.
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_subcompositor")
   (WHEN (SLOT-BOUNDP DISPATCH 'CL-WL:DESTROY)
-    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH)))
+    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH))
+  (CL-WL:DESTROY-RESOURCE DISPATCH))
 
 (PUSHNEW
  (LIST "wl_subcompositor" (LIST "wl_subsurface" "wl_surface")
@@ -5991,7 +5998,8 @@ An additional interface to a wl_surface object, which has been
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_subsurface")
   (WHEN (SLOT-BOUNDP DISPATCH 'CL-WL:DESTROY)
-    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH)))
+    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH))
+  (CL-WL:DESTROY-RESOURCE DISPATCH))
 
 (PUSHNEW
  (LIST "wl_subsurface" (LIST "wl_surface")

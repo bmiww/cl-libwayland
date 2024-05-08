@@ -9,7 +9,7 @@
   (:use #:cl #:cffi #:wl-ffi)
   (:nicknames :wl)
   (:export create-client mk-if iface init-interface-definitions
-	   object get-display client version id ptr destroy
+	   object get-display client version id ptr destroy destroy-resource
 	   global dispatch-impl
 	   client objects get-display ptr rem-client
 	   display dispatch-event-loop event-loop-fd flush-clients display-ptr all-clients destroy))
@@ -79,8 +79,10 @@
    (destroy :initarg :destroy :accessor destroy)))
 
 (defmethod mk-if (class (object object) id &rest args)
-  "Convenience method to create a new interface using the context of the creating object as reference"
-  (apply #'make-instance class :display (get-display object) :client (client object) :id id args))
+  "Convenience method to create a new interface using the context of the creating object as reference.
+Created object also gets added to the client object tracking hash-table"
+  (setf (gethash id (objects (client object)))
+	(apply #'make-instance class :display (get-display object) :client (client object) :id id args)))
 
 (defclass global (object)
   ((dispatch-impl :initarg :dispatch-impl :reader dispatch-impl)))
@@ -89,13 +91,16 @@
 ;; I have no idea what the second argument to this is. Wouldn't touch any more than necessary.
 (defcallback resource-destroy-cb :void ((listener :pointer) (data :pointer))
   (declare (ignore data))
-  (print "Was")
   (let* ((resource-ptr (gethash (pointer-address listener) *destroy-tracker*)))
     (remhash resource-ptr *resource-tracker*)
     ;; TODO: libayland might have already killed off the pointer. Check if this is valid.
     (foreign-free resource-ptr)
     (remhash (pointer-address listener) *destroy-tracker*)
     (foreign-free listener)))
+
+(defun destroy-resource (object)
+  (let* ((resource-ptr (ptr object)))
+    (remhash (pointer-address resource-ptr) *resource-tracker*)))
 
 (defun create-resource (client interface version id)
   ;; (let ((destructo-struct (foreign-alloc '(:struct wl_listener)))
@@ -134,6 +139,7 @@
 (defcallback client-destroy-cb :void ((listener :pointer) (data :pointer))
   (declare (ignore data))
   (let* ((client (gethash (pointer-address listener) *destroy-tracker*)))
+    (clear-client-objects client)
     (rem-client (get-display client) client)
     (remhash (pointer-address listener) *destroy-tracker*)
     (foreign-free listener)))
@@ -163,6 +169,11 @@ and set up the client object in the lisp world for further referencing."
 (defmethod (setf iface) (iface (client client) id)
   (setf (gethash id (objects client)) iface))
 
+(defmethod clear-client-objects ((client client))
+  (maphash (lambda (id iface)
+	     (declare (ignore id))
+	     (destroy-resource iface))
+	   (objects client)))
 
 ;; ┌┬┐┌─┐┌┬┐┌─┐
 ;;  ││├─┤ │ ├─┤

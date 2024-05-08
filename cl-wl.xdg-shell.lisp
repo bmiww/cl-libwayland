@@ -145,7 +145,8 @@ The xdg_wm_base interface is exposed as a global object enabling clients
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "xdg_wm_base")
   (WHEN (SLOT-BOUNDP DISPATCH 'CL-WL:DESTROY)
-    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH)))
+    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH))
+  (CL-WL:DESTROY-RESOURCE DISPATCH))
 
 (PUSHNEW
  (LIST "xdg_wm_base" (LIST "xdg_positioner" "xdg_surface" "wl_surface")
@@ -395,7 +396,8 @@ The xdg_positioner provides a collection of rules for the placement of a
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "xdg_positioner")
   (WHEN (SLOT-BOUNDP DISPATCH 'CL-WL:DESTROY)
-    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH)))
+    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH))
+  (CL-WL:DESTROY-RESOURCE DISPATCH))
 
 (PUSHNEW
  (LIST "xdg_positioner" (LIST)
@@ -784,7 +786,8 @@ An interface that may be implemented by a wl_surface, for
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "xdg_surface")
   (WHEN (SLOT-BOUNDP DISPATCH 'CL-WL:DESTROY)
-    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH)))
+    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH))
+  (CL-WL:DESTROY-RESOURCE DISPATCH))
 
 (PUSHNEW
  (LIST "xdg_surface"
@@ -1133,7 +1136,8 @@ This interface defines an xdg_surface role which allows a surface to,
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "xdg_toplevel")
   (WHEN (SLOT-BOUNDP DISPATCH 'CL-WL:DESTROY)
-    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH)))
+    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH))
+  (CL-WL:DESTROY-RESOURCE DISPATCH))
 
 (PUSHNEW
  (LIST "xdg_toplevel" (LIST "xdg_toplevel" "wl_seat" "wl_output")
@@ -1711,7 +1715,8 @@ A popup surface is a short-lived, temporary surface. It can be used to
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "xdg_popup")
   (WHEN (SLOT-BOUNDP DISPATCH 'CL-WL:DESTROY)
-    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH)))
+    (FUNCALL (SLOT-VALUE DISPATCH 'CL-WL:DESTROY) DISPATCH))
+  (CL-WL:DESTROY-RESOURCE DISPATCH))
 
 (PUSHNEW
  (LIST "xdg_popup" (LIST "wl_seat" "xdg_positioner")
