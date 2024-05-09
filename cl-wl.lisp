@@ -80,7 +80,8 @@
 
 (defmethod mk-if (class (object object) id &rest args)
   "Convenience method to create a new interface using the context of the creating object as reference.
-Created object also gets added to the client object tracking hash-table"
+Reuses the display and client fields of the reference object.
+Created object also gets added to the client object tracking hash-table."
   (setf (gethash id (objects (client object)))
 	(apply #'make-instance class :display (get-display object) :client (client object) :id id args)))
 
