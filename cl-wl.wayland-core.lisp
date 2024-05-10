@@ -4804,7 +4804,7 @@ The wl_keyboard interface represents one or more keyboards
                                (NTH INDEX KEYS)))
               (SETF (FOREIGN-SLOT-VALUE STRUCT '(:STRUCT WL_ARRAY)
                      'CL-WL.FFI::SIZE)
-                      LENGTH
+                      (* LENGTH (FOREIGN-TYPE-SIZE :UINT32))
                     (FOREIGN-SLOT-VALUE STRUCT '(:STRUCT WL_ARRAY)
                      'CL-WL.FFI::ALLOC)
                       LENGTH

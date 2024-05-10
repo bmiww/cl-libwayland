@@ -19,8 +19,10 @@
    '("xdg_toplevel" "configure" 2 :uint32)
    '("wl_keyboard" "enter" 2 :uint32)
    '("xdg_toplevel" "wm_capabilities" 0 :uint32)
-   '("zwp_linux_dmabuf_feedback_v1" "main_device" 0 :uint32)
-   '("zwp_linux_dmabuf_feedback_v1" "tranche_target_device" 0 :uint32)
+   ;; dev_t value. This could be 32 bits in older c versions. Can't be arsed
+   '("zwp_linux_dmabuf_feedback_v1" "main_device" 0 :uint64)
+   ;; dev_t value. This could be 32 bits in older c versions. Can't be arsed
+   '("zwp_linux_dmabuf_feedback_v1" "tranche_target_device" 0 :uint64)
    '("zwp_linux_dmabuf_feedback_v1" "tranche_formats" 0 :uint16)))
 
 (defun find-array-type (interface-name message-name index)
@@ -223,7 +225,7 @@ argument feed."
 	     (loop for index below length do
 	       (setf (mem-aref data ,c-type index) (nth index ,name)))
 
-	     (setf (foreign-slot-value struct '(:struct wl_array) 'wl-ffi::size) length
+	     (setf (foreign-slot-value struct '(:struct wl_array) 'wl-ffi::size) (* length (foreign-type-size ,c-type))
 		   (foreign-slot-value struct '(:struct wl_array) 'wl-ffi::alloc) length
 		   (foreign-slot-value struct '(:struct wl_array) 'wl-ffi::data) data)
 	     struct)))))))

@@ -967,13 +967,13 @@ This object advertises dmabuf parameters feedback. This includes the
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::A)
             (LET* ((LENGTH (LENGTH DEVICE))
                    (STRUCT (FOREIGN-ALLOC '(:STRUCT WL_ARRAY)))
-                   (DATA (FOREIGN-ALLOC :UINT32 :COUNT LENGTH)))
+                   (DATA (FOREIGN-ALLOC :UINT64 :COUNT LENGTH)))
               (LOOP FOR INDEX BELOW LENGTH
-                    DO (SETF (MEM-AREF DATA :UINT32 INDEX)
+                    DO (SETF (MEM-AREF DATA :UINT64 INDEX)
                                (NTH INDEX DEVICE)))
               (SETF (FOREIGN-SLOT-VALUE STRUCT '(:STRUCT WL_ARRAY)
                      'CL-WL.FFI::SIZE)
-                      LENGTH
+                      (* LENGTH (FOREIGN-TYPE-SIZE :UINT64))
                     (FOREIGN-SLOT-VALUE STRUCT '(:STRUCT WL_ARRAY)
                      'CL-WL.FFI::ALLOC)
                       LENGTH
@@ -997,13 +997,13 @@ This object advertises dmabuf parameters feedback. This includes the
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::A)
             (LET* ((LENGTH (LENGTH DEVICE))
                    (STRUCT (FOREIGN-ALLOC '(:STRUCT WL_ARRAY)))
-                   (DATA (FOREIGN-ALLOC :UINT32 :COUNT LENGTH)))
+                   (DATA (FOREIGN-ALLOC :UINT64 :COUNT LENGTH)))
               (LOOP FOR INDEX BELOW LENGTH
-                    DO (SETF (MEM-AREF DATA :UINT32 INDEX)
+                    DO (SETF (MEM-AREF DATA :UINT64 INDEX)
                                (NTH INDEX DEVICE)))
               (SETF (FOREIGN-SLOT-VALUE STRUCT '(:STRUCT WL_ARRAY)
                      'CL-WL.FFI::SIZE)
-                      LENGTH
+                      (* LENGTH (FOREIGN-TYPE-SIZE :UINT64))
                     (FOREIGN-SLOT-VALUE STRUCT '(:STRUCT WL_ARRAY)
                      'CL-WL.FFI::ALLOC)
                       LENGTH
@@ -1028,7 +1028,7 @@ This object advertises dmabuf parameters feedback. This includes the
                                (NTH INDEX INDICES)))
               (SETF (FOREIGN-SLOT-VALUE STRUCT '(:STRUCT WL_ARRAY)
                      'CL-WL.FFI::SIZE)
-                      LENGTH
+                      (* LENGTH (FOREIGN-TYPE-SIZE :UINT16))
                     (FOREIGN-SLOT-VALUE STRUCT '(:STRUCT WL_ARRAY)
                      'CL-WL.FFI::ALLOC)
                       LENGTH

@@ -1565,7 +1565,7 @@ This interface defines an xdg_surface role which allows a surface to,
                                (NTH INDEX STATES)))
               (SETF (FOREIGN-SLOT-VALUE STRUCT '(:STRUCT WL_ARRAY)
                      'CL-WL.FFI::SIZE)
-                      LENGTH
+                      (* LENGTH (FOREIGN-TYPE-SIZE :UINT32))
                     (FOREIGN-SLOT-VALUE STRUCT '(:STRUCT WL_ARRAY)
                      'CL-WL.FFI::ALLOC)
                       LENGTH
@@ -1609,7 +1609,7 @@ This interface defines an xdg_surface role which allows a surface to,
                                (NTH INDEX CAPABILITIES)))
               (SETF (FOREIGN-SLOT-VALUE STRUCT '(:STRUCT WL_ARRAY)
                      'CL-WL.FFI::SIZE)
-                      LENGTH
+                      (* LENGTH (FOREIGN-TYPE-SIZE :UINT32))
                     (FOREIGN-SLOT-VALUE STRUCT '(:STRUCT WL_ARRAY)
                      'CL-WL.FFI::ALLOC)
                       LENGTH
