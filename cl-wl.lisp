@@ -73,6 +73,7 @@
 (defclass object ()
   ((display :initarg :display :reader get-display)
    (client :initarg :client :reader client)
+   (global :initarg :global :reader global)
    (version :initarg :version :reader version)
    (id :initarg :id :reader id)
    (ptr :initarg :ptr :accessor ptr)
