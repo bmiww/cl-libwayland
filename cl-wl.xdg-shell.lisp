@@ -314,7 +314,8 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "xdg_wm_base")
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
+                        :GLOBAL GLOBAL)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -691,7 +692,8 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "xdg_positioner")
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
+                        :GLOBAL GLOBAL)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -1040,7 +1042,8 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "xdg_surface")
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
+                        :GLOBAL GLOBAL)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -1649,7 +1652,8 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "xdg_toplevel")
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
+                        :GLOBAL GLOBAL)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -1944,7 +1948,8 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "xdg_popup")
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
+                        :GLOBAL GLOBAL)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID

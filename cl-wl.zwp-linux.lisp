@@ -415,7 +415,8 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "zwp_linux_dmabuf_v1")
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
+                        :GLOBAL GLOBAL)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -727,7 +728,8 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "zwp_linux_buffer_params_v1")
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
+                        :GLOBAL GLOBAL)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -1020,9 +1022,9 @@ This object advertises dmabuf parameters feedback. This includes the
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::A)
             (LET* ((LENGTH (LENGTH INDICES))
                    (STRUCT (FOREIGN-ALLOC '(:STRUCT WL_ARRAY)))
-                   (DATA (FOREIGN-ALLOC :UINT32 :COUNT LENGTH)))
+                   (DATA (FOREIGN-ALLOC :UINT16 :COUNT LENGTH)))
               (LOOP FOR INDEX BELOW LENGTH
-                    DO (SETF (MEM-AREF DATA :UINT32 INDEX)
+                    DO (SETF (MEM-AREF DATA :UINT16 INDEX)
                                (NTH INDEX INDICES)))
               (SETF (FOREIGN-SLOT-VALUE STRUCT '(:STRUCT WL_ARRAY)
                      'CL-WL.FFI::SIZE)
@@ -1083,7 +1085,8 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "zwp_linux_dmabuf_feedback_v1")
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
+                        :GLOBAL GLOBAL)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID

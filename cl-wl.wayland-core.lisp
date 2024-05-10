@@ -617,7 +617,8 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_display")
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
+                        :GLOBAL GLOBAL)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -827,7 +828,8 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_registry")
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
+                        :GLOBAL GLOBAL)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -949,7 +951,8 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_callback")
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
+                        :GLOBAL GLOBAL)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -1090,7 +1093,8 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_compositor")
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
+                        :GLOBAL GLOBAL)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -1286,7 +1290,8 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_shm_pool")
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
+                        :GLOBAL GLOBAL)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -1446,7 +1451,8 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_shm")
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
+                        :GLOBAL GLOBAL)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -1599,7 +1605,8 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_buffer")
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
+                        :GLOBAL GLOBAL)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -1884,7 +1891,8 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_data_offer")
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
+                        :GLOBAL GLOBAL)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -2164,7 +2172,8 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_data_source")
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
+                        :GLOBAL GLOBAL)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -2510,7 +2519,8 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_data_device")
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
+                        :GLOBAL GLOBAL)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -2675,7 +2685,8 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_data_device_manager")
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
+                        :GLOBAL GLOBAL)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -2813,7 +2824,8 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_shell")
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
+                        :GLOBAL GLOBAL)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -3299,7 +3311,8 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_shell_surface")
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
+                        :GLOBAL GLOBAL)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -3857,7 +3870,8 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_surface")
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
+                        :GLOBAL GLOBAL)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -4082,7 +4096,8 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_seat")
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
+                        :GLOBAL GLOBAL)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -4563,7 +4578,8 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_pointer")
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
+                        :GLOBAL GLOBAL)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -4890,7 +4906,8 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_keyboard")
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
+                        :GLOBAL GLOBAL)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -5223,7 +5240,8 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_touch")
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
+                        :GLOBAL GLOBAL)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -5518,7 +5536,8 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_output")
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
+                        :GLOBAL GLOBAL)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -5711,7 +5730,8 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_region")
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
+                        :GLOBAL GLOBAL)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -5900,7 +5920,8 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_subcompositor")
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
+                        :GLOBAL GLOBAL)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -6216,7 +6237,8 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (CL-WL::DEBUG-LOG! "Binding ~a~%" "wl_subsurface")
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
-                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID)))
+                        (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
+                        :GLOBAL GLOBAL)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -6238,3 +6260,4 @@ This can be overriden by inheritance in case if custom behaviour is required."
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
                                     CL-WL::*GLOBAL-TRACKER*)
                              GLOBAL))))
+
