@@ -134,6 +134,8 @@ Created object also gets added to the client object tracking hash-table."
 (defun get-client (client)
   (let* ((pid (client-get-credentials client))
 	 (client (gethash pid (clients *display-singleton*))))
+    ;; TODO: Somehow the pid isn't always there and reliable. Need to figure out why.
+    ;; Prime example is firefox, which does something weird
     (unless client (error (format nil "No client found for pid ~a" pid)))
     client))
 
