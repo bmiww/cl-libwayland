@@ -68,7 +68,10 @@
   (display-destroy-clients (display-ptr display))
   (display-destroy (display-ptr display))
   (setf *resource-tracker* (make-hash-table :test 'eq))
-  (setf *display-singleton* nil))
+  (setf *display-singleton* nil)
+  (setf *global-tracker* (make-hash-table :test 'eq))
+  (setf *data-tracker* (make-hash-table :test 'equal))
+  (setf *data-counter* 0))
 
 ;; ┌─┐┌┐  ┬┌─┐┌─┐┌┬┐
 ;; │ │├┴┐ │├┤ │   │
