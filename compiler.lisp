@@ -5,10 +5,13 @@
 ;; ██║     ██║   ██║██║╚██╔╝██║██╔═══╝ ██║██║     ██╔══╝  ██╔══██╗
 ;; ╚██████╗╚██████╔╝██║ ╚═╝ ██║██║     ██║███████╗███████╗██║  ██║
 ;;  ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚═╝     ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝
+;; TODO: For the wl_display send-error function - it is expected to send an object_id rather than a pointer (it seems)
+;; Although the type there is listed as object. Since i don't currently use the send-error event - ignoring for now
+;; NOTE: Regenerate all the xmls that are predefined in this project
+;; (gen-classes-i-use)
 ;; NOTE: Example invocations
 ;; (generate-wayland-classes 'wayland-core "/usr/share/wayland/wayland.xml")
 ;; (generate-wayland-classes 'xdg-shell "xmls/xdg-shell.xml" :deps '("wayland-core"))
-;; TODO: Get rid of the cl-async dependency. defccallback is the only thing we use from it.
 
 (defpackage :cl-wl.compiler
   (:use :cl :xmls :cl-wl.parser))
@@ -19,9 +22,9 @@
    '("xdg_toplevel" "configure" 2 :uint32)
    '("wl_keyboard" "enter" 2 :uint32)
    '("xdg_toplevel" "wm_capabilities" 0 :uint32)
-   ;; dev_t value. This could be 32 bits in older c versions. Can't be arsed
+   ;; TODO: dev_t value. This could be 32 bits in older c versions. Can't be arsed
    '("zwp_linux_dmabuf_feedback_v1" "main_device" 0 :uint64)
-   ;; dev_t value. This could be 32 bits in older c versions. Can't be arsed
+   ;; TODO: dev_t value. This could be 32 bits in older c versions. Can't be arsed
    '("zwp_linux_dmabuf_feedback_v1" "tranche_target_device" 0 :uint64)
    '("zwp_linux_dmabuf_feedback_v1" "tranche_formats" 0 :uint16)))
 
@@ -38,16 +41,24 @@
 (defun gen-request-generic (request)
   `(defgeneric ,(symbolify (dash-name request)) (resource ,@(mapcar 'gen-generic-arg (args request)))))
 
-(defun gen-dispatch-init ()
-  `((defmethod initialize-instance :after ((instance dispatch) &key)
-     ;; Bound is instance
-     ;; Maybe we can move the hash-table insertion to the constructor here
-     (let* ((resource (wl::create-resource (wl::ptr (wl::client instance)) ,(symbolify "*interface*")
-					   (version instance) (wl::id instance))))
-       (setf (gethash (pointer-address resource) wl::*resource-tracker*) instance)
-       (setf (wl::ptr instance) resource)
-       (resource-set-dispatcher resource ,(symbolify "*dispatcher*") (null-pointer) (null-pointer) (null-pointer))))))
+(defun pkg-name (interface) (symbolify ":~a" (name interface)))
+(defun dispatch-id (interface) (symbolify "~a-id" (name interface)))
+(defun dispatch-ptr (interface) (symbolify "~a-ptr" (name interface)))
+(defun dispatch-named-ptr (name) (symbolify "~a::~a-ptr" name name))
 
+(defun gen-dispatch-init (interface)
+  `((defmethod shared-initialize :after ((instance dispatch) slot-names &key id)
+      (declare (ignore slot-names))
+      (unless (,(dispatch-id interface) instance)
+	(setf (,(dispatch-id interface) instance) id)
+	(let* ((resource (wl::create-resource
+			  (wl::ptr (wl::client instance))
+			  ,(symbolify "*interface*")
+			  (version instance)
+			  (,(dispatch-id interface) instance))))
+	  (setf (gethash (pointer-address resource) wl::*resource-tracker*) instance)
+	  (setf (,(dispatch-ptr interface) instance) resource)
+	  (resource-set-dispatcher resource ,(symbolify "*dispatcher*") (null-pointer) (null-pointer) (null-pointer)))))))
 
 (defun gen-bind-callback (interface)
   `((defmethod dispatch-bind ((global global) client data version id)
@@ -213,7 +224,9 @@ argument feed."
        ;; TODO: You wanted to create a lisp list with keywords. For now just leaving as is/or as uint
        ;; ("enum" `(error "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
        ("enum" name)
-       ("object" `(wl::ptr ,name))
+       ("object" (if (interface arg)
+		     `(,(dispatch-named-ptr (interface arg)) ,name)
+		     `(error "Protocol did not specify object type. For example see wl_display error event. This is unimplemented")))
        ("fixed" `(wl::to-fixnum ,name))
        ("array"
 	;; NOTE: For some reason - the pywayland implementation sets alloc to equal the size of the array
@@ -230,47 +243,51 @@ argument feed."
 		   (foreign-slot-value struct '(:struct wl_array) 'wl-ffi::data) data)
 	     struct)))))))
 
-(defun gen-event (event opcode)
+(defun gen-event (interface event opcode)
   `(defmethod ,(symbolify "send-~a" (dash-name event)) ((dispatch dispatch) ,@(mapcar 'gen-generic-arg (args event)))
      (wl::debug-log! "Event: ~a~%" ,(name event))
      (let ((arg-list (foreign-alloc '(:union wl_argument) :count ,(length (args event)))))
        ,@(loop for index below (length (args event))
 	       for arg = (nth index (args event))
 	       collect (gen-c-arg-setter arg index))
-       (resource-post-event-array (wl::ptr dispatch) ,opcode arg-list))))
+       (resource-post-event-array
+	(,(dispatch-ptr interface) dispatch) ,opcode arg-list))))
 
 (defun gen-events (interface)
   (let ((events (events interface)))
     (if events
 	(loop for index below (length events)
 	      for event = (nth index events)
-	      collect (gen-event event index))
+	      collect (gen-event interface event index))
 	nil)))
 
 (defun has-destroy-request (interface)
   (some (lambda (request) (string= (name request) "destroy")) (requests interface)))
 
-(defun pkg-name (interface)
-  (symbolify ":~a" (name interface)))
-
 (defun gen-interface (interface)
   (let ((pkg-name (pkg-name interface)))
     (append
      `((in-package ,pkg-name))
-     `((defclass dispatch (wl::object) ()
+     `((defclass dispatch (wl::object)
+	 ((,(dispatch-id interface) :initform nil :accessor ,(dispatch-id interface))
+	  (,(dispatch-ptr interface) :initform nil :accessor ,(dispatch-ptr interface)))
 	 (:default-initargs :version ,(version interface))
 	 (:documentation ,(description interface))))
      (mapcar 'gen-request-generic (requests interface))
+     `((defmethod wl::destroy :after ((dispatch dispatch))
+	 (wl::debug-log! "Destroying dispatch object: ~a~%" ,(name interface))
+	 ;; TODO: This might need to be a hook or something instead
+	 ;; Right now - it is easily overwriteable by different levels of inheritance
+	 (when (slot-boundp dispatch 'wl::destroy) (funcall (slot-value dispatch 'wl::destroy) dispatch))
+	 (let ((resource-ptr (,(dispatch-ptr interface) dispatch)))
+	   (remhash (pointer-address resource-ptr) wl::*resource-tracker*))))
      (if (has-destroy-request interface)
-       `((defmethod destroy ((dispatch dispatch))
-	   (wl::debug-log! "Destroying dispatch object: ~a~%" ,(name interface))
-	   (when (slot-boundp dispatch 'wl::destroy) (funcall (slot-value dispatch 'wl::destroy) dispatch))
-	   (wl:destroy-resource dispatch)))
-       nil)
+	 `((defmethod destroy ((dispatch dispatch)) (wl::destroy dispatch)))
+	 nil)
      (gen-interface-c-structs interface)
      (gen-dispatcher-c-callback interface)
      `((defvar *dispatcher* (callback ,(symbolify "dispatcher-ffi"))))
-     (gen-dispatch-init)
+     (gen-dispatch-init interface)
      (gen-events interface)
 
      `((defclass global (wl::global) ()

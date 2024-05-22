@@ -8,8 +8,8 @@
 (defpackage #:cl-wl
   (:use #:cl #:cffi #:wl-ffi)
   (:nicknames :wl)
-  (:export create-client mk-if iface init-interface-definitions
-	   object get-display client version id ptr destroy destroy-resource
+  (:export create-client mk-if up-if iface init-interface-definitions
+	   object get-display client version id ptr destroy
 	   global dispatch-impl
 	   client objects get-display ptr rem-client
 	   display dispatch-event-loop event-loop-fd flush-clients display-ptr all-clients destroy))
@@ -26,10 +26,13 @@
 ;; Might be unnecessary - since it's id based - and usually new restart ids will overwrite what is already here
 (defvar *global-tracker* (make-hash-table :test 'eq))
 ;; TODO: Might not need to be a hash-table since i intend this to be ephemeral
+;; TODO: Also - seems to keeping around objects - doesn't have to be this way
 (defvar *data-tracker* (make-hash-table :test 'equal))
 (defvar *data-counter* 0)
 ;; Keeps a table of addresses for destruction listener objects connected to particular resources
 (defvar *destroy-tracker* (make-hash-table :test 'eq))
+;; TODO: Multi inheritance is still keeping objects around here. The destroy :after for different
+;; classes doesn't seem to be working out
 (defvar *resource-tracker* (make-hash-table :test 'eq))
 
 ;; ┌┬┐┬┌─┐┌─┐┬  ┌─┐┬ ┬
@@ -75,9 +78,28 @@
    (client :initarg :client :reader client)
    (global :initarg :global :reader global)
    (version :initarg :version :reader version)
-   (id :initarg :id :reader id)
-   (ptr :initarg :ptr :accessor ptr)
-   (destroy :initarg :destroy :accessor destroy)))
+   ;; TODO: This one is now for the most part moved to ${interface-name}-id
+   ;; There are still some stragglers
+   ;; Might be possible to remove this
+   (id :initarg :id)
+   (destroy :initarg :destroy-callback :accessor destroy-callback)))
+
+;; NOTE: Empty implementation - since the dispatch object implementations are supposed to connect :after
+(defgeneric destroy (object))
+(defmethod destroy ((object object)) ())
+
+;; TODO: this might still be of some interest - the purpose of it would be
+;; to grab the class-name or package name or whatever - and then try to associate
+;; The id with the dispatch ${pkg-name}-id field
+;; (defmethod id! ((object object) class)
+  ;; (let ((id (slot-value object 'id)))
+    ;; (etypecase id
+      ;; (integer id)
+      ;; (cons (get class id)))))
+
+(defmethod id ((object object)) (slot-value object 'id))
+(defmethod (setf id) (new-id (object object)) (setf (slot-value object 'id) new-id))
+
 
 (defmethod mk-if (class (object object) id &rest args)
   "Convenience method to create a new interface using the context of the creating object as reference.
@@ -86,8 +108,20 @@ Created object also gets added to the client object tracking hash-table."
   (setf (gethash id (objects (client object)))
 	(apply #'make-instance class :display (get-display object) :client (client object) :id id args)))
 
+;; TODO: The compiled classes also need to handle multiple pointers. I'd assume.
+;; Not sure i've used pointers an awful lot yet.
+;; Maybe i can instead have a pointer reader that retrieves the pointer based on the id of the object
+(defmethod up-if (class (object object) id &rest args)
+  "Convenience method to update an existing interface using the context of the creating object as reference.
+Reuses the display and client fields of the reference object.
+Created object also gets added to the client object tracking hash-table."
+  (let ((new-obj (apply #'change-class object class :id id args)))
+    (setf (gethash id (objects (client object))) new-obj)))
+
 (defclass global (object)
-  ((dispatch-impl :initarg :dispatch-impl :reader dispatch-impl)))
+  ((dispatch-impl :initarg :dispatch-impl :reader dispatch-impl)
+   (ptr :initarg :ptr :accessor ptr)))
+
 (defgeneric bind (client resource id))
 
 ;; I have no idea what the second argument to this is. Wouldn't touch any more than necessary.
@@ -100,22 +134,8 @@ Created object also gets added to the client object tracking hash-table."
     (remhash (pointer-address listener) *destroy-tracker*)
     (foreign-free listener)))
 
-(defun destroy-resource (object)
-  (let* ((resource-ptr (ptr object)))
-    (remhash (pointer-address resource-ptr) *resource-tracker*)))
-
 (defun create-resource (client interface version id)
-  ;; (let ((destructo-struct (foreign-alloc '(:struct wl_listener)))
-	;; (resource-ptr (resource-create client interface version id)))
-  (let ((resource-ptr (resource-create client interface version id)))
-    ;; (setf (foreign-slot-value destructo-struct '(:struct wl_listener) 'wl-ffi::link)
-	  ;; (foreign-alloc '(:struct wl_list)))
-    ;; (setf (foreign-slot-value destructo-struct '(:struct wl_listener) 'wl-ffi::notify)
-	  ;; (callback resource-destroy-cb))
-
-    ;; (setf (gethash (pointer-address destructo-struct) *destroy-tracker*) resource-ptr)
-    ;; (resource-add-destroy-listener resource-ptr destructo-struct)
-    resource-ptr))
+  (resource-create client interface version id))
 
 ;; ┌─┐┬  ┬┌─┐┌┐┌┌┬┐
 ;; │  │  │├┤ │││ │
@@ -176,7 +196,7 @@ and set up the client object in the lisp world for further referencing."
 (defmethod clear-client-objects ((client client))
   (maphash (lambda (id iface)
 	     (declare (ignore id))
-	     (destroy-resource iface))
+	     (destroy iface))
 	   (objects client)))
 
 ;; ┌┬┐┌─┐┌┬┐┌─┐

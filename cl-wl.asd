@@ -14,6 +14,7 @@
   :depends-on (#:str
 	       #:cffi
 	       #:alexandria
+	       #:dissect
 	       #:cl-wl.ffi)
   :components ((:file "cl-wl")
 	       (:file "util")))
