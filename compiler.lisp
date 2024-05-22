@@ -278,7 +278,8 @@ argument feed."
 	 (wl::debug-log! "Destroying dispatch object: ~a~%" ,(name interface))
 	 ;; TODO: This might need to be a hook or something instead
 	 ;; Right now - it is easily overwriteable by different levels of inheritance
-	 (when (slot-boundp dispatch 'wl::destroy) (funcall (slot-value dispatch 'wl::destroy) dispatch))
+	 (when (wl::destroy-callback dispatch) (loop for callback in (wl::destroy-callback dispatch)
+						     do (funcall callback dispatch)))
 	 (let ((resource-ptr (,(dispatch-ptr interface) dispatch)))
 	   (remhash (pointer-address resource-ptr) wl::*resource-tracker*))))
      (if (has-destroy-request interface)

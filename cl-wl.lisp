@@ -9,7 +9,7 @@
   (:use #:cl #:cffi #:wl-ffi)
   (:nicknames :wl)
   (:export create-client mk-if up-if iface init-interface-definitions
-	   object get-display client version id ptr destroy
+	   object get-display client version id ptr destroy add-destroy-callback
 	   global dispatch-impl
 	   client objects get-display ptr rem-client
 	   display dispatch-event-loop event-loop-fd flush-clients display-ptr all-clients destroy))
@@ -85,7 +85,10 @@
    ;; There are still some stragglers
    ;; Might be possible to remove this
    (id :initarg :id)
-   (destroy :initarg :destroy-callback :accessor destroy-callback)))
+   (destroy :initform nil :accessor destroy-callback)))
+
+(defmethod add-destroy-callback ((object object) callback)
+  (push (destroy-callback object) callback))
 
 ;; NOTE: Empty implementation - since the dispatch object implementations are supposed to connect :after
 (defgeneric destroy (object))
