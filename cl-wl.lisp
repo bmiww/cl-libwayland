@@ -88,7 +88,7 @@
    (destroy :initform nil :accessor destroy-callback)))
 
 (defmethod add-destroy-callback ((object object) callback)
-  (push (destroy-callback object) callback))
+  (setf (destroy-callback object) (push callback (destroy-callback object))))
 
 ;; NOTE: Empty implementation - since the dispatch object implementations are supposed to connect :after
 (defgeneric destroy (object))
