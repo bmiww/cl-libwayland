@@ -47,7 +47,9 @@
 
 (defmethod initialize-instance :before ((display display) &key)
   (restart-case (when *display-singleton* (error "There can only be one!... display."))
-    (make-a-new-one () (setf *display-singleton* nil))))
+    (make-a-new-one ()
+      (init-interface-definitions)
+      (setf *display-singleton* nil))))
 
 (defmethod initialize-instance :after ((display display) &key)
   (setf (display-ptr display) (display-create))
