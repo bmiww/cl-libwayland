@@ -35,6 +35,11 @@
 ;; classes doesn't seem to be working out
 (defvar *resource-tracker* (make-hash-table :test 'eq))
 
+(defun remove-resource (pointer)
+  (if pointer
+      (remhash pointer *resource-tracker*)
+      (format t "Resource already removed~a~%" pointer)))
+
 ;; ┌┬┐┬┌─┐┌─┐┬  ┌─┐┬ ┬
 ;;  │││└─┐├─┘│  ├─┤└┬┘
 ;; ─┴┘┴└─┘┴  ┴─┘┴ ┴ ┴
@@ -94,16 +99,7 @@
 
 ;; NOTE: Empty implementation - since the dispatch object implementations are supposed to connect :after
 (defgeneric destroy (object))
-(defmethod destroy ((object object)) ())
-
-;; TODO: this might still be of some interest - the purpose of it would be
-;; to grab the class-name or package name or whatever - and then try to associate
-;; The id with the dispatch ${pkg-name}-id field
-;; (defmethod id! ((object object) class)
-  ;; (let ((id (slot-value object 'id)))
-    ;; (etypecase id
-      ;; (integer id)
-      ;; (cons (get class id)))))
+(defmethod destroy ((object object)))
 
 (defmethod id ((object object)) (slot-value object 'id))
 (defmethod (setf id) (new-id (object object)) (setf (slot-value object 'id) new-id))
@@ -136,8 +132,7 @@ Created object also gets added to the client object tracking hash-table."
 (defcallback resource-destroy-cb :void ((listener :pointer) (data :pointer))
   (declare (ignore data))
   (let* ((resource-ptr (gethash (pointer-address listener) *destroy-tracker*)))
-    (remhash resource-ptr *resource-tracker*)
-    ;; TODO: libayland might have already killed off the pointer. Check if this is valid.
+    (remove-resource resource-ptr)
     (foreign-free resource-ptr)
     (remhash (pointer-address listener) *destroy-tracker*)
     (foreign-free listener)))
