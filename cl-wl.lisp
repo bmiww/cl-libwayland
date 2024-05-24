@@ -48,10 +48,10 @@
 (defmethod initialize-instance :before ((display display) &key)
   (restart-case (when *display-singleton* (error "There can only be one!... display."))
     (make-a-new-one ()
-      (init-interface-definitions)
       (setf *display-singleton* nil))))
 
 (defmethod initialize-instance :after ((display display) &key)
+  (init-interface-definitions)
   (setf (display-ptr display) (display-create))
   (display-add-socket-fd (display-ptr display) (socket-fd display))
   (setf (event-loop display) (display-get-event-loop (display-ptr display)))
