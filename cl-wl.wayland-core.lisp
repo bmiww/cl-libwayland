@@ -1547,7 +1547,7 @@ A singleton global object that provides support for shared
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
-            FORMAT)
+            (FORMAT-TO-VALUE FORMAT))
     (RESOURCE-POST-EVENT-ARRAY (WL_SHM-PTR DISPATCH) 0 ARG-LIST)))
 
 (DEFUN ERROR-FROM-VALUE (NUMBER)
@@ -2253,7 +2253,8 @@ A wl_data_offer represents a piece of data offered for transfer
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
-            SOURCE_ACTIONS)
+            (WL-DATA-DEVICE-MANAGER::DND-ACTION-TO-VALUE
+             SOURCE_ACTIONS))
     (RESOURCE-POST-EVENT-ARRAY (WL_DATA_OFFER-PTR DISPATCH) 1
      ARG-LIST)))
 
@@ -2263,7 +2264,8 @@ A wl_data_offer represents a piece of data offered for transfer
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
-            DND_ACTION)
+            (WL-DATA-DEVICE-MANAGER::DND-ACTION-TO-VALUE
+             DND_ACTION))
     (RESOURCE-POST-EVENT-ARRAY (WL_DATA_OFFER-PTR DISPATCH) 2
      ARG-LIST)))
 
@@ -2586,7 +2588,8 @@ The wl_data_source object is the source side of a wl_data_offer.
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
-            DND_ACTION)
+            (WL-DATA-DEVICE-MANAGER::DND-ACTION-TO-VALUE
+             DND_ACTION))
     (RESOURCE-POST-EVENT-ARRAY (WL_DATA_SOURCE-PTR DISPATCH) 5
      ARG-LIST)))
 
@@ -3848,7 +3851,7 @@ An interface that may be implemented by a wl_surface, for
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
-            EDGES)
+            (RESIZE-TO-VALUE EDGES))
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I)
@@ -4472,7 +4475,7 @@ A surface is a rectangular area that may be displayed on zero
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
-            TRANSFORM)
+            (WL-OUTPUT::TRANSFORM-TO-VALUE TRANSFORM))
     (RESOURCE-POST-EVENT-ARRAY (WL_SURFACE-PTR DISPATCH) 3
      ARG-LIST)))
 
@@ -4766,7 +4769,7 @@ A seat is a group of keyboards, pointer and touch devices. This
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
-            CAPABILITIES)
+            (CAPABILITY-TO-VALUE CAPABILITIES))
     (RESOURCE-POST-EVENT-ARRAY (WL_SEAT-PTR DISPATCH) 0 ARG-LIST)))
 
 (DEFMETHOD SEND-NAME ((DISPATCH DISPATCH) NAME)
@@ -5220,7 +5223,7 @@ The wl_pointer interface represents one or more input devices,
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
-            STATE)
+            (BUTTON-STATE-TO-VALUE STATE))
     (RESOURCE-POST-EVENT-ARRAY (WL_POINTER-PTR DISPATCH) 3
      ARG-LIST)))
 
@@ -5236,7 +5239,7 @@ The wl_pointer interface represents one or more input devices,
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
-            AXIS)
+            (AXIS-TO-VALUE AXIS))
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::F)
@@ -5257,7 +5260,7 @@ The wl_pointer interface represents one or more input devices,
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
-            AXIS_SOURCE)
+            (AXIS-SOURCE-TO-VALUE AXIS_SOURCE))
     (RESOURCE-POST-EVENT-ARRAY (WL_POINTER-PTR DISPATCH) 6
      ARG-LIST)))
 
@@ -5272,7 +5275,7 @@ The wl_pointer interface represents one or more input devices,
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
-            AXIS)
+            (AXIS-TO-VALUE AXIS))
     (RESOURCE-POST-EVENT-ARRAY (WL_POINTER-PTR DISPATCH) 7
      ARG-LIST)))
 
@@ -5283,7 +5286,7 @@ The wl_pointer interface represents one or more input devices,
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
-            AXIS)
+            (AXIS-TO-VALUE AXIS))
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I)
@@ -5298,7 +5301,7 @@ The wl_pointer interface represents one or more input devices,
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
-            AXIS)
+            (AXIS-TO-VALUE AXIS))
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I)
@@ -5313,11 +5316,12 @@ The wl_pointer interface represents one or more input devices,
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
-            AXIS)
+            (AXIS-TO-VALUE AXIS))
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
-            DIRECTION)
+            (AXIS-RELATIVE-DIRECTION-TO-VALUE
+             DIRECTION))
     (RESOURCE-POST-EVENT-ARRAY (WL_POINTER-PTR DISPATCH) 10
      ARG-LIST)))
 
@@ -5622,7 +5626,7 @@ The wl_keyboard interface represents one or more keyboards
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
-            FORMAT)
+            (KEYMAP-FORMAT-TO-VALUE FORMAT))
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::H)
@@ -5704,7 +5708,7 @@ The wl_keyboard interface represents one or more keyboards
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
-            STATE)
+            (KEY-STATE-TO-VALUE STATE))
     (RESOURCE-POST-EVENT-ARRAY (WL_KEYBOARD-PTR DISPATCH) 3
      ARG-LIST)))
 
@@ -6366,7 +6370,7 @@ An output describes part of the compositor geometry.  The
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 4)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
-            SUBPIXEL)
+            (SUBPIXEL-TO-VALUE SUBPIXEL))
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 5)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::S)
@@ -6378,7 +6382,7 @@ An output describes part of the compositor geometry.  The
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 7)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
-            TRANSFORM)
+            (TRANSFORM-TO-VALUE TRANSFORM))
     (RESOURCE-POST-EVENT-ARRAY (WL_OUTPUT-PTR DISPATCH) 0
      ARG-LIST)))
 
@@ -6390,7 +6394,7 @@ An output describes part of the compositor geometry.  The
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
-            FLAGS)
+            (MODE-TO-VALUE FLAGS))
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I)

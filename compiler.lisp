@@ -221,9 +221,12 @@ argument feed."
      (alexandria:eswitch ((arg-type arg) :test 'string=)
        ("int" name) ("uint" name) ("new_id" name)
        ("fd" name) ("string" name)
-       ;; TODO: You wanted to create a lisp list with keywords. For now just leaving as is/or as uint
-       ;; ("enum" `(error "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
-       ("enum" name)
+       ("enum" (let ((enum (enum arg)) (func-name ""))
+		 (setf func-name
+		       (if (> (length enum) 1)
+			   (format nil "~a::~a-to-value" (dash-name! (car enum)) (dash-name! (cadr enum)))
+			   (format nil "~a-to-value" (dash-name! (car enum)))))
+		 `(,(symbolify func-name) ,name)))
        ("object" (if (interface arg)
 		     `(,(dispatch-named-ptr (interface arg)) ,name)
 		     `(error "Protocol did not specify object type. For example see wl_display error event. This is unimplemented")))
@@ -354,8 +357,9 @@ argument feed."
      `((defvar *dispatch-bind* (callback ,(symbolify "dispatch-bind-ffi"))))
      (gen-global-init interface))))
 
+(defun dash-name! (name) (str:replace-all "_" "-" name))
 ;; NOTE: Thing could be an interface/request/event/arg
-(defun dash-name (thing) (str:replace-all "_" "-" (name thing)))
+(defun dash-name (thing) (dash-name! (name thing)))
 
 (defun gen-interface-preamble (interface)
   (let ((pkg-name (pkg-name interface)))
