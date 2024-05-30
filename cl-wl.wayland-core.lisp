@@ -1343,7 +1343,7 @@ The wl_shm_pool object encapsulates a piece of memory shared
                 (FOREIGN-SLOT-VALUE
                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 4)
                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-               (VALUES
+               (WL-SHM::FORMAT-FROM-VALUE
                 (FOREIGN-SLOT-VALUE
                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 5)
                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
@@ -2210,11 +2210,11 @@ A wl_data_offer represents a piece of data offered for transfer
      (4
       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_offer" "set-actions")
       (FUNCALL 'SET-ACTIONS RESOURCE
-               (VALUES
+               (WL-DATA-DEVICE-MANAGER::DND-ACTION-FROM-VALUE
                 (FOREIGN-SLOT-VALUE
                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))
-               (VALUES
+               (WL-DATA-DEVICE-MANAGER::DND-ACTION-FROM-VALUE
                 (FOREIGN-SLOT-VALUE
                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))))
@@ -2517,7 +2517,7 @@ The wl_data_source object is the source side of a wl_data_offer.
      (2
       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_data_source" "set-actions")
       (FUNCALL 'SET-ACTIONS RESOURCE
-               (VALUES
+               (WL-DATA-DEVICE-MANAGER::DND-ACTION-FROM-VALUE
                 (FOREIGN-SLOT-VALUE
                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))))
@@ -3711,7 +3711,7 @@ An interface that may be implemented by a wl_surface, for
                 (FOREIGN-SLOT-VALUE
                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))
-               (VALUES
+               (RESIZE-FROM-VALUE
                 (FOREIGN-SLOT-VALUE
                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
@@ -3737,7 +3737,7 @@ An interface that may be implemented by a wl_surface, for
                 (FOREIGN-SLOT-VALUE
                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-               (VALUES
+               (TRANSIENT-FROM-VALUE
                 (FOREIGN-SLOT-VALUE
                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
@@ -3745,7 +3745,7 @@ An interface that may be implemented by a wl_surface, for
       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_shell_surface"
                          "set-fullscreen")
       (FUNCALL 'SET-FULLSCREEN RESOURCE
-               (VALUES
+               (FULLSCREEN-METHOD-FROM-VALUE
                 (FOREIGN-SLOT-VALUE
                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))
@@ -3786,7 +3786,7 @@ An interface that may be implemented by a wl_surface, for
                 (FOREIGN-SLOT-VALUE
                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 4)
                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-               (VALUES
+               (TRANSIENT-FROM-VALUE
                 (FOREIGN-SLOT-VALUE
                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 5)
                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
@@ -4378,7 +4378,7 @@ A surface is a rectangular area that may be displayed on zero
       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "wl_surface"
                          "set-buffer-transform")
       (FUNCALL 'SET-BUFFER-TRANSFORM RESOURCE
-               (VALUES
+               (WL-OUTPUT::TRANSFORM-FROM-VALUE
                 (FOREIGN-SLOT-VALUE
                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))

@@ -673,7 +673,7 @@ This temporary object is a collection of dmabufs and other
                 (FOREIGN-SLOT-VALUE
                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))
-               (VALUES
+               (FLAGS-FROM-VALUE
                 (FOREIGN-SLOT-VALUE
                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
@@ -697,7 +697,7 @@ This temporary object is a collection of dmabufs and other
                 (FOREIGN-SLOT-VALUE
                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))
-               (VALUES
+               (FLAGS-FROM-VALUE
                 (FOREIGN-SLOT-VALUE
                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 4)
                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))))

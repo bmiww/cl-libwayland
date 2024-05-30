@@ -643,14 +643,14 @@ The xdg_positioner provides a collection of rules for the placement of a
      (3
       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner" "set-anchor")
       (FUNCALL 'SET-ANCHOR RESOURCE
-               (VALUES
+               (ANCHOR-FROM-VALUE
                 (FOREIGN-SLOT-VALUE
                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
      (4
       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner" "set-gravity")
       (FUNCALL 'SET-GRAVITY RESOURCE
-               (VALUES
+               (GRAVITY-FROM-VALUE
                 (FOREIGN-SLOT-VALUE
                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
@@ -658,7 +658,7 @@ The xdg_positioner provides a collection of rules for the placement of a
       (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner"
                          "set-constraint-adjustment")
       (FUNCALL 'SET-CONSTRAINT-ADJUSTMENT RESOURCE
-               (VALUES
+               (CONSTRAINT-ADJUSTMENT-FROM-VALUE
                 (FOREIGN-SLOT-VALUE
                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
@@ -1666,7 +1666,7 @@ This interface defines an xdg_surface role which allows a surface to,
                 (FOREIGN-SLOT-VALUE
                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))
-               (VALUES
+               (RESIZE-EDGE-FROM-VALUE
                 (FOREIGN-SLOT-VALUE
                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))

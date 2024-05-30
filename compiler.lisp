@@ -93,12 +93,17 @@ This can be overriden by inheritance in case if custom behaviour is required." (
       ("fixed" `(values ,selector))
       ("fd" `(values ,selector))
       ("string" `(values ,selector))
-      ;; TODO: You wanted to create a lisp list with keywords. For now just leaving as is/or as uint
-      ;; ("enum" `(error "WL C enum not yet implemented. You wanted to create a lisp list with keywords"))
-      ("enum" `(values ,selector))
+      ("enum"
+       (let ((enum (enum arg)) (func-name ""))
+	 (setf func-name
+	       (if (> (length enum) 1)
+		   (format nil "~a::~a-from-value" (dash-name! (car enum)) (dash-name! (cadr enum)))
+		   (format nil "~a-from-value" (dash-name! (car enum)))))
+	 `(,(symbolify func-name) ,selector)))
       ("object" `(gethash (pointer-address ,selector) wl::*resource-tracker*))
       ;; TODO: You don't know yet how to handle the darn arrays - so just error out here :)
       ("array" `(error "WL C ARRAY PARSING NOT IMPLEMENTED")))))
+
 
 ;; TODO: This is a bit annoying - since it loosly refers to the symbol "resource"
 (defun gen-matcher (ifname opcode request)
