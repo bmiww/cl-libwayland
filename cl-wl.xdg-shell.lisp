@@ -312,6 +312,30 @@ The xdg_wm_base interface is exposed as a global object enabling clients
     (RESOURCE-POST-EVENT-ARRAY (XDG_WM_BASE-PTR DISPATCH) 0
      ARG-LIST)))
 
+(DEFUN ERROR-FROM-VALUE (NUMBER)
+  (LOOP FOR ENTRY IN '((0 :ROLE) (1 :DEFUNCT-SURFACES)
+                       (2 :NOT-THE-TOPMOST-POPUP)
+                       (3 :INVALID-POPUP-PARENT)
+                       (4 :INVALID-SURFACE-STATE)
+                       (5 :INVALID-POSITIONER)
+                       (6 :UNRESPONSIVE))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ NUMBER VALUE) RETURN KEYWORD
+        FINALLY (ERROR (FORMAT NIL "Unknown enum value: ~a" NUMBER))))
+
+(DEFUN ERROR-TO-VALUE (KEY)
+  (LOOP FOR ENTRY IN '((0 :ROLE) (1 :DEFUNCT-SURFACES)
+                       (2 :NOT-THE-TOPMOST-POPUP)
+                       (3 :INVALID-POPUP-PARENT)
+                       (4 :INVALID-SURFACE-STATE)
+                       (5 :INVALID-POSITIONER)
+                       (6 :UNRESPONSIVE))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ KEY KEYWORD) RETURN VALUE
+        FINALLY (ERROR (FORMAT NIL "Unknown enum keyword: ~a" KEY))))
+
 (DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 6 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "create desktop-style surfaces
@@ -690,6 +714,92 @@ The xdg_positioner provides a collection of rules for the placement of a
       (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
        (NULL-POINTER) (NULL-POINTER)))))
 
+(DEFUN ERROR-FROM-VALUE (NUMBER)
+  (LOOP FOR ENTRY IN '((0 :INVALID-INPUT))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ NUMBER VALUE) RETURN KEYWORD
+        FINALLY (ERROR (FORMAT NIL "Unknown enum value: ~a" NUMBER))))
+
+(DEFUN ERROR-TO-VALUE (KEY)
+  (LOOP FOR ENTRY IN '((0 :INVALID-INPUT))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ KEY KEYWORD) RETURN VALUE
+        FINALLY (ERROR (FORMAT NIL "Unknown enum keyword: ~a" KEY))))
+
+(DEFUN ANCHOR-FROM-VALUE (NUMBER)
+  (LOOP FOR ENTRY IN '((0 :NONE) (1 :TOP)
+                       (2 :BOTTOM) (3 :LEFT)
+                       (4 :RIGHT) (5 :TOP-LEFT)
+                       (6 :BOTTOM-LEFT) (7 :TOP-RIGHT)
+                       (8 :BOTTOM-RIGHT))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ NUMBER VALUE) RETURN KEYWORD
+        FINALLY (ERROR (FORMAT NIL "Unknown enum value: ~a" NUMBER))))
+
+(DEFUN ANCHOR-TO-VALUE (KEY)
+  (LOOP FOR ENTRY IN '((0 :NONE) (1 :TOP)
+                       (2 :BOTTOM) (3 :LEFT)
+                       (4 :RIGHT) (5 :TOP-LEFT)
+                       (6 :BOTTOM-LEFT) (7 :TOP-RIGHT)
+                       (8 :BOTTOM-RIGHT))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ KEY KEYWORD) RETURN VALUE
+        FINALLY (ERROR (FORMAT NIL "Unknown enum keyword: ~a" KEY))))
+
+(DEFUN GRAVITY-FROM-VALUE (NUMBER)
+  (LOOP FOR ENTRY IN '((0 :NONE) (1 :TOP)
+                       (2 :BOTTOM) (3 :LEFT)
+                       (4 :RIGHT) (5 :TOP-LEFT)
+                       (6 :BOTTOM-LEFT) (7 :TOP-RIGHT)
+                       (8 :BOTTOM-RIGHT))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ NUMBER VALUE) RETURN KEYWORD
+        FINALLY (ERROR (FORMAT NIL "Unknown enum value: ~a" NUMBER))))
+
+(DEFUN GRAVITY-TO-VALUE (KEY)
+  (LOOP FOR ENTRY IN '((0 :NONE) (1 :TOP)
+                       (2 :BOTTOM) (3 :LEFT)
+                       (4 :RIGHT) (5 :TOP-LEFT)
+                       (6 :BOTTOM-LEFT) (7 :TOP-RIGHT)
+                       (8 :BOTTOM-RIGHT))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ KEY KEYWORD) RETURN VALUE
+        FINALLY (ERROR (FORMAT NIL "Unknown enum keyword: ~a" KEY))))
+
+(DEFUN CONSTRAINT-ADJUSTMENT-FROM-VALUE (BITS)
+  (LOOP FOR ENTRY IN '((0 :NONE) (1 :SLIDE-X)
+                       (2 :SLIDE-Y) (4 :FLIP-X)
+                       (8 :FLIP-Y) (16 :RESIZE-X)
+                       (32 :RESIZE-Y))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        FOR BIT = (LOGAND VALUE BITS)
+        FOR FLAG = (IF (AND (ZEROP BITS) (ZEROP VALUE))
+                       KEYWORD
+                       (IF (> BIT 0)
+                           KEYWORD
+                           NIL))
+        WHEN FLAG
+        COLLECT FLAG))
+
+(DEFUN CONSTRAINT-ADJUSTMENT-TO-VALUE (KEYWORDS)
+  (REDUCE #'+ KEYWORDS :KEY
+          (LAMBDA (KEYWORD)
+            (OR
+             (CADR
+              (ASSOC KEYWORD
+                     '((:NONE 0) (:SLIDE-X 1)
+                       (:SLIDE-Y 2) (:FLIP-X 4)
+                       (:FLIP-Y 8) (:RESIZE-X 16)
+                       (:RESIZE-Y 32))))
+             0))))
+
 (DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 6 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "child surface positioner
@@ -1026,6 +1136,30 @@ An interface that may be implemented by a wl_surface, for
             SERIAL)
     (RESOURCE-POST-EVENT-ARRAY (XDG_SURFACE-PTR DISPATCH) 0
      ARG-LIST)))
+
+(DEFUN ERROR-FROM-VALUE (NUMBER)
+  (LOOP FOR ENTRY IN '((1 :NOT-CONSTRUCTED)
+                       (2 :ALREADY-CONSTRUCTED)
+                       (3 :UNCONFIGURED-BUFFER)
+                       (4 :INVALID-SERIAL)
+                       (5 :INVALID-SIZE)
+                       (6 :DEFUNCT-ROLE-OBJECT))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ NUMBER VALUE) RETURN KEYWORD
+        FINALLY (ERROR (FORMAT NIL "Unknown enum value: ~a" NUMBER))))
+
+(DEFUN ERROR-TO-VALUE (KEY)
+  (LOOP FOR ENTRY IN '((1 :NOT-CONSTRUCTED)
+                       (2 :ALREADY-CONSTRUCTED)
+                       (3 :UNCONFIGURED-BUFFER)
+                       (4 :INVALID-SERIAL)
+                       (5 :INVALID-SIZE)
+                       (6 :DEFUNCT-ROLE-OBJECT))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ KEY KEYWORD) RETURN VALUE
+        FINALLY (ERROR (FORMAT NIL "Unknown enum keyword: ~a" KEY))))
 
 (DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 6 :DISPATCH-IMPL 'DISPATCH)
@@ -1681,6 +1815,84 @@ This interface defines an xdg_surface role which allows a surface to,
     (RESOURCE-POST-EVENT-ARRAY (XDG_TOPLEVEL-PTR DISPATCH) 3
      ARG-LIST)))
 
+(DEFUN ERROR-FROM-VALUE (NUMBER)
+  (LOOP FOR ENTRY IN '((0 :INVALID-RESIZE-EDGE)
+                       (1 :INVALID-PARENT)
+                       (2 :INVALID-SIZE))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ NUMBER VALUE) RETURN KEYWORD
+        FINALLY (ERROR (FORMAT NIL "Unknown enum value: ~a" NUMBER))))
+
+(DEFUN ERROR-TO-VALUE (KEY)
+  (LOOP FOR ENTRY IN '((0 :INVALID-RESIZE-EDGE)
+                       (1 :INVALID-PARENT)
+                       (2 :INVALID-SIZE))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ KEY KEYWORD) RETURN VALUE
+        FINALLY (ERROR (FORMAT NIL "Unknown enum keyword: ~a" KEY))))
+
+(DEFUN RESIZE-EDGE-FROM-VALUE (NUMBER)
+  (LOOP FOR ENTRY IN '((0 :NONE) (1 :TOP)
+                       (2 :BOTTOM) (4 :LEFT)
+                       (5 :TOP-LEFT) (6 :BOTTOM-LEFT)
+                       (8 :RIGHT) (9 :TOP-RIGHT)
+                       (10 :BOTTOM-RIGHT))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ NUMBER VALUE) RETURN KEYWORD
+        FINALLY (ERROR (FORMAT NIL "Unknown enum value: ~a" NUMBER))))
+
+(DEFUN RESIZE-EDGE-TO-VALUE (KEY)
+  (LOOP FOR ENTRY IN '((0 :NONE) (1 :TOP)
+                       (2 :BOTTOM) (4 :LEFT)
+                       (5 :TOP-LEFT) (6 :BOTTOM-LEFT)
+                       (8 :RIGHT) (9 :TOP-RIGHT)
+                       (10 :BOTTOM-RIGHT))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ KEY KEYWORD) RETURN VALUE
+        FINALLY (ERROR (FORMAT NIL "Unknown enum keyword: ~a" KEY))))
+
+(DEFUN STATE-FROM-VALUE (NUMBER)
+  (LOOP FOR ENTRY IN '((1 :MAXIMIZED) (2 :FULLSCREEN)
+                       (3 :RESIZING) (4 :ACTIVATED)
+                       (5 :TILED-LEFT) (6 :TILED-RIGHT)
+                       (7 :TILED-TOP) (8 :TILED-BOTTOM)
+                       (9 :SUSPENDED))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ NUMBER VALUE) RETURN KEYWORD
+        FINALLY (ERROR (FORMAT NIL "Unknown enum value: ~a" NUMBER))))
+
+(DEFUN STATE-TO-VALUE (KEY)
+  (LOOP FOR ENTRY IN '((1 :MAXIMIZED) (2 :FULLSCREEN)
+                       (3 :RESIZING) (4 :ACTIVATED)
+                       (5 :TILED-LEFT) (6 :TILED-RIGHT)
+                       (7 :TILED-TOP) (8 :TILED-BOTTOM)
+                       (9 :SUSPENDED))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ KEY KEYWORD) RETURN VALUE
+        FINALLY (ERROR (FORMAT NIL "Unknown enum keyword: ~a" KEY))))
+
+(DEFUN WM-CAPABILITIES-FROM-VALUE (NUMBER)
+  (LOOP FOR ENTRY IN '((1 :WINDOW-MENU) (2 :MAXIMIZE)
+                       (3 :FULLSCREEN) (4 :MINIMIZE))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ NUMBER VALUE) RETURN KEYWORD
+        FINALLY (ERROR (FORMAT NIL "Unknown enum value: ~a" NUMBER))))
+
+(DEFUN WM-CAPABILITIES-TO-VALUE (KEY)
+  (LOOP FOR ENTRY IN '((1 :WINDOW-MENU) (2 :MAXIMIZE)
+                       (3 :FULLSCREEN) (4 :MINIMIZE))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ KEY KEYWORD) RETURN VALUE
+        FINALLY (ERROR (FORMAT NIL "Unknown enum keyword: ~a" KEY))))
+
 (DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 6 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "toplevel surface
@@ -1990,6 +2202,20 @@ A popup surface is a short-lived, temporary surface. It can be used to
             TOKEN)
     (RESOURCE-POST-EVENT-ARRAY (XDG_POPUP-PTR DISPATCH) 2
      ARG-LIST)))
+
+(DEFUN ERROR-FROM-VALUE (NUMBER)
+  (LOOP FOR ENTRY IN '((0 :INVALID-GRAB))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ NUMBER VALUE) RETURN KEYWORD
+        FINALLY (ERROR (FORMAT NIL "Unknown enum value: ~a" NUMBER))))
+
+(DEFUN ERROR-TO-VALUE (KEY)
+  (LOOP FOR ENTRY IN '((0 :INVALID-GRAB))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ KEY KEYWORD) RETURN VALUE
+        FINALLY (ERROR (FORMAT NIL "Unknown enum keyword: ~a" KEY))))
 
 (DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 6 :DISPATCH-IMPL 'DISPATCH)

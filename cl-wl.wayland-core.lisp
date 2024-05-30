@@ -622,6 +622,26 @@ The core global object.  This is a special singleton object.  It
     (RESOURCE-POST-EVENT-ARRAY (WL_DISPLAY-PTR DISPATCH) 1
      ARG-LIST)))
 
+(DEFUN ERROR-FROM-VALUE (NUMBER)
+  (LOOP FOR ENTRY IN '((0 :INVALID-OBJECT)
+                       (1 :INVALID-METHOD)
+                       (2 :NO-MEMORY)
+                       (3 :IMPLEMENTATION))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ NUMBER VALUE) RETURN KEYWORD
+        FINALLY (ERROR (FORMAT NIL "Unknown enum value: ~a" NUMBER))))
+
+(DEFUN ERROR-TO-VALUE (KEY)
+  (LOOP FOR ENTRY IN '((0 :INVALID-OBJECT)
+                       (1 :INVALID-METHOD)
+                       (2 :NO-MEMORY)
+                       (3 :IMPLEMENTATION))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ KEY KEYWORD) RETURN VALUE
+        FINALLY (ERROR (FORMAT NIL "Unknown enum keyword: ~a" KEY))))
+
 (DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 1 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "core global object
@@ -1530,6 +1550,248 @@ A singleton global object that provides support for shared
             FORMAT)
     (RESOURCE-POST-EVENT-ARRAY (WL_SHM-PTR DISPATCH) 0 ARG-LIST)))
 
+(DEFUN ERROR-FROM-VALUE (NUMBER)
+  (LOOP FOR ENTRY IN '((0 :INVALID-FORMAT)
+                       (1 :INVALID-STRIDE)
+                       (2 :INVALID-FD))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ NUMBER VALUE) RETURN KEYWORD
+        FINALLY (ERROR (FORMAT NIL "Unknown enum value: ~a" NUMBER))))
+
+(DEFUN ERROR-TO-VALUE (KEY)
+  (LOOP FOR ENTRY IN '((0 :INVALID-FORMAT)
+                       (1 :INVALID-STRIDE)
+                       (2 :INVALID-FD))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ KEY KEYWORD) RETURN VALUE
+        FINALLY (ERROR (FORMAT NIL "Unknown enum keyword: ~a" KEY))))
+
+(DEFUN FORMAT-FROM-VALUE (NUMBER)
+  (LOOP FOR ENTRY IN '((0 :ARGB8888) (1 :XRGB8888)
+                       (538982467 :C8)
+                       (943867730 :RGB332)
+                       (944916290 :BGR233)
+                       (842093144 :XRGB4444)
+                       (842089048 :XBGR4444)
+                       (842094674 :RGBX4444)
+                       (842094658 :BGRX4444)
+                       (842093121 :ARGB4444)
+                       (842089025 :ABGR4444)
+                       (842088786 :RGBA4444)
+                       (842088770 :BGRA4444)
+                       (892424792 :XRGB1555)
+                       (892420696 :XBGR1555)
+                       (892426322 :RGBX5551)
+                       (892426306 :BGRX5551)
+                       (892424769 :ARGB1555)
+                       (892420673 :ABGR1555)
+                       (892420434 :RGBA5551)
+                       (892420418 :BGRA5551)
+                       (909199186 :RGB565)
+                       (909199170 :BGR565)
+                       (875710290 :RGB888)
+                       (875710274 :BGR888)
+                       (875709016 :XBGR8888)
+                       (875714642 :RGBX8888)
+                       (875714626 :BGRX8888)
+                       (875708993 :ABGR8888)
+                       (875708754 :RGBA8888)
+                       (875708738 :BGRA8888)
+                       (808669784 :XRGB2101010)
+                       (808665688 :XBGR2101010)
+                       (808671314 :RGBX1010102)
+                       (808671298 :BGRX1010102)
+                       (808669761 :ARGB2101010)
+                       (808665665 :ABGR2101010)
+                       (808665426 :RGBA1010102)
+                       (808665410 :BGRA1010102)
+                       (1448695129 :YUYV)
+                       (1431918169 :YVYU)
+                       (1498831189 :UYVY)
+                       (1498765654 :VYUY)
+                       (1448433985 :AYUV)
+                       (842094158 :NV12)
+                       (825382478 :NV21)
+                       (909203022 :NV16)
+                       (825644622 :NV61)
+                       (961959257 :YUV410)
+                       (961893977 :YVU410)
+                       (825316697 :YUV411)
+                       (825316953 :YVU411)
+                       (842093913 :YUV420)
+                       (842094169 :YVU420)
+                       (909202777 :YUV422)
+                       (909203033 :YVU422)
+                       (875713881 :YUV444)
+                       (875714137 :YVU444)
+                       (538982482 :R8) (540422482 :R16)
+                       (943212370 :RG88)
+                       (943215175 :GR88)
+                       (842221394 :RG1616)
+                       (842224199 :GR1616)
+                       (1211388504 :XRGB16161616F)
+                       (1211384408 :XBGR16161616F)
+                       (1211388481 :ARGB16161616F)
+                       (1211384385 :ABGR16161616F)
+                       (1448434008 :XYUV8888)
+                       (875713878 :VUY888)
+                       (808670550 :VUY101010)
+                       (808530521 :Y210)
+                       (842084953 :Y212)
+                       (909193817 :Y216)
+                       (808531033 :Y410)
+                       (842085465 :Y412)
+                       (909194329 :Y416)
+                       (808670808 :XVYU2101010)
+                       (909334104 :XVYU12-16161616)
+                       (942954072 :XVYU16161616)
+                       (810299481 :Y0L0)
+                       (810299480 :X0L0)
+                       (843853913 :Y0L2)
+                       (843853912 :X0L2)
+                       (942691673 :YUV420-8BIT)
+                       (808539481 :YUV420-10BIT)
+                       (943805016 :XRGB8888-A8)
+                       (943800920 :XBGR8888-A8)
+                       (943806546 :RGBX8888-A8)
+                       (943806530 :BGRX8888-A8)
+                       (943798354 :RGB888-A8)
+                       (943798338 :BGR888-A8)
+                       (943797586 :RGB565-A8)
+                       (943797570 :BGR565-A8)
+                       (875714126 :NV24)
+                       (842290766 :NV42)
+                       (808530512 :P210)
+                       (808530000 :P010)
+                       (842084432 :P012)
+                       (909193296 :P016)
+                       (808534593 :AXBXGXRX106106106106)
+                       (892425806 :NV15)
+                       (808531025 :Q410)
+                       (825242705 :Q401)
+                       (942953048 :XRGB16161616)
+                       (942948952 :XBGR16161616)
+                       (942953025 :ARGB16161616)
+                       (942948929 :ABGR16161616))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ NUMBER VALUE) RETURN KEYWORD
+        FINALLY (ERROR (FORMAT NIL "Unknown enum value: ~a" NUMBER))))
+
+(DEFUN FORMAT-TO-VALUE (KEY)
+  (LOOP FOR ENTRY IN '((0 :ARGB8888) (1 :XRGB8888)
+                       (538982467 :C8)
+                       (943867730 :RGB332)
+                       (944916290 :BGR233)
+                       (842093144 :XRGB4444)
+                       (842089048 :XBGR4444)
+                       (842094674 :RGBX4444)
+                       (842094658 :BGRX4444)
+                       (842093121 :ARGB4444)
+                       (842089025 :ABGR4444)
+                       (842088786 :RGBA4444)
+                       (842088770 :BGRA4444)
+                       (892424792 :XRGB1555)
+                       (892420696 :XBGR1555)
+                       (892426322 :RGBX5551)
+                       (892426306 :BGRX5551)
+                       (892424769 :ARGB1555)
+                       (892420673 :ABGR1555)
+                       (892420434 :RGBA5551)
+                       (892420418 :BGRA5551)
+                       (909199186 :RGB565)
+                       (909199170 :BGR565)
+                       (875710290 :RGB888)
+                       (875710274 :BGR888)
+                       (875709016 :XBGR8888)
+                       (875714642 :RGBX8888)
+                       (875714626 :BGRX8888)
+                       (875708993 :ABGR8888)
+                       (875708754 :RGBA8888)
+                       (875708738 :BGRA8888)
+                       (808669784 :XRGB2101010)
+                       (808665688 :XBGR2101010)
+                       (808671314 :RGBX1010102)
+                       (808671298 :BGRX1010102)
+                       (808669761 :ARGB2101010)
+                       (808665665 :ABGR2101010)
+                       (808665426 :RGBA1010102)
+                       (808665410 :BGRA1010102)
+                       (1448695129 :YUYV)
+                       (1431918169 :YVYU)
+                       (1498831189 :UYVY)
+                       (1498765654 :VYUY)
+                       (1448433985 :AYUV)
+                       (842094158 :NV12)
+                       (825382478 :NV21)
+                       (909203022 :NV16)
+                       (825644622 :NV61)
+                       (961959257 :YUV410)
+                       (961893977 :YVU410)
+                       (825316697 :YUV411)
+                       (825316953 :YVU411)
+                       (842093913 :YUV420)
+                       (842094169 :YVU420)
+                       (909202777 :YUV422)
+                       (909203033 :YVU422)
+                       (875713881 :YUV444)
+                       (875714137 :YVU444)
+                       (538982482 :R8) (540422482 :R16)
+                       (943212370 :RG88)
+                       (943215175 :GR88)
+                       (842221394 :RG1616)
+                       (842224199 :GR1616)
+                       (1211388504 :XRGB16161616F)
+                       (1211384408 :XBGR16161616F)
+                       (1211388481 :ARGB16161616F)
+                       (1211384385 :ABGR16161616F)
+                       (1448434008 :XYUV8888)
+                       (875713878 :VUY888)
+                       (808670550 :VUY101010)
+                       (808530521 :Y210)
+                       (842084953 :Y212)
+                       (909193817 :Y216)
+                       (808531033 :Y410)
+                       (842085465 :Y412)
+                       (909194329 :Y416)
+                       (808670808 :XVYU2101010)
+                       (909334104 :XVYU12-16161616)
+                       (942954072 :XVYU16161616)
+                       (810299481 :Y0L0)
+                       (810299480 :X0L0)
+                       (843853913 :Y0L2)
+                       (843853912 :X0L2)
+                       (942691673 :YUV420-8BIT)
+                       (808539481 :YUV420-10BIT)
+                       (943805016 :XRGB8888-A8)
+                       (943800920 :XBGR8888-A8)
+                       (943806546 :RGBX8888-A8)
+                       (943806530 :BGRX8888-A8)
+                       (943798354 :RGB888-A8)
+                       (943798338 :BGR888-A8)
+                       (943797586 :RGB565-A8)
+                       (943797570 :BGR565-A8)
+                       (875714126 :NV24)
+                       (842290766 :NV42)
+                       (808530512 :P210)
+                       (808530000 :P010)
+                       (842084432 :P012)
+                       (909193296 :P016)
+                       (808534593 :AXBXGXRX106106106106)
+                       (892425806 :NV15)
+                       (808531025 :Q410)
+                       (825242705 :Q401)
+                       (942953048 :XRGB16161616)
+                       (942948952 :XBGR16161616)
+                       (942953025 :ARGB16161616)
+                       (942948929 :ABGR16161616))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ KEY KEYWORD) RETURN VALUE
+        FINALLY (ERROR (FORMAT NIL "Unknown enum keyword: ~a" KEY))))
+
 (DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 1 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "shared memory support
@@ -2005,6 +2267,26 @@ A wl_data_offer represents a piece of data offered for transfer
     (RESOURCE-POST-EVENT-ARRAY (WL_DATA_OFFER-PTR DISPATCH) 2
      ARG-LIST)))
 
+(DEFUN ERROR-FROM-VALUE (NUMBER)
+  (LOOP FOR ENTRY IN '((0 :INVALID-FINISH)
+                       (1 :INVALID-ACTION-MASK)
+                       (2 :INVALID-ACTION)
+                       (3 :INVALID-OFFER))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ NUMBER VALUE) RETURN KEYWORD
+        FINALLY (ERROR (FORMAT NIL "Unknown enum value: ~a" NUMBER))))
+
+(DEFUN ERROR-TO-VALUE (KEY)
+  (LOOP FOR ENTRY IN '((0 :INVALID-FINISH)
+                       (1 :INVALID-ACTION-MASK)
+                       (2 :INVALID-ACTION)
+                       (3 :INVALID-OFFER))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ KEY KEYWORD) RETURN VALUE
+        FINALLY (ERROR (FORMAT NIL "Unknown enum keyword: ~a" KEY))))
+
 (DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 3 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "offer to transfer data
@@ -2307,6 +2589,22 @@ The wl_data_source object is the source side of a wl_data_offer.
             DND_ACTION)
     (RESOURCE-POST-EVENT-ARRAY (WL_DATA_SOURCE-PTR DISPATCH) 5
      ARG-LIST)))
+
+(DEFUN ERROR-FROM-VALUE (NUMBER)
+  (LOOP FOR ENTRY IN '((0 :INVALID-ACTION-MASK)
+                       (1 :INVALID-SOURCE))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ NUMBER VALUE) RETURN KEYWORD
+        FINALLY (ERROR (FORMAT NIL "Unknown enum value: ~a" NUMBER))))
+
+(DEFUN ERROR-TO-VALUE (KEY)
+  (LOOP FOR ENTRY IN '((0 :INVALID-ACTION-MASK)
+                       (1 :INVALID-SOURCE))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ KEY KEYWORD) RETURN VALUE
+        FINALLY (ERROR (FORMAT NIL "Unknown enum keyword: ~a" KEY))))
 
 (DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 3 :DISPATCH-IMPL 'DISPATCH)
@@ -2676,6 +2974,20 @@ There is one wl_data_device per seat which can be obtained
     (RESOURCE-POST-EVENT-ARRAY (WL_DATA_DEVICE-PTR DISPATCH) 5
      ARG-LIST)))
 
+(DEFUN ERROR-FROM-VALUE (NUMBER)
+  (LOOP FOR ENTRY IN '((0 :ROLE))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ NUMBER VALUE) RETURN KEYWORD
+        FINALLY (ERROR (FORMAT NIL "Unknown enum value: ~a" NUMBER))))
+
+(DEFUN ERROR-TO-VALUE (KEY)
+  (LOOP FOR ENTRY IN '((0 :ROLE))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ KEY KEYWORD) RETURN VALUE
+        FINALLY (ERROR (FORMAT NIL "Unknown enum keyword: ~a" KEY))))
+
 (DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 3 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "data transfer device
@@ -2855,6 +3167,30 @@ The wl_data_device_manager is a singleton global object that
       (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
        (NULL-POINTER) (NULL-POINTER)))))
 
+(DEFUN DND-ACTION-FROM-VALUE (BITS)
+  (LOOP FOR ENTRY IN '((0 :NONE) (1 :COPY)
+                       (2 :MOVE) (4 :ASK))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        FOR BIT = (LOGAND VALUE BITS)
+        FOR FLAG = (IF (AND (ZEROP BITS) (ZEROP VALUE))
+                       KEYWORD
+                       (IF (> BIT 0)
+                           KEYWORD
+                           NIL))
+        WHEN FLAG
+        COLLECT FLAG))
+
+(DEFUN DND-ACTION-TO-VALUE (KEYWORDS)
+  (REDUCE #'+ KEYWORDS :KEY
+          (LAMBDA (KEYWORD)
+            (OR
+             (CADR
+              (ASSOC KEYWORD
+                     '((:NONE 0) (:COPY 1)
+                       (:MOVE 2) (:ASK 4))))
+             0))))
+
 (DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 3 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "data transfer interface
@@ -3010,6 +3346,20 @@ This interface is implemented by servers that provide
       (SETF (WL_SHELL-PTR INSTANCE) RESOURCE)
       (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
        (NULL-POINTER) (NULL-POINTER)))))
+
+(DEFUN ERROR-FROM-VALUE (NUMBER)
+  (LOOP FOR ENTRY IN '((0 :ROLE))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ NUMBER VALUE) RETURN KEYWORD
+        FINALLY (ERROR (FORMAT NIL "Unknown enum value: ~a" NUMBER))))
+
+(DEFUN ERROR-TO-VALUE (KEY)
+  (LOOP FOR ENTRY IN '((0 :ROLE))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ KEY KEYWORD) RETURN VALUE
+        FINALLY (ERROR (FORMAT NIL "Unknown enum keyword: ~a" KEY))))
 
 (DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 1 :DISPATCH-IMPL 'DISPATCH)
@@ -3515,6 +3865,70 @@ An interface that may be implemented by a wl_surface, for
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 0)))
     (RESOURCE-POST-EVENT-ARRAY (WL_SHELL_SURFACE-PTR DISPATCH) 2
      ARG-LIST)))
+
+(DEFUN RESIZE-FROM-VALUE (BITS)
+  (LOOP FOR ENTRY IN '((0 :NONE) (1 :TOP)
+                       (2 :BOTTOM) (4 :LEFT)
+                       (5 :TOP-LEFT) (6 :BOTTOM-LEFT)
+                       (8 :RIGHT) (9 :TOP-RIGHT)
+                       (10 :BOTTOM-RIGHT))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        FOR BIT = (LOGAND VALUE BITS)
+        FOR FLAG = (IF (AND (ZEROP BITS) (ZEROP VALUE))
+                       KEYWORD
+                       (IF (> BIT 0)
+                           KEYWORD
+                           NIL))
+        WHEN FLAG
+        COLLECT FLAG))
+
+(DEFUN RESIZE-TO-VALUE (KEYWORDS)
+  (REDUCE #'+ KEYWORDS :KEY
+          (LAMBDA (KEYWORD)
+            (OR
+             (CADR
+              (ASSOC KEYWORD
+                     '((:NONE 0) (:TOP 1)
+                       (:BOTTOM 2) (:LEFT 4)
+                       (:TOP-LEFT 5) (:BOTTOM-LEFT 6)
+                       (:RIGHT 8) (:TOP-RIGHT 9)
+                       (:BOTTOM-RIGHT 10))))
+             0))))
+
+(DEFUN TRANSIENT-FROM-VALUE (BITS)
+  (LOOP FOR ENTRY IN '((1 :INACTIVE))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        FOR BIT = (LOGAND VALUE BITS)
+        FOR FLAG = (IF (AND (ZEROP BITS) (ZEROP VALUE))
+                       KEYWORD
+                       (IF (> BIT 0)
+                           KEYWORD
+                           NIL))
+        WHEN FLAG
+        COLLECT FLAG))
+
+(DEFUN TRANSIENT-TO-VALUE (KEYWORDS)
+  (REDUCE #'+ KEYWORDS :KEY
+          (LAMBDA (KEYWORD)
+            (OR (CADR (ASSOC KEYWORD '((:INACTIVE 1)))) 0))))
+
+(DEFUN FULLSCREEN-METHOD-FROM-VALUE (NUMBER)
+  (LOOP FOR ENTRY IN '((0 :DEFAULT) (1 :SCALE)
+                       (2 :DRIVER) (3 :FILL))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ NUMBER VALUE) RETURN KEYWORD
+        FINALLY (ERROR (FORMAT NIL "Unknown enum value: ~a" NUMBER))))
+
+(DEFUN FULLSCREEN-METHOD-TO-VALUE (KEY)
+  (LOOP FOR ENTRY IN '((0 :DEFAULT) (1 :SCALE)
+                       (2 :DRIVER) (3 :FILL))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ KEY KEYWORD) RETURN VALUE
+        FINALLY (ERROR (FORMAT NIL "Unknown enum keyword: ~a" KEY))))
 
 (DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 1 :DISPATCH-IMPL 'DISPATCH)
@@ -4062,6 +4476,28 @@ A surface is a rectangular area that may be displayed on zero
     (RESOURCE-POST-EVENT-ARRAY (WL_SURFACE-PTR DISPATCH) 3
      ARG-LIST)))
 
+(DEFUN ERROR-FROM-VALUE (NUMBER)
+  (LOOP FOR ENTRY IN '((0 :INVALID-SCALE)
+                       (1 :INVALID-TRANSFORM)
+                       (2 :INVALID-SIZE)
+                       (3 :INVALID-OFFSET)
+                       (4 :DEFUNCT-ROLE-OBJECT))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ NUMBER VALUE) RETURN KEYWORD
+        FINALLY (ERROR (FORMAT NIL "Unknown enum value: ~a" NUMBER))))
+
+(DEFUN ERROR-TO-VALUE (KEY)
+  (LOOP FOR ENTRY IN '((0 :INVALID-SCALE)
+                       (1 :INVALID-TRANSFORM)
+                       (2 :INVALID-SIZE)
+                       (3 :INVALID-OFFSET)
+                       (4 :DEFUNCT-ROLE-OBJECT))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ KEY KEYWORD) RETURN VALUE
+        FINALLY (ERROR (FORMAT NIL "Unknown enum keyword: ~a" KEY))))
+
 (DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 6 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "an onscreen surface
@@ -4341,6 +4777,44 @@ A seat is a group of keyboards, pointer and touch devices. This
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::S)
             NAME)
     (RESOURCE-POST-EVENT-ARRAY (WL_SEAT-PTR DISPATCH) 1 ARG-LIST)))
+
+(DEFUN CAPABILITY-FROM-VALUE (BITS)
+  (LOOP FOR ENTRY IN '((1 :POINTER) (2 :KEYBOARD)
+                       (4 :TOUCH))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        FOR BIT = (LOGAND VALUE BITS)
+        FOR FLAG = (IF (AND (ZEROP BITS) (ZEROP VALUE))
+                       KEYWORD
+                       (IF (> BIT 0)
+                           KEYWORD
+                           NIL))
+        WHEN FLAG
+        COLLECT FLAG))
+
+(DEFUN CAPABILITY-TO-VALUE (KEYWORDS)
+  (REDUCE #'+ KEYWORDS :KEY
+          (LAMBDA (KEYWORD)
+            (OR
+             (CADR
+              (ASSOC KEYWORD
+                     '((:POINTER 1) (:KEYBOARD 2)
+                       (:TOUCH 4))))
+             0))))
+
+(DEFUN ERROR-FROM-VALUE (NUMBER)
+  (LOOP FOR ENTRY IN '((0 :MISSING-CAPABILITY))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ NUMBER VALUE) RETURN KEYWORD
+        FINALLY (ERROR (FORMAT NIL "Unknown enum value: ~a" NUMBER))))
+
+(DEFUN ERROR-TO-VALUE (KEY)
+  (LOOP FOR ENTRY IN '((0 :MISSING-CAPABILITY))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ KEY KEYWORD) RETURN VALUE
+        FINALLY (ERROR (FORMAT NIL "Unknown enum keyword: ~a" KEY))))
 
 (DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 9 :DISPATCH-IMPL 'DISPATCH)
@@ -4847,6 +5321,80 @@ The wl_pointer interface represents one or more input devices,
     (RESOURCE-POST-EVENT-ARRAY (WL_POINTER-PTR DISPATCH) 10
      ARG-LIST)))
 
+(DEFUN ERROR-FROM-VALUE (NUMBER)
+  (LOOP FOR ENTRY IN '((0 :ROLE))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ NUMBER VALUE) RETURN KEYWORD
+        FINALLY (ERROR (FORMAT NIL "Unknown enum value: ~a" NUMBER))))
+
+(DEFUN ERROR-TO-VALUE (KEY)
+  (LOOP FOR ENTRY IN '((0 :ROLE))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ KEY KEYWORD) RETURN VALUE
+        FINALLY (ERROR (FORMAT NIL "Unknown enum keyword: ~a" KEY))))
+
+(DEFUN BUTTON-STATE-FROM-VALUE (NUMBER)
+  (LOOP FOR ENTRY IN '((0 :RELEASED) (1 :PRESSED))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ NUMBER VALUE) RETURN KEYWORD
+        FINALLY (ERROR (FORMAT NIL "Unknown enum value: ~a" NUMBER))))
+
+(DEFUN BUTTON-STATE-TO-VALUE (KEY)
+  (LOOP FOR ENTRY IN '((0 :RELEASED) (1 :PRESSED))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ KEY KEYWORD) RETURN VALUE
+        FINALLY (ERROR (FORMAT NIL "Unknown enum keyword: ~a" KEY))))
+
+(DEFUN AXIS-FROM-VALUE (NUMBER)
+  (LOOP FOR ENTRY IN '((0 :VERTICAL-SCROLL)
+                       (1 :HORIZONTAL-SCROLL))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ NUMBER VALUE) RETURN KEYWORD
+        FINALLY (ERROR (FORMAT NIL "Unknown enum value: ~a" NUMBER))))
+
+(DEFUN AXIS-TO-VALUE (KEY)
+  (LOOP FOR ENTRY IN '((0 :VERTICAL-SCROLL)
+                       (1 :HORIZONTAL-SCROLL))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ KEY KEYWORD) RETURN VALUE
+        FINALLY (ERROR (FORMAT NIL "Unknown enum keyword: ~a" KEY))))
+
+(DEFUN AXIS-SOURCE-FROM-VALUE (NUMBER)
+  (LOOP FOR ENTRY IN '((0 :WHEEL) (1 :FINGER)
+                       (2 :CONTINUOUS) (3 :WHEEL-TILT))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ NUMBER VALUE) RETURN KEYWORD
+        FINALLY (ERROR (FORMAT NIL "Unknown enum value: ~a" NUMBER))))
+
+(DEFUN AXIS-SOURCE-TO-VALUE (KEY)
+  (LOOP FOR ENTRY IN '((0 :WHEEL) (1 :FINGER)
+                       (2 :CONTINUOUS) (3 :WHEEL-TILT))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ KEY KEYWORD) RETURN VALUE
+        FINALLY (ERROR (FORMAT NIL "Unknown enum keyword: ~a" KEY))))
+
+(DEFUN AXIS-RELATIVE-DIRECTION-FROM-VALUE (NUMBER)
+  (LOOP FOR ENTRY IN '((0 :IDENTICAL) (1 :INVERTED))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ NUMBER VALUE) RETURN KEYWORD
+        FINALLY (ERROR (FORMAT NIL "Unknown enum value: ~a" NUMBER))))
+
+(DEFUN AXIS-RELATIVE-DIRECTION-TO-VALUE (KEY)
+  (LOOP FOR ENTRY IN '((0 :IDENTICAL) (1 :INVERTED))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ KEY KEYWORD) RETURN VALUE
+        FINALLY (ERROR (FORMAT NIL "Unknown enum keyword: ~a" KEY))))
+
 (DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 9 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "pointer input device
@@ -5202,6 +5750,34 @@ The wl_keyboard interface represents one or more keyboards
             DELAY)
     (RESOURCE-POST-EVENT-ARRAY (WL_KEYBOARD-PTR DISPATCH) 5
      ARG-LIST)))
+
+(DEFUN KEYMAP-FORMAT-FROM-VALUE (NUMBER)
+  (LOOP FOR ENTRY IN '((0 :NO-KEYMAP) (1 :XKB-V1))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ NUMBER VALUE) RETURN KEYWORD
+        FINALLY (ERROR (FORMAT NIL "Unknown enum value: ~a" NUMBER))))
+
+(DEFUN KEYMAP-FORMAT-TO-VALUE (KEY)
+  (LOOP FOR ENTRY IN '((0 :NO-KEYMAP) (1 :XKB-V1))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ KEY KEYWORD) RETURN VALUE
+        FINALLY (ERROR (FORMAT NIL "Unknown enum keyword: ~a" KEY))))
+
+(DEFUN KEY-STATE-FROM-VALUE (NUMBER)
+  (LOOP FOR ENTRY IN '((0 :RELEASED) (1 :PRESSED))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ NUMBER VALUE) RETURN KEYWORD
+        FINALLY (ERROR (FORMAT NIL "Unknown enum value: ~a" NUMBER))))
+
+(DEFUN KEY-STATE-TO-VALUE (KEY)
+  (LOOP FOR ENTRY IN '((0 :RELEASED) (1 :PRESSED))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ KEY KEYWORD) RETURN VALUE
+        FINALLY (ERROR (FORMAT NIL "Unknown enum keyword: ~a" KEY))))
 
 (DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 9 :DISPATCH-IMPL 'DISPATCH)
@@ -5867,6 +6443,72 @@ An output describes part of the compositor geometry.  The
     (RESOURCE-POST-EVENT-ARRAY (WL_OUTPUT-PTR DISPATCH) 5
      ARG-LIST)))
 
+(DEFUN SUBPIXEL-FROM-VALUE (NUMBER)
+  (LOOP FOR ENTRY IN '((0 :UNKNOWN) (1 :NONE)
+                       (2 :HORIZONTAL-RGB)
+                       (3 :HORIZONTAL-BGR)
+                       (4 :VERTICAL-RGB)
+                       (5 :VERTICAL-BGR))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ NUMBER VALUE) RETURN KEYWORD
+        FINALLY (ERROR (FORMAT NIL "Unknown enum value: ~a" NUMBER))))
+
+(DEFUN SUBPIXEL-TO-VALUE (KEY)
+  (LOOP FOR ENTRY IN '((0 :UNKNOWN) (1 :NONE)
+                       (2 :HORIZONTAL-RGB)
+                       (3 :HORIZONTAL-BGR)
+                       (4 :VERTICAL-RGB)
+                       (5 :VERTICAL-BGR))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ KEY KEYWORD) RETURN VALUE
+        FINALLY (ERROR (FORMAT NIL "Unknown enum keyword: ~a" KEY))))
+
+(DEFUN TRANSFORM-FROM-VALUE (NUMBER)
+  (LOOP FOR ENTRY IN '((0 :NORMAL) (1 :90)
+                       (2 :180) (3 :270)
+                       (4 :FLIPPED) (5 :FLIPPED-90)
+                       (6 :FLIPPED-180)
+                       (7 :FLIPPED-270))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ NUMBER VALUE) RETURN KEYWORD
+        FINALLY (ERROR (FORMAT NIL "Unknown enum value: ~a" NUMBER))))
+
+(DEFUN TRANSFORM-TO-VALUE (KEY)
+  (LOOP FOR ENTRY IN '((0 :NORMAL) (1 :90)
+                       (2 :180) (3 :270)
+                       (4 :FLIPPED) (5 :FLIPPED-90)
+                       (6 :FLIPPED-180)
+                       (7 :FLIPPED-270))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ KEY KEYWORD) RETURN VALUE
+        FINALLY (ERROR (FORMAT NIL "Unknown enum keyword: ~a" KEY))))
+
+(DEFUN MODE-FROM-VALUE (BITS)
+  (LOOP FOR ENTRY IN '((1 :CURRENT) (2 :PREFERRED))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        FOR BIT = (LOGAND VALUE BITS)
+        FOR FLAG = (IF (AND (ZEROP BITS) (ZEROP VALUE))
+                       KEYWORD
+                       (IF (> BIT 0)
+                           KEYWORD
+                           NIL))
+        WHEN FLAG
+        COLLECT FLAG))
+
+(DEFUN MODE-TO-VALUE (KEYWORDS)
+  (REDUCE #'+ KEYWORDS :KEY
+          (LAMBDA (KEYWORD)
+            (OR
+             (CADR
+              (ASSOC KEYWORD
+                     '((:CURRENT 1) (:PREFERRED 2))))
+             0))))
+
 (DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 4 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "compositor output region
@@ -6267,6 +6909,22 @@ The global interface exposing sub-surface compositing capabilities.
       (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
        (NULL-POINTER) (NULL-POINTER)))))
 
+(DEFUN ERROR-FROM-VALUE (NUMBER)
+  (LOOP FOR ENTRY IN '((0 :BAD-SURFACE)
+                       (1 :BAD-PARENT))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ NUMBER VALUE) RETURN KEYWORD
+        FINALLY (ERROR (FORMAT NIL "Unknown enum value: ~a" NUMBER))))
+
+(DEFUN ERROR-TO-VALUE (KEY)
+  (LOOP FOR ENTRY IN '((0 :BAD-SURFACE)
+                       (1 :BAD-PARENT))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ KEY KEYWORD) RETURN VALUE
+        FINALLY (ERROR (FORMAT NIL "Unknown enum keyword: ~a" KEY))))
+
 (DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 1 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "sub-surface compositing
@@ -6569,6 +7227,20 @@ An additional interface to a wl_surface object, which has been
       (SETF (WL_SUBSURFACE-PTR INSTANCE) RESOURCE)
       (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
        (NULL-POINTER) (NULL-POINTER)))))
+
+(DEFUN ERROR-FROM-VALUE (NUMBER)
+  (LOOP FOR ENTRY IN '((0 :BAD-SURFACE))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ NUMBER VALUE) RETURN KEYWORD
+        FINALLY (ERROR (FORMAT NIL "Unknown enum value: ~a" NUMBER))))
+
+(DEFUN ERROR-TO-VALUE (KEY)
+  (LOOP FOR ENTRY IN '((0 :BAD-SURFACE))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ KEY KEYWORD) RETURN VALUE
+        FINALLY (ERROR (FORMAT NIL "Unknown enum keyword: ~a" KEY))))
 
 (DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 1 :DISPATCH-IMPL 'DISPATCH)

@@ -264,6 +264,58 @@ argument feed."
 (defun has-destroy-request (interface)
   (some (lambda (request) (string= (name request) "destroy")) (requests interface)))
 
+(defun gen-enum-keyword (entry) (symbolify ":~a" (dash-name entry)))
+
+(defun gen-bitfield-enum (enum entries)
+  `((defun ,(symbolify "~a-from-value" (dash-name enum)) (bits)
+      (loop for entry in '(,@(mapcar (lambda (entry) `(,(value entry) ,(gen-enum-keyword entry))) entries))
+	    for value = (car entry)
+	    for keyword = (cadr entry)
+	    for bit = (logand value bits)
+	    for flag = (if (and (zerop bits) (zerop value)) keyword
+			   (if (> bit 0) keyword nil))
+	    when flag collect flag))
+    (defun ,(symbolify "~a-to-value" (dash-name enum)) (keywords)
+      (reduce #'+ keywords
+	      :key (lambda (keyword)
+		     (or (cadr (assoc keyword
+				      ',(mapcar
+					 (lambda (entry)
+					   `(,(gen-enum-keyword entry) ,(value entry)))
+					 entries))) 0))))))
+
+(defun gen-simple-enum (enum entries)
+  `((defun ,(symbolify "~a-from-value" (dash-name enum)) (number)
+      (loop for entry in '(,@(mapcar (lambda (entry) `(,(value entry) ,(gen-enum-keyword entry))) entries))
+	    for value = (car entry)
+	    for keyword = (cadr entry)
+	    when (eq number value)
+	      return keyword
+	    finally (error (format nil "Unknown enum value: ~a" number))))
+    (defun ,(symbolify "~a-to-value" (dash-name enum)) (key)
+      (loop for entry in '(,@(mapcar (lambda (entry) `(,(value entry) ,(gen-enum-keyword entry))) entries))
+	    for value = (car entry)
+	    for keyword = (cadr entry)
+	    when (eq key keyword)
+	      return value
+	    finally (error (format nil "Unknown enum keyword: ~a" key))))))
+
+(defun gen-enum (enum)
+  (let ((entries (entries enum))
+	(bitfield (bitfield-p enum)))
+    (if bitfield
+	(gen-bitfield-enum enum entries)
+	(gen-simple-enum enum entries))))
+
+
+
+(defun gen-enums (interface)
+  (let ((enums (enums interface)))
+    (apply #'append
+	   (loop for enum in enums
+		 collect (gen-enum enum)))))
+
+
 (defun gen-interface (interface)
   (let ((pkg-name (pkg-name interface)))
     (append
@@ -291,6 +343,8 @@ argument feed."
      `((defvar *dispatcher* (callback ,(symbolify "dispatcher-ffi"))))
      (gen-dispatch-init interface)
      (gen-events interface)
+
+     (gen-enums interface)
 
      `((defclass global (wl::global) ()
 	 (:default-initargs :version ,(version interface) :dispatch-impl 'dispatch)

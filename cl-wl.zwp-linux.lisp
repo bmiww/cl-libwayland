@@ -736,6 +736,54 @@ This temporary object is a collection of dmabufs and other
     (RESOURCE-POST-EVENT-ARRAY
      (ZWP_LINUX_BUFFER_PARAMS_V1-PTR DISPATCH) 1 ARG-LIST)))
 
+(DEFUN ERROR-FROM-VALUE (NUMBER)
+  (LOOP FOR ENTRY IN '((0 :ALREADY-USED) (1 :PLANE-IDX)
+                       (2 :PLANE-SET) (3 :INCOMPLETE)
+                       (4 :INVALID-FORMAT)
+                       (5 :INVALID-DIMENSIONS)
+                       (6 :OUT-OF-BOUNDS)
+                       (7 :INVALID-WL-BUFFER))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ NUMBER VALUE) RETURN KEYWORD
+        FINALLY (ERROR (FORMAT NIL "Unknown enum value: ~a" NUMBER))))
+
+(DEFUN ERROR-TO-VALUE (KEY)
+  (LOOP FOR ENTRY IN '((0 :ALREADY-USED) (1 :PLANE-IDX)
+                       (2 :PLANE-SET) (3 :INCOMPLETE)
+                       (4 :INVALID-FORMAT)
+                       (5 :INVALID-DIMENSIONS)
+                       (6 :OUT-OF-BOUNDS)
+                       (7 :INVALID-WL-BUFFER))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        WHEN (EQ KEY KEYWORD) RETURN VALUE
+        FINALLY (ERROR (FORMAT NIL "Unknown enum keyword: ~a" KEY))))
+
+(DEFUN FLAGS-FROM-VALUE (BITS)
+  (LOOP FOR ENTRY IN '((1 :Y-INVERT) (2 :INTERLACED)
+                       (4 :BOTTOM-FIRST))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        FOR BIT = (LOGAND VALUE BITS)
+        FOR FLAG = (IF (AND (ZEROP BITS) (ZEROP VALUE))
+                       KEYWORD
+                       (IF (> BIT 0)
+                           KEYWORD
+                           NIL))
+        WHEN FLAG
+        COLLECT FLAG))
+
+(DEFUN FLAGS-TO-VALUE (KEYWORDS)
+  (REDUCE #'+ KEYWORDS :KEY
+          (LAMBDA (KEYWORD)
+            (OR
+             (CADR
+              (ASSOC KEYWORD
+                     '((:Y-INVERT 1) (:INTERLACED 2)
+                       (:BOTTOM-FIRST 4))))
+             0))))
+
 (DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 5 :DISPATCH-IMPL 'DISPATCH)
           (:DOCUMENTATION "parameters for creating a dmabuf-based wl_buffer
@@ -1103,6 +1151,24 @@ This object advertises dmabuf parameters feedback. This includes the
             FLAGS)
     (RESOURCE-POST-EVENT-ARRAY
      (ZWP_LINUX_DMABUF_FEEDBACK_V1-PTR DISPATCH) 6 ARG-LIST)))
+
+(DEFUN TRANCHE-FLAGS-FROM-VALUE (BITS)
+  (LOOP FOR ENTRY IN '((1 :SCANOUT))
+        FOR VALUE = (CAR ENTRY)
+        FOR KEYWORD = (CADR ENTRY)
+        FOR BIT = (LOGAND VALUE BITS)
+        FOR FLAG = (IF (AND (ZEROP BITS) (ZEROP VALUE))
+                       KEYWORD
+                       (IF (> BIT 0)
+                           KEYWORD
+                           NIL))
+        WHEN FLAG
+        COLLECT FLAG))
+
+(DEFUN TRANCHE-FLAGS-TO-VALUE (KEYWORDS)
+  (REDUCE #'+ KEYWORDS :KEY
+          (LAMBDA (KEYWORD)
+            (OR (CADR (ASSOC KEYWORD '((:SCANOUT 1)))) 0))))
 
 (DEFCLASS GLOBAL (CL-WL:GLOBAL) NIL
           (:DEFAULT-INITARGS :VERSION 5 :DISPATCH-IMPL 'DISPATCH)
