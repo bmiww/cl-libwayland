@@ -233,7 +233,9 @@ argument feed."
 			   (format nil "~a-to-value" (dash-name! (car enum)))))
 		 `(,(symbolify func-name) ,name)))
        ("object" (if (interface arg)
-		     `(,(dispatch-named-ptr (interface arg)) ,name)
+		     (if (nullable arg)
+			 `(if ,name (,(dispatch-named-ptr (interface arg)) ,name) (null-pointer))
+			 `(,(dispatch-named-ptr (interface arg)) ,name))
 		     `(error "Protocol did not specify object type. For example see wl_display error event. This is unimplemented")))
        ("fixed" `(wl::to-fixnum ,name))
        ("array"

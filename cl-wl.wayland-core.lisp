@@ -2932,7 +2932,9 @@ There is one wl_data_device per seat which can be obtained
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 4)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O)
-            (WL_DATA_OFFER::WL_DATA_OFFER-PTR ID))
+            (IF ID
+                (WL_DATA_OFFER::WL_DATA_OFFER-PTR ID)
+                (NULL-POINTER)))
     (RESOURCE-POST-EVENT-ARRAY (WL_DATA_DEVICE-PTR DISPATCH) 1
      ARG-LIST)))
 
@@ -2973,7 +2975,9 @@ There is one wl_data_device per seat which can be obtained
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O)
-            (WL_DATA_OFFER::WL_DATA_OFFER-PTR ID))
+            (IF ID
+                (WL_DATA_OFFER::WL_DATA_OFFER-PTR ID)
+                (NULL-POINTER)))
     (RESOURCE-POST-EVENT-ARRAY (WL_DATA_DEVICE-PTR DISPATCH) 5
      ARG-LIST)))
 

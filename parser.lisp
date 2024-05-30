@@ -9,7 +9,7 @@
   (:use :cl :xmls :split-sequence)
   (:export name enum description arg-type args value entries enum-name bitfield-p requests events
 	   version enums read-protocol event interface signature arg-type-char
-	   parent-interface parent-message))
+	   parent-interface parent-message nullable))
 (in-package :cl-wl.parser)
 
 ;; ┌─┐┌┐┌┌┬┐┬─┐┬ ┬
