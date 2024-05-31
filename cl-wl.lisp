@@ -92,12 +92,17 @@
    ;; There are still some stragglers
    ;; Might be possible to remove this
    (id :initarg :id)
+   ;; NOTE: I'm using this one to be able to grab the latest id attached to a resource
+   ;; It should by no means be used in runtime since class upgrades will change it.
+   ;; Used in mk-if
+   (transient-id :initarg :transient-id :accessor transient-id)
    (destroy :initform nil :accessor destroy-callback)))
 
 (defmethod add-destroy-callback ((object object) callback)
   (setf (destroy-callback object) (push callback (destroy-callback object))))
 
 ;; NOTE: Empty implementation - since the dispatch object implementations are supposed to connect :after
+;; TODO: The basic implementations could also do regular overrides instead of :after
 (defgeneric destroy (object))
 (defmethod destroy ((object object)))
 
@@ -109,8 +114,8 @@
   "Convenience method to create a new interface using the context of the creating object as reference.
 Reuses the display and client fields of the reference object.
 Created object also gets added to the client object tracking hash-table."
-  (setf (gethash id (objects (client object)))
-	(apply #'make-instance class :display (get-display object) :client (client object) :id id args)))
+  (let ((object (apply #'make-instance class :display (get-display object) :client (client object) :id id args)))
+    (setf (gethash (transient-id object) (objects (client object))) object)))
 
 ;; TODO: The compiled classes also need to handle multiple pointers. I'd assume.
 ;; Not sure i've used pointers an awful lot yet.
