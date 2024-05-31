@@ -583,8 +583,7 @@ The core global object.  This is a special singleton object.  It
     (LET* ((RESOURCE
             (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                     *INTERFACE* (VERSION INSTANCE)
-                                    (OR (WL_DISPLAY-ID INSTANCE)
-                                        0))))
+                                    (OR ID 0))))
       (SETF (CL-WL::TRANSIENT-ID INSTANCE)
               (SETF (WL_DISPLAY-ID INSTANCE)
                       (OR ID (CL-WL.FFI:RESOURCE-GET-ID RESOURCE))))
@@ -817,8 +816,7 @@ The singleton global registry object.  The server has a number of
     (LET* ((RESOURCE
             (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                     *INTERFACE* (VERSION INSTANCE)
-                                    (OR (WL_REGISTRY-ID INSTANCE)
-                                        0))))
+                                    (OR ID 0))))
       (SETF (CL-WL::TRANSIENT-ID INSTANCE)
               (SETF (WL_REGISTRY-ID INSTANCE)
                       (OR ID (CL-WL.FFI:RESOURCE-GET-ID RESOURCE))))
@@ -995,8 +993,7 @@ Clients can handle the 'done' event to get notified when
     (LET* ((RESOURCE
             (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                     *INTERFACE* (VERSION INSTANCE)
-                                    (OR (WL_CALLBACK-ID INSTANCE)
-                                        0))))
+                                    (OR ID 0))))
       (SETF (CL-WL::TRANSIENT-ID INSTANCE)
               (SETF (WL_CALLBACK-ID INSTANCE)
                       (OR ID (CL-WL.FFI:RESOURCE-GET-ID RESOURCE))))
@@ -1169,8 +1166,7 @@ A compositor.  This object is a singleton global.  The
     (LET* ((RESOURCE
             (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                     *INTERFACE* (VERSION INSTANCE)
-                                    (OR (WL_COMPOSITOR-ID INSTANCE)
-                                        0))))
+                                    (OR ID 0))))
       (SETF (CL-WL::TRANSIENT-ID INSTANCE)
               (SETF (WL_COMPOSITOR-ID INSTANCE)
                       (OR ID (CL-WL.FFI:RESOURCE-GET-ID RESOURCE))))
@@ -1379,8 +1375,7 @@ The wl_shm_pool object encapsulates a piece of memory shared
     (LET* ((RESOURCE
             (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                     *INTERFACE* (VERSION INSTANCE)
-                                    (OR (WL_SHM_POOL-ID INSTANCE)
-                                        0))))
+                                    (OR ID 0))))
       (SETF (CL-WL::TRANSIENT-ID INSTANCE)
               (SETF (WL_SHM_POOL-ID INSTANCE)
                       (OR ID (CL-WL.FFI:RESOURCE-GET-ID RESOURCE))))
@@ -1548,7 +1543,7 @@ A singleton global object that provides support for shared
     (LET* ((RESOURCE
             (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                     *INTERFACE* (VERSION INSTANCE)
-                                    (OR (WL_SHM-ID INSTANCE) 0))))
+                                    (OR ID 0))))
       (SETF (CL-WL::TRANSIENT-ID INSTANCE)
               (SETF (WL_SHM-ID INSTANCE)
                       (OR ID (CL-WL.FFI:RESOURCE-GET-ID RESOURCE))))
@@ -1960,8 +1955,7 @@ A buffer provides the content for a wl_surface. Buffers are
     (LET* ((RESOURCE
             (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                     *INTERFACE* (VERSION INSTANCE)
-                                    (OR (WL_BUFFER-ID INSTANCE)
-                                        0))))
+                                    (OR ID 0))))
       (SETF (CL-WL::TRANSIENT-ID INSTANCE)
               (SETF (WL_BUFFER-ID INSTANCE)
                       (OR ID (CL-WL.FFI:RESOURCE-GET-ID RESOURCE))))
@@ -2248,8 +2242,7 @@ A wl_data_offer represents a piece of data offered for transfer
     (LET* ((RESOURCE
             (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                     *INTERFACE* (VERSION INSTANCE)
-                                    (OR (WL_DATA_OFFER-ID INSTANCE)
-                                        0))))
+                                    (OR ID 0))))
       (SETF (CL-WL::TRANSIENT-ID INSTANCE)
               (SETF (WL_DATA_OFFER-ID INSTANCE)
                       (OR ID (CL-WL.FFI:RESOURCE-GET-ID RESOURCE))))
@@ -2554,9 +2547,7 @@ The wl_data_source object is the source side of a wl_data_offer.
     (LET* ((RESOURCE
             (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                     *INTERFACE* (VERSION INSTANCE)
-                                    (OR
-                                     (WL_DATA_SOURCE-ID INSTANCE)
-                                     0))))
+                                    (OR ID 0))))
       (SETF (CL-WL::TRANSIENT-ID INSTANCE)
               (SETF (WL_DATA_SOURCE-ID INSTANCE)
                       (OR ID (CL-WL.FFI:RESOURCE-GET-ID RESOURCE))))
@@ -2917,9 +2908,7 @@ There is one wl_data_device per seat which can be obtained
     (LET* ((RESOURCE
             (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                     *INTERFACE* (VERSION INSTANCE)
-                                    (OR
-                                     (WL_DATA_DEVICE-ID INSTANCE)
-                                     0))))
+                                    (OR ID 0))))
       (SETF (CL-WL::TRANSIENT-ID INSTANCE)
               (SETF (WL_DATA_DEVICE-ID INSTANCE)
                       (OR ID (CL-WL.FFI:RESOURCE-GET-ID RESOURCE))))
@@ -3196,10 +3185,7 @@ The wl_data_device_manager is a singleton global object that
     (LET* ((RESOURCE
             (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                     *INTERFACE* (VERSION INSTANCE)
-                                    (OR
-                                     (WL_DATA_DEVICE_MANAGER-ID
-                                      INSTANCE)
-                                     0))))
+                                    (OR ID 0))))
       (SETF (CL-WL::TRANSIENT-ID INSTANCE)
               (SETF (WL_DATA_DEVICE_MANAGER-ID INSTANCE)
                       (OR ID (CL-WL.FFI:RESOURCE-GET-ID RESOURCE))))
@@ -3381,7 +3367,7 @@ This interface is implemented by servers that provide
     (LET* ((RESOURCE
             (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                     *INTERFACE* (VERSION INSTANCE)
-                                    (OR (WL_SHELL-ID INSTANCE) 0))))
+                                    (OR ID 0))))
       (SETF (CL-WL::TRANSIENT-ID INSTANCE)
               (SETF (WL_SHELL-ID INSTANCE)
                       (OR ID (CL-WL.FFI:RESOURCE-GET-ID RESOURCE))))
@@ -3865,9 +3851,7 @@ An interface that may be implemented by a wl_surface, for
     (LET* ((RESOURCE
             (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                     *INTERFACE* (VERSION INSTANCE)
-                                    (OR
-                                     (WL_SHELL_SURFACE-ID INSTANCE)
-                                     0))))
+                                    (OR ID 0))))
       (SETF (CL-WL::TRANSIENT-ID INSTANCE)
               (SETF (WL_SHELL_SURFACE-ID INSTANCE)
                       (OR ID (CL-WL.FFI:RESOURCE-GET-ID RESOURCE))))
@@ -4473,8 +4457,7 @@ A surface is a rectangular area that may be displayed on zero
     (LET* ((RESOURCE
             (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                     *INTERFACE* (VERSION INSTANCE)
-                                    (OR (WL_SURFACE-ID INSTANCE)
-                                        0))))
+                                    (OR ID 0))))
       (SETF (CL-WL::TRANSIENT-ID INSTANCE)
               (SETF (WL_SURFACE-ID INSTANCE)
                       (OR ID (CL-WL.FFI:RESOURCE-GET-ID RESOURCE))))
@@ -4801,7 +4784,7 @@ A seat is a group of keyboards, pointer and touch devices. This
     (LET* ((RESOURCE
             (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                     *INTERFACE* (VERSION INSTANCE)
-                                    (OR (WL_SEAT-ID INSTANCE) 0))))
+                                    (OR ID 0))))
       (SETF (CL-WL::TRANSIENT-ID INSTANCE)
               (SETF (WL_SEAT-ID INSTANCE)
                       (OR ID (CL-WL.FFI:RESOURCE-GET-ID RESOURCE))))
@@ -5185,8 +5168,7 @@ The wl_pointer interface represents one or more input devices,
     (LET* ((RESOURCE
             (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                     *INTERFACE* (VERSION INSTANCE)
-                                    (OR (WL_POINTER-ID INSTANCE)
-                                        0))))
+                                    (OR ID 0))))
       (SETF (CL-WL::TRANSIENT-ID INSTANCE)
               (SETF (WL_POINTER-ID INSTANCE)
                       (OR ID (CL-WL.FFI:RESOURCE-GET-ID RESOURCE))))
@@ -5662,8 +5644,7 @@ The wl_keyboard interface represents one or more keyboards
     (LET* ((RESOURCE
             (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                     *INTERFACE* (VERSION INSTANCE)
-                                    (OR (WL_KEYBOARD-ID INSTANCE)
-                                        0))))
+                                    (OR ID 0))))
       (SETF (CL-WL::TRANSIENT-ID INSTANCE)
               (SETF (WL_KEYBOARD-ID INSTANCE)
                       (OR ID (CL-WL.FFI:RESOURCE-GET-ID RESOURCE))))
@@ -6058,7 +6039,7 @@ The wl_touch interface represents a touchscreen
     (LET* ((RESOURCE
             (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                     *INTERFACE* (VERSION INSTANCE)
-                                    (OR (WL_TOUCH-ID INSTANCE) 0))))
+                                    (OR ID 0))))
       (SETF (CL-WL::TRANSIENT-ID INSTANCE)
               (SETF (WL_TOUCH-ID INSTANCE)
                       (OR ID (CL-WL.FFI:RESOURCE-GET-ID RESOURCE))))
@@ -6393,8 +6374,7 @@ An output describes part of the compositor geometry.  The
     (LET* ((RESOURCE
             (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                     *INTERFACE* (VERSION INSTANCE)
-                                    (OR (WL_OUTPUT-ID INSTANCE)
-                                        0))))
+                                    (OR ID 0))))
       (SETF (CL-WL::TRANSIENT-ID INSTANCE)
               (SETF (WL_OUTPUT-ID INSTANCE)
                       (OR ID (CL-WL.FFI:RESOURCE-GET-ID RESOURCE))))
@@ -6775,8 +6755,7 @@ A region object describes an area.
     (LET* ((RESOURCE
             (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                     *INTERFACE* (VERSION INSTANCE)
-                                    (OR (WL_REGION-ID INSTANCE)
-                                        0))))
+                                    (OR ID 0))))
       (SETF (CL-WL::TRANSIENT-ID INSTANCE)
               (SETF (WL_REGION-ID INSTANCE)
                       (OR ID (CL-WL.FFI:RESOURCE-GET-ID RESOURCE))))
@@ -6967,9 +6946,7 @@ The global interface exposing sub-surface compositing capabilities.
     (LET* ((RESOURCE
             (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                     *INTERFACE* (VERSION INSTANCE)
-                                    (OR
-                                     (WL_SUBCOMPOSITOR-ID INSTANCE)
-                                     0))))
+                                    (OR ID 0))))
       (SETF (CL-WL::TRANSIENT-ID INSTANCE)
               (SETF (WL_SUBCOMPOSITOR-ID INSTANCE)
                       (OR ID (CL-WL.FFI:RESOURCE-GET-ID RESOURCE))))
@@ -7290,8 +7267,7 @@ An additional interface to a wl_surface object, which has been
     (LET* ((RESOURCE
             (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                     *INTERFACE* (VERSION INSTANCE)
-                                    (OR (WL_SUBSURFACE-ID INSTANCE)
-                                        0))))
+                                    (OR ID 0))))
       (SETF (CL-WL::TRANSIENT-ID INSTANCE)
               (SETF (WL_SUBSURFACE-ID INSTANCE)
                       (OR ID (CL-WL.FFI:RESOURCE-GET-ID RESOURCE))))

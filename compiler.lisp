@@ -54,7 +54,7 @@
 			  (wl::ptr (wl::client instance))
 			  ,(symbolify "*interface*")
 			  (version instance)
-			  (or (,(dispatch-id interface) instance) 0))))
+			  (or id 0))))
 	  (setf (wl::transient-id instance)
 		(setf (,(dispatch-id interface) instance) (or id (wl-ffi:resource-get-id resource))))
 	  (setf (,(dispatch-ptr interface) instance) resource)

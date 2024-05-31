@@ -317,10 +317,7 @@ Following the interfaces from:
     (LET* ((RESOURCE
             (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                     *INTERFACE* (VERSION INSTANCE)
-                                    (OR
-                                     (ZWP_LINUX_DMABUF_V1-ID
-                                      INSTANCE)
-                                     0))))
+                                    (OR ID 0))))
       (SETF (CL-WL::TRANSIENT-ID INSTANCE)
               (SETF (ZWP_LINUX_DMABUF_V1-ID INSTANCE)
                       (OR ID (CL-WL.FFI:RESOURCE-GET-ID RESOURCE))))
@@ -715,10 +712,7 @@ This temporary object is a collection of dmabufs and other
     (LET* ((RESOURCE
             (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                     *INTERFACE* (VERSION INSTANCE)
-                                    (OR
-                                     (ZWP_LINUX_BUFFER_PARAMS_V1-ID
-                                      INSTANCE)
-                                     0))))
+                                    (OR ID 0))))
       (SETF (CL-WL::TRANSIENT-ID INSTANCE)
               (SETF (ZWP_LINUX_BUFFER_PARAMS_V1-ID INSTANCE)
                       (OR ID (CL-WL.FFI:RESOURCE-GET-ID RESOURCE))))
@@ -1035,10 +1029,7 @@ This object advertises dmabuf parameters feedback. This includes the
     (LET* ((RESOURCE
             (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                     *INTERFACE* (VERSION INSTANCE)
-                                    (OR
-                                     (ZWP_LINUX_DMABUF_FEEDBACK_V1-ID
-                                      INSTANCE)
-                                     0))))
+                                    (OR ID 0))))
       (SETF (CL-WL::TRANSIENT-ID INSTANCE)
               (SETF (ZWP_LINUX_DMABUF_FEEDBACK_V1-ID INSTANCE)
                       (OR ID (CL-WL.FFI:RESOURCE-GET-ID RESOURCE))))

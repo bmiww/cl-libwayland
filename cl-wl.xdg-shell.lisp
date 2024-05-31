@@ -294,8 +294,7 @@ The xdg_wm_base interface is exposed as a global object enabling clients
     (LET* ((RESOURCE
             (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                     *INTERFACE* (VERSION INSTANCE)
-                                    (OR (XDG_WM_BASE-ID INSTANCE)
-                                        0))))
+                                    (OR ID 0))))
       (SETF (CL-WL::TRANSIENT-ID INSTANCE)
               (SETF (XDG_WM_BASE-ID INSTANCE)
                       (OR ID (CL-WL.FFI:RESOURCE-GET-ID RESOURCE))))
@@ -709,9 +708,7 @@ The xdg_positioner provides a collection of rules for the placement of a
     (LET* ((RESOURCE
             (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                     *INTERFACE* (VERSION INSTANCE)
-                                    (OR
-                                     (XDG_POSITIONER-ID INSTANCE)
-                                     0))))
+                                    (OR ID 0))))
       (SETF (CL-WL::TRANSIENT-ID INSTANCE)
               (SETF (XDG_POSITIONER-ID INSTANCE)
                       (OR ID (CL-WL.FFI:RESOURCE-GET-ID RESOURCE))))
@@ -1126,8 +1123,7 @@ An interface that may be implemented by a wl_surface, for
     (LET* ((RESOURCE
             (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                     *INTERFACE* (VERSION INSTANCE)
-                                    (OR (XDG_SURFACE-ID INSTANCE)
-                                        0))))
+                                    (OR ID 0))))
       (SETF (CL-WL::TRANSIENT-ID INSTANCE)
               (SETF (XDG_SURFACE-ID INSTANCE)
                       (OR ID (CL-WL.FFI:RESOURCE-GET-ID RESOURCE))))
@@ -1735,8 +1731,7 @@ This interface defines an xdg_surface role which allows a surface to,
     (LET* ((RESOURCE
             (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                     *INTERFACE* (VERSION INSTANCE)
-                                    (OR (XDG_TOPLEVEL-ID INSTANCE)
-                                        0))))
+                                    (OR ID 0))))
       (SETF (CL-WL::TRANSIENT-ID INSTANCE)
               (SETF (XDG_TOPLEVEL-ID INSTANCE)
                       (OR ID (CL-WL.FFI:RESOURCE-GET-ID RESOURCE))))
@@ -2167,8 +2162,7 @@ A popup surface is a short-lived, temporary surface. It can be used to
     (LET* ((RESOURCE
             (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                     *INTERFACE* (VERSION INSTANCE)
-                                    (OR (XDG_POPUP-ID INSTANCE)
-                                        0))))
+                                    (OR ID 0))))
       (SETF (CL-WL::TRANSIENT-ID INSTANCE)
               (SETF (XDG_POPUP-ID INSTANCE)
                       (OR ID (CL-WL.FFI:RESOURCE-GET-ID RESOURCE))))
