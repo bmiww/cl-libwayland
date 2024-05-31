@@ -50,14 +50,14 @@
   `((defmethod shared-initialize :after ((instance dispatch) slot-names &key id)
       (declare (ignore slot-names))
       (unless (,(dispatch-id interface) instance)
-	(setf (,(dispatch-id interface) instance) id)
 	(let* ((resource (wl::create-resource
 			  (wl::ptr (wl::client instance))
 			  ,(symbolify "*interface*")
 			  (version instance)
-			  (,(dispatch-id interface) instance))))
-	  (setf (gethash (pointer-address resource) wl::*resource-tracker*) instance)
+			  (or (,(dispatch-id interface) instance) 0))))
+	  (setf (,(dispatch-id interface) instance) (or id (wl-ffi:resource-get-id resource)))
 	  (setf (,(dispatch-ptr interface) instance) resource)
+	  (setf (gethash (pointer-address resource) wl::*resource-tracker*) instance)
 	  (resource-set-dispatcher resource ,(symbolify "*dispatcher*") (null-pointer) (null-pointer) (null-pointer)))))))
 
 (defun gen-bind-callback (interface)

@@ -314,15 +314,18 @@ Following the interfaces from:
 (DEFMETHOD SHARED-INITIALIZE :AFTER ((INSTANCE DISPATCH) SLOT-NAMES &KEY ID)
   (DECLARE (IGNORE SLOT-NAMES))
   (UNLESS (ZWP_LINUX_DMABUF_V1-ID INSTANCE)
-    (SETF (ZWP_LINUX_DMABUF_V1-ID INSTANCE) ID)
     (LET* ((RESOURCE
             (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                     *INTERFACE* (VERSION INSTANCE)
-                                    (ZWP_LINUX_DMABUF_V1-ID
-                                     INSTANCE))))
+                                    (OR
+                                     (ZWP_LINUX_DMABUF_V1-ID
+                                      INSTANCE)
+                                     0))))
+      (SETF (ZWP_LINUX_DMABUF_V1-ID INSTANCE)
+              (OR ID (CL-WL.FFI:RESOURCE-GET-ID RESOURCE)))
+      (SETF (ZWP_LINUX_DMABUF_V1-PTR INSTANCE) RESOURCE)
       (SETF (GETHASH (POINTER-ADDRESS RESOURCE) CL-WL::*RESOURCE-TRACKER*)
               INSTANCE)
-      (SETF (ZWP_LINUX_DMABUF_V1-PTR INSTANCE) RESOURCE)
       (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
        (NULL-POINTER) (NULL-POINTER)))))
 
@@ -708,15 +711,18 @@ This temporary object is a collection of dmabufs and other
 (DEFMETHOD SHARED-INITIALIZE :AFTER ((INSTANCE DISPATCH) SLOT-NAMES &KEY ID)
   (DECLARE (IGNORE SLOT-NAMES))
   (UNLESS (ZWP_LINUX_BUFFER_PARAMS_V1-ID INSTANCE)
-    (SETF (ZWP_LINUX_BUFFER_PARAMS_V1-ID INSTANCE) ID)
     (LET* ((RESOURCE
             (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                     *INTERFACE* (VERSION INSTANCE)
-                                    (ZWP_LINUX_BUFFER_PARAMS_V1-ID
-                                     INSTANCE))))
+                                    (OR
+                                     (ZWP_LINUX_BUFFER_PARAMS_V1-ID
+                                      INSTANCE)
+                                     0))))
+      (SETF (ZWP_LINUX_BUFFER_PARAMS_V1-ID INSTANCE)
+              (OR ID (CL-WL.FFI:RESOURCE-GET-ID RESOURCE)))
+      (SETF (ZWP_LINUX_BUFFER_PARAMS_V1-PTR INSTANCE) RESOURCE)
       (SETF (GETHASH (POINTER-ADDRESS RESOURCE) CL-WL::*RESOURCE-TRACKER*)
               INSTANCE)
-      (SETF (ZWP_LINUX_BUFFER_PARAMS_V1-PTR INSTANCE) RESOURCE)
       (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
        (NULL-POINTER) (NULL-POINTER)))))
 
@@ -1024,15 +1030,18 @@ This object advertises dmabuf parameters feedback. This includes the
 (DEFMETHOD SHARED-INITIALIZE :AFTER ((INSTANCE DISPATCH) SLOT-NAMES &KEY ID)
   (DECLARE (IGNORE SLOT-NAMES))
   (UNLESS (ZWP_LINUX_DMABUF_FEEDBACK_V1-ID INSTANCE)
-    (SETF (ZWP_LINUX_DMABUF_FEEDBACK_V1-ID INSTANCE) ID)
     (LET* ((RESOURCE
             (CL-WL::CREATE-RESOURCE (CL-WL:PTR (CL-WL:CLIENT INSTANCE))
                                     *INTERFACE* (VERSION INSTANCE)
-                                    (ZWP_LINUX_DMABUF_FEEDBACK_V1-ID
-                                     INSTANCE))))
+                                    (OR
+                                     (ZWP_LINUX_DMABUF_FEEDBACK_V1-ID
+                                      INSTANCE)
+                                     0))))
+      (SETF (ZWP_LINUX_DMABUF_FEEDBACK_V1-ID INSTANCE)
+              (OR ID (CL-WL.FFI:RESOURCE-GET-ID RESOURCE)))
+      (SETF (ZWP_LINUX_DMABUF_FEEDBACK_V1-PTR INSTANCE) RESOURCE)
       (SETF (GETHASH (POINTER-ADDRESS RESOURCE) CL-WL::*RESOURCE-TRACKER*)
               INSTANCE)
-      (SETF (ZWP_LINUX_DMABUF_FEEDBACK_V1-PTR INSTANCE) RESOURCE)
       (RESOURCE-SET-DISPATCHER RESOURCE *DISPATCHER* (NULL-POINTER)
        (NULL-POINTER) (NULL-POINTER)))))
 
