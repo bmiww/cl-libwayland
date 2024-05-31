@@ -2924,9 +2924,7 @@ There is one wl_data_device per seat which can be obtained
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N)
-            (IF (TYPEP ID 'INTEGER)
-                ID
-                (WL_DATA_OFFER::WL_DATA_OFFER-ID ID)))
+            (WL_DATA_OFFER::WL_DATA_OFFER-PTR ID))
     (RESOURCE-POST-EVENT-ARRAY (WL_DATA_DEVICE-PTR DISPATCH) 0
      ARG-LIST)))
 
@@ -7375,4 +7373,3 @@ This can be overriden by inheritance in case if custom behaviour is required."
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
                                     CL-WL::*GLOBAL-TRACKER*)
                              GLOBAL))))
-

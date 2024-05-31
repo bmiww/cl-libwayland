@@ -728,9 +728,7 @@ This temporary object is a collection of dmabufs and other
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N)
-            (IF (TYPEP BUFFER 'INTEGER)
-                BUFFER
-                (WL_BUFFER::WL_BUFFER-ID BUFFER)))
+            (WL_BUFFER::WL_BUFFER-PTR BUFFER))
     (RESOURCE-POST-EVENT-ARRAY
      (ZWP_LINUX_BUFFER_PARAMS_V1-PTR DISPATCH) 0 ARG-LIST)))
 

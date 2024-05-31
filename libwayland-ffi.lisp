@@ -69,7 +69,7 @@
   (f :int32)                        ;; fixed numbers are represented with :int32
   (s :string)                       ;; string
   (o :pointer)                      ;; object - usually reference to some wl_resource
-  (n :uint)                         ;; new_id
+  (n :pointer)                      ;; new_id - libwayland is annoying and expects a pointer to the object rather than its id. Then the lib extracts the id itself
   (a (:pointer (:struct wl_array))) ;; array
   (h :int))                         ;; file descriptor
 

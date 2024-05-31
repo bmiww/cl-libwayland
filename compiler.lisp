@@ -229,9 +229,7 @@ argument feed."
      (alexandria:eswitch ((arg-type arg) :test 'string=)
        ("int" name) ("uint" name)
        ("fd" name) ("string" name)
-       ("new_id" `(if (typep ,name 'integer)
-		      ,name
-		      (,(dispatch-named-id! (interface arg)) ,name)))
+       ("new_id" `(,(dispatch-named-ptr (interface arg)) ,name))
        ("enum" (let ((enum (enum arg)) (func-name ""))
 		 (setf func-name
 		       (if (> (length enum) 1)
