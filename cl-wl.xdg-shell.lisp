@@ -308,8 +308,8 @@ The xdg_wm_base interface is exposed as a global object enabling clients
   (CL-WL::DEBUG-LOG! "Event: ~a~%" "ping")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 1)))
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 0)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 'WL-FFI::U)
             SERIAL)
     (RESOURCE-POST-EVENT-ARRAY (XDG_WM_BASE-PTR DISPATCH) 0
      ARG-LIST)))
@@ -1137,8 +1137,8 @@ An interface that may be implemented by a wl_surface, for
   (CL-WL::DEBUG-LOG! "Event: ~a~%" "configure")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 1)))
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 0)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 'WL-FFI::U)
             SERIAL)
     (RESOURCE-POST-EVENT-ARRAY (XDG_SURFACE-PTR DISPATCH) 0
      ARG-LIST)))
@@ -1747,16 +1747,16 @@ This interface defines an xdg_surface role which allows a surface to,
   (CL-WL::DEBUG-LOG! "Event: ~a~%" "configure")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 3)))
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 0)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 'WL-FFI::I)
             WIDTH)
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 1)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 'WL-FFI::I)
             HEIGHT)
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
-           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::A)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 2)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 'WL-FFI::A)
             (LET* ((LENGTH (LENGTH STATES))
                    (STRUCT (FOREIGN-ALLOC '(:STRUCT WL_ARRAY)))
                    (DATA (FOREIGN-ALLOC :UINT32 :COUNT LENGTH)))
@@ -1787,12 +1787,12 @@ This interface defines an xdg_surface role which allows a surface to,
   (CL-WL::DEBUG-LOG! "Event: ~a~%" "configure_bounds")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 2)))
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 0)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 'WL-FFI::I)
             WIDTH)
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 1)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 'WL-FFI::I)
             HEIGHT)
     (RESOURCE-POST-EVENT-ARRAY (XDG_TOPLEVEL-PTR DISPATCH) 2
      ARG-LIST)))
@@ -1802,8 +1802,8 @@ This interface defines an xdg_surface role which allows a surface to,
   (CL-WL::DEBUG-LOG! "Event: ~a~%" "wm_capabilities")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 1)))
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::A)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 0)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 'WL-FFI::A)
             (LET* ((LENGTH (LENGTH CAPABILITIES))
                    (STRUCT (FOREIGN-ALLOC '(:STRUCT WL_ARRAY)))
                    (DATA (FOREIGN-ALLOC :UINT32 :COUNT LENGTH)))
@@ -2178,20 +2178,20 @@ A popup surface is a short-lived, temporary surface. It can be used to
   (CL-WL::DEBUG-LOG! "Event: ~a~%" "configure")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 4)))
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 0)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 'WL-FFI::I)
             X)
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 1)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 'WL-FFI::I)
             Y)
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
-           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 2)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 'WL-FFI::I)
             WIDTH)
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
-           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 3)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 'WL-FFI::I)
             HEIGHT)
     (RESOURCE-POST-EVENT-ARRAY (XDG_POPUP-PTR DISPATCH) 0
      ARG-LIST)))
@@ -2207,8 +2207,8 @@ A popup surface is a short-lived, temporary surface. It can be used to
   (CL-WL::DEBUG-LOG! "Event: ~a~%" "repositioned")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 1)))
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 0)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 'WL-FFI::U)
             TOKEN)
     (RESOURCE-POST-EVENT-ARRAY (XDG_POPUP-PTR DISPATCH) 2
      ARG-LIST)))

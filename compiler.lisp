@@ -217,8 +217,8 @@ argument feed."
 (defun gen-c-arg-setter-inner (arg index value-form)
   `(setf
     (foreign-slot-value
-     (mem-aref arg-list '(:union wl-ffi:wl_argument) ,index)
-     '(:union wl-ffi:wl_argument)
+     (mem-aref arg-list '(:union wl-ffi:wl_argument_outgoing) ,index)
+     '(:union wl-ffi:wl_argument_outgoing)
      ,(symbolify "'wl-ffi::~a" (arg-type-char arg)))
     ,value-form))
 

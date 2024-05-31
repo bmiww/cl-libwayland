@@ -20,7 +20,7 @@
    display-run display-flush-clients display-destroy-clients display-get-event-loop
    display-create display-destroy display-add-socket-fd
 
-   wl_resource wl_list wl_argument wl_listener wl_array wl_message
+   wl_resource wl_list wl_argument wl_argument_outgoing wl_listener wl_array wl_message
 
    name version method_count methods event_count events
    signature types
@@ -64,6 +64,19 @@
   (notify :pointer))
 
 (defcunion wl_argument
+  (i :int)                          ;; integer
+  (u :uint)                         ;; unsigned integer
+  (f :int32)                        ;; fixed numbers are represented with :int32
+  (s :string)                       ;; string
+  (o :pointer)                      ;; object - usually reference to some wl_resource
+  (n :uint)                         ;; new_id
+  (a (:pointer (:struct wl_array))) ;; array
+  (h :int))                         ;; file descriptor
+
+;; TODO: Libwayland sucks. When the n (new_id) is used for server events
+;; Libwayland expects a pointer to an object previously created by us
+;; But when libwayland uses our callbacks it actually gives a number rather than a pointer
+(defcunion wl_argument_outgoing
   (i :int)                          ;; integer
   (u :uint)                         ;; unsigned integer
   (f :int32)                        ;; fixed numbers are represented with :int32

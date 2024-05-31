@@ -331,8 +331,8 @@ Following the interfaces from:
   (CL-WL::DEBUG-LOG! "Event: ~a~%" "format")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 1)))
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 0)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 'WL-FFI::U)
             FORMAT)
     (RESOURCE-POST-EVENT-ARRAY (ZWP_LINUX_DMABUF_V1-PTR DISPATCH) 0
      ARG-LIST)))
@@ -343,16 +343,16 @@ Following the interfaces from:
   (CL-WL::DEBUG-LOG! "Event: ~a~%" "modifier")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 3)))
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 0)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 'WL-FFI::U)
             FORMAT)
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 1)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 'WL-FFI::U)
             MODIFIER_HI)
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
-           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 2)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 'WL-FFI::U)
             MODIFIER_LO)
     (RESOURCE-POST-EVENT-ARRAY (ZWP_LINUX_DMABUF_V1-PTR DISPATCH) 1
      ARG-LIST)))
@@ -726,8 +726,8 @@ This temporary object is a collection of dmabufs and other
   (CL-WL::DEBUG-LOG! "Event: ~a~%" "created")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 1)))
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 0)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 'WL-FFI::N)
             (WL_BUFFER::WL_BUFFER-PTR BUFFER))
     (RESOURCE-POST-EVENT-ARRAY
      (ZWP_LINUX_BUFFER_PARAMS_V1-PTR DISPATCH) 0 ARG-LIST)))
@@ -1050,12 +1050,12 @@ This object advertises dmabuf parameters feedback. This includes the
   (CL-WL::DEBUG-LOG! "Event: ~a~%" "format_table")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 2)))
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::H)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 0)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 'WL-FFI::H)
             FD)
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 1)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 'WL-FFI::U)
             SIZE)
     (RESOURCE-POST-EVENT-ARRAY
      (ZWP_LINUX_DMABUF_FEEDBACK_V1-PTR DISPATCH) 1 ARG-LIST)))
@@ -1065,8 +1065,8 @@ This object advertises dmabuf parameters feedback. This includes the
   (CL-WL::DEBUG-LOG! "Event: ~a~%" "main_device")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 1)))
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::A)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 0)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 'WL-FFI::A)
             (LET* ((LENGTH (LENGTH DEVICE))
                    (STRUCT (FOREIGN-ALLOC '(:STRUCT WL_ARRAY)))
                    (DATA (FOREIGN-ALLOC :UINT64 :COUNT LENGTH)))
@@ -1097,8 +1097,8 @@ This object advertises dmabuf parameters feedback. This includes the
   (CL-WL::DEBUG-LOG! "Event: ~a~%" "tranche_target_device")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 1)))
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::A)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 0)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 'WL-FFI::A)
             (LET* ((LENGTH (LENGTH DEVICE))
                    (STRUCT (FOREIGN-ALLOC '(:STRUCT WL_ARRAY)))
                    (DATA (FOREIGN-ALLOC :UINT64 :COUNT LENGTH)))
@@ -1123,8 +1123,8 @@ This object advertises dmabuf parameters feedback. This includes the
   (CL-WL::DEBUG-LOG! "Event: ~a~%" "tranche_formats")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 1)))
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::A)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 0)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 'WL-FFI::A)
             (LET* ((LENGTH (LENGTH INDICES))
                    (STRUCT (FOREIGN-ALLOC '(:STRUCT WL_ARRAY)))
                    (DATA (FOREIGN-ALLOC :UINT16 :COUNT LENGTH)))
@@ -1149,8 +1149,8 @@ This object advertises dmabuf parameters feedback. This includes the
   (CL-WL::DEBUG-LOG! "Event: ~a~%" "tranche_flags")
   (LET ((ARG-LIST (FOREIGN-ALLOC '(:UNION WL_ARGUMENT) :COUNT 1)))
     (SETF (FOREIGN-SLOT-VALUE
-           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-           '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U)
+           (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 0)
+           '(:UNION CL-WL.FFI:WL_ARGUMENT_OUTGOING) 'WL-FFI::U)
             (TRANCHE-FLAGS-TO-VALUE FLAGS))
     (RESOURCE-POST-EVENT-ARRAY
      (ZWP_LINUX_DMABUF_FEEDBACK_V1-PTR DISPATCH) 6 ARG-LIST)))
