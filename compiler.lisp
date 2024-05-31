@@ -42,7 +42,9 @@
   `(defgeneric ,(symbolify (dash-name request)) (resource ,@(mapcar 'gen-generic-arg (args request)))))
 
 (defun pkg-name (interface) (symbolify ":~a" (name interface)))
-(defun dispatch-id (interface) (symbolify "~a-id" (name interface)))
+(defun dispatch-id! (name) (symbolify "~a-id" name))
+(defun dispatch-named-id! (name) (symbolify "~a::~a-id" name name))
+(defun dispatch-id (interface) (dispatch-id! (name interface)))
 (defun dispatch-ptr (interface) (symbolify "~a-ptr" (name interface)))
 (defun dispatch-named-ptr (name) (symbolify "~a::~a-ptr" name name))
 
@@ -225,8 +227,11 @@ argument feed."
     (gen-c-arg-setter-inner
      arg index
      (alexandria:eswitch ((arg-type arg) :test 'string=)
-       ("int" name) ("uint" name) ("new_id" name)
+       ("int" name) ("uint" name)
        ("fd" name) ("string" name)
+       ("new_id" `(if (typep ,name 'integer)
+		      ,name
+		      (,(dispatch-named-id! (interface arg)) ,name)))
        ("enum" (let ((enum (enum arg)) (func-name ""))
 		 (setf func-name
 		       (if (> (length enum) 1)

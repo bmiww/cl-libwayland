@@ -2924,7 +2924,9 @@ There is one wl_data_device per seat which can be obtained
     (SETF (FOREIGN-SLOT-VALUE
            (MEM-AREF ARG-LIST '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
            '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N)
-            ID)
+            (IF (TYPEP ID 'INTEGER)
+                ID
+                (WL_DATA_OFFER::WL_DATA_OFFER-ID ID)))
     (RESOURCE-POST-EVENT-ARRAY (WL_DATA_DEVICE-PTR DISPATCH) 0
      ARG-LIST)))
 
