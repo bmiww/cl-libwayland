@@ -117,9 +117,6 @@ Created object also gets added to the client object tracking hash-table."
   (let ((object (apply #'make-instance class :display (get-display object) :client (client object) :id id args)))
     (setf (gethash (transient-id object) (objects (client object))) object)))
 
-;; TODO: The compiled classes also need to handle multiple pointers. I'd assume.
-;; Not sure i've used pointers an awful lot yet.
-;; Maybe i can instead have a pointer reader that retrieves the pointer based on the id of the object
 (defmethod up-if (class (object object) id &rest args)
   "Convenience method to update an existing interface using the context of the creating object as reference.
 Reuses the display and client fields of the reference object.
