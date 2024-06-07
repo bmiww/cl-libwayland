@@ -136,7 +136,9 @@ Created object also gets added to the client object tracking hash-table."
   (declare (ignore data))
   (let* ((resource-ptr (gethash (pointer-address listener) *destroy-tracker*)))
     (remove-resource resource-ptr)
-    (foreign-free resource-ptr)
+    ;; TODO: For now going to remove this foreign-free
+    ;; since i'm worried that i might sometimes be prematurely freeing resources
+    ;; (foreign-free resource-ptr)
     (remhash (pointer-address listener) *destroy-tracker*)
     (foreign-free listener)))
 
