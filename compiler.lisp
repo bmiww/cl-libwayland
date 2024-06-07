@@ -438,7 +438,9 @@ argument feed."
   (flet ((fname (name) (merge-pathnames name (asdf:system-source-directory :cl-wl))))
     (generate-wayland-classes 'wayland-core (fname "xmls/wayland.xml"))
     (generate-wayland-classes 'xdg-shell (fname "xmls/xdg-shell.xml") :deps '("wayland-core"))
-    (generate-wayland-classes 'zwp-linux (fname "xmls/linux-dmabuf-v1.xml") :deps '("wayland-core"))))
+    (generate-wayland-classes 'zwp-linux (fname "xmls/linux-dmabuf-v1.xml") :deps '("wayland-core"))
+    (generate-wayland-classes 'zwlr-layer-shell (fname "xmls/wlr-layer-shell-unstable-v1.xml")
+			      :deps '("wayland-core" "xdg-shell"))))
 
 ;; ┬ ┬┌┬┐┬┬
 ;; │ │ │ ││
