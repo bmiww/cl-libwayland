@@ -12,7 +12,7 @@
   (:export
    global-create global-get-name
    event-loop-get-fd event-loop-dispatch
-   client-create client-add-destroy-listener
+   client-create client-add-destroy-listener client-add-destroy-late-listener
 
    resource-post-event-array resource-add-destroy-listener
    resource-get-id resource-create resource-set-dispatcher
@@ -143,6 +143,10 @@
   (fd :int32))
 
 (defcfun ("wl_client_add_destroy_listener" client-add-destroy-listener) :void
+  (client :pointer)
+  (listener (:pointer (:struct wl_listener))))
+
+(defcfun ("wl_client_add_destroy_late_listener" client-add-destroy-late-listener) :void
   (client :pointer)
   (listener (:pointer (:struct wl_listener))))
 

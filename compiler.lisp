@@ -75,7 +75,7 @@ This can be overriden by inheritance in case if custom behaviour is required." (
   `((defcallback dispatch-bind-ffi :void ((client :pointer) (data :pointer) (version :uint) (id :uint))
 	(let* ((client (wl::get-client client))
 	       (global (wl::get-data data)))
-	  (funcall 'dispatch-bind global client (null-pointer) version id)))))
+	  (when client (funcall 'dispatch-bind global client (null-pointer) version id))))))
 
 ;; TODO: This is a bit annoying - since it loosly refers to the args symbol
 (defun gen-c-arg-selector (arg index)

@@ -66,7 +66,9 @@
 (defmethod dispatch-event-loop ((display display)) (event-loop-dispatch (event-loop display) 0))
 (defmethod flush-clients ((display display)) (display-flush-clients (display-ptr display)))
 (defmethod all-clients ((display display)) (alexandria:hash-table-values (clients display)))
-(defmethod rem-client ((display display) client) (remhash (pid client) (clients display)))
+(defmethod rem-client ((display display) client)
+  (format t "REMOVING CLIENT ~a~%" (pointer-address (ptr client)))
+  (remhash (pointer-address (ptr client)) (clients display)))
 
 ;; TODO: This could also clean up some of the resources and close client connections
 ;; Gracefully. Maybe need to also do a notify for all globals/objects that they are being
@@ -151,20 +153,19 @@ Created object also gets added to the client object tracking hash-table."
 (defclass client ()
   ((objects :initform (make-hash-table :test 'eq) :accessor objects)
    (display :initarg :display :reader get-display)
+   ;; TODO: Possibly removable - trying to use PTR instead now
    (pid :initarg :pid :reader pid)
    (ptr :initarg :ptr :reader ptr)))
 
+;; TODO: Possibly removable - trying to use PTR instead now
 (defun client-get-credentials (client)
   (with-foreign-objects ((pid :int) (uid :int) (gid :int))
     (wl-ffi::client-get-credentials client pid uid gid)
     (values (mem-aref pid :int) (mem-aref uid :int) (mem-aref gid :int))))
 
-(defun get-client (client)
-  (let* ((pid (client-get-credentials client))
-	 (client (gethash pid (clients *display-singleton*))))
-    ;; TODO: Somehow the pid isn't always there and reliable. Need to figure out why.
-    ;; Prime example is firefox, which does something weird
-    (unless client (error (format nil "No client found for pid ~a" pid)))
+(defun get-client (client-ptr)
+  (let* ((client (gethash (pointer-address client-ptr) (clients *display-singleton*))))
+    (unless client (format t "No client found for ptr ~a~%" (pointer-address client-ptr)))
     client))
 
 ;; I have no idea what the second argument to this is. Wouldn't touch any more than necessary.
@@ -181,7 +182,6 @@ Created object also gets added to the client object tracking hash-table."
 This will in essence forward the client to the libwayland implementation
 and set up the client object in the lisp world for further referencing."
   (let* ((client (client-create (display-ptr display) fd))
-	 (pid (client-get-credentials client))
 	 (destructo-struct (foreign-alloc '(:struct wl_listener))))
 
     (setf (foreign-slot-value destructo-struct '(:struct wl_listener) 'wl-ffi::link)
@@ -189,8 +189,9 @@ and set up the client object in the lisp world for further referencing."
     (setf (foreign-slot-value destructo-struct '(:struct wl_listener) 'wl-ffi::notify)
 	  (callback client-destroy-cb))
 
-    (client-add-destroy-listener client destructo-struct)
-    (let ((client (setf (gethash pid (clients display)) (make-instance class :display display :ptr client :pid pid))))
+    (client-add-destroy-late-listener client destructo-struct)
+    (format t "Creating client with ptr ~a~%" (pointer-address client))
+    (let ((client (setf (gethash (pointer-address client) (clients display)) (make-instance class :display display :ptr client))))
       (setf (gethash (pointer-address destructo-struct) *destroy-tracker*) client))))
 
 (defmethod iface ((client client) id)
