@@ -9,7 +9,7 @@
   (:use #:cl #:cffi #:wl-ffi)
   (:nicknames :wl)
   (:export create-client mk-if up-if iface init-interface-definitions
-	   object get-display client version id ptr destroy add-destroy-callback
+	   object get-display client version version-want id ptr destroy add-destroy-callback
 	   global dispatch-impl
 	   client objects get-display ptr rem-client
 	   display dispatch-event-loop event-loop-fd flush-clients display-ptr all-clients destroy))
@@ -89,6 +89,7 @@
   ((display :initarg :display :reader get-display)
    (client :initarg :client :reader client)
    (global :initarg :global :reader global)
+   (version-want :initarg :version-want :reader version-want)
    (version :initarg :version :reader version)
    ;; TODO: This one is now for the most part moved to ${interface-name}-id
    ;; There are still some stragglers
@@ -117,7 +118,11 @@
   "Convenience method to create a new interface using the context of the creating object as reference.
 Reuses the display and client fields of the reference object.
 Created object also gets added to the client object tracking hash-table."
-  (let ((object (apply #'make-instance class :display (get-display object) :client (client object) :id id args)))
+  (let* ((version (getf args :version-want))
+	 (object (apply #'make-instance class :display (get-display object)
+				  :client (client object) :id id
+				  :version-want (or version (version-want object))
+				  args)))
     (setf (gethash (transient-id object) (objects (client object))) object)))
 
 (defmethod up-if (class (object object) id &rest args)

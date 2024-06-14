@@ -68,7 +68,7 @@
       ,(format nil "Default bind implementation for the ~a global object.
 This can be overriden by inheritance in case if custom behaviour is required." (name interface))
       (wl::debug-log! "Binding ~a~%" ,(name interface))
-      (let ((bound (make-instance (wl::dispatch-impl global) :display (wl::get-display client) :client client :id id :global global)))
+      (let ((bound (make-instance (wl::dispatch-impl global) :display (wl::get-display client) :client client :id id :global global :version-want version)))
 	(setf (wl::iface client id) bound)))))
 
 (defun gen-bind-c-callback ()

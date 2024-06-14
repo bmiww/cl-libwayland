@@ -659,7 +659,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
-                        :GLOBAL GLOBAL)))
+                        :GLOBAL GLOBAL :VERSION-WANT VERSION)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -891,7 +891,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
-                        :GLOBAL GLOBAL)))
+                        :GLOBAL GLOBAL :VERSION-WANT VERSION)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -1034,7 +1034,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
-                        :GLOBAL GLOBAL)))
+                        :GLOBAL GLOBAL :VERSION-WANT VERSION)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -1195,7 +1195,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
-                        :GLOBAL GLOBAL)))
+                        :GLOBAL GLOBAL :VERSION-WANT VERSION)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -1409,7 +1409,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
-                        :GLOBAL GLOBAL)))
+                        :GLOBAL GLOBAL :VERSION-WANT VERSION)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -1831,7 +1831,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
-                        :GLOBAL GLOBAL)))
+                        :GLOBAL GLOBAL :VERSION-WANT VERSION)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -2003,7 +2003,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
-                        :GLOBAL GLOBAL)))
+                        :GLOBAL GLOBAL :VERSION-WANT VERSION)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -2331,7 +2331,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
-                        :GLOBAL GLOBAL)))
+                        :GLOBAL GLOBAL :VERSION-WANT VERSION)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -2652,7 +2652,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
-                        :GLOBAL GLOBAL)))
+                        :GLOBAL GLOBAL :VERSION-WANT VERSION)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -3042,7 +3042,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
-                        :GLOBAL GLOBAL)))
+                        :GLOBAL GLOBAL :VERSION-WANT VERSION)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -3252,7 +3252,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
-                        :GLOBAL GLOBAL)))
+                        :GLOBAL GLOBAL :VERSION-WANT VERSION)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -3424,7 +3424,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
-                        :GLOBAL GLOBAL)))
+                        :GLOBAL GLOBAL :VERSION-WANT VERSION)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -3997,7 +3997,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
-                        :GLOBAL GLOBAL)))
+                        :GLOBAL GLOBAL :VERSION-WANT VERSION)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -4599,7 +4599,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
-                        :GLOBAL GLOBAL)))
+                        :GLOBAL GLOBAL :VERSION-WANT VERSION)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -4882,7 +4882,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
-                        :GLOBAL GLOBAL)))
+                        :GLOBAL GLOBAL :VERSION-WANT VERSION)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -5469,7 +5469,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
-                        :GLOBAL GLOBAL)))
+                        :GLOBAL GLOBAL :VERSION-WANT VERSION)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -5850,7 +5850,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
-                        :GLOBAL GLOBAL)))
+                        :GLOBAL GLOBAL :VERSION-WANT VERSION)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -6203,7 +6203,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
-                        :GLOBAL GLOBAL)))
+                        :GLOBAL GLOBAL :VERSION-WANT VERSION)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -6590,7 +6590,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
-                        :GLOBAL GLOBAL)))
+                        :GLOBAL GLOBAL :VERSION-WANT VERSION)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -6801,7 +6801,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
-                        :GLOBAL GLOBAL)))
+                        :GLOBAL GLOBAL :VERSION-WANT VERSION)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -7024,7 +7024,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
-                        :GLOBAL GLOBAL)))
+                        :GLOBAL GLOBAL :VERSION-WANT VERSION)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
@@ -7372,7 +7372,7 @@ This can be overriden by inheritance in case if custom behaviour is required."
   (LET ((BOUND
          (MAKE-INSTANCE (CL-WL:DISPATCH-IMPL GLOBAL) :DISPLAY
                         (CL-WL:GET-DISPLAY CLIENT) :CLIENT CLIENT :ID ID
-                        :GLOBAL GLOBAL)))
+                        :GLOBAL GLOBAL :VERSION-WANT VERSION)))
     (SETF (CL-WL:IFACE CLIENT ID) BOUND)))
 
 (DEFCALLBACK DISPATCH-BIND-FFI :VOID
