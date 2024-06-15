@@ -194,7 +194,7 @@ and set up the client object in the lisp world for further referencing."
     (setf (foreign-slot-value destructo-struct '(:struct wl_listener) 'wl-ffi::notify)
 	  (callback client-destroy-cb))
 
-    (client-add-destroy-late-listener client destructo-struct)
+    (client-add-destroy-listener client destructo-struct)
     (format t "Creating client with ptr ~a~%" (pointer-address client))
     (let ((client (setf (gethash (pointer-address client) (clients display)) (make-instance class :display display :ptr client))))
       (setf (gethash (pointer-address destructo-struct) *destroy-tracker*) client))))
