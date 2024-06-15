@@ -350,7 +350,7 @@ argument feed."
 	   (wl::remove-resource (pointer-address resource-ptr)))))
      (if (has-destroy-request interface)
 	 `((defmethod destroy ((dispatch dispatch)) (wl::destroy dispatch))
-	   (defmethod destroy (empty) (print "Resource already destroyed")))
+	   (defmethod destroy (empty) ()))
 	 nil)
      (gen-interface-c-structs interface)
      (gen-dispatcher-c-callback interface)

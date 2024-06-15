@@ -78,7 +78,7 @@ Clients can use this interface to assign the surface_layer role to
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH)) (CL-WL:DESTROY DISPATCH))
 
-(DEFMETHOD DESTROY (EMPTY) (PRINT "Resource already destroyed"))
+(DEFMETHOD DESTROY (EMPTY) ())
 
 (PUSHNEW
  (LIST "zwlr_layer_shell_v1"
@@ -338,7 +338,7 @@ An interface that may be implemented by a wl_surface, for surfaces that
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH)) (CL-WL:DESTROY DISPATCH))
 
-(DEFMETHOD DESTROY (EMPTY) (PRINT "Resource already destroyed"))
+(DEFMETHOD DESTROY (EMPTY) ())
 
 (PUSHNEW
  (LIST "zwlr_layer_surface_v1" (LIST "xdg_popup")
@@ -776,4 +776,3 @@ This can be overriden by inheritance in case if custom behaviour is required."
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
                                     CL-WL::*GLOBAL-TRACKER*)
                              GLOBAL))))
-
