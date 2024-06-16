@@ -6,7 +6,7 @@
   :VERSION
   "0.0.1"
   :DEPENDS-ON
-  (#:CFFI #:CL-ASYNC #:CL-WL #:CL-WL.FFI #:CL-WL.XDG-SHELL)
+  (#:CFFI #:CL-WL #:CL-WL.FFI #:CL-WL.XDG-SHELL)
   :COMPONENTS
   ((:FILE "cl-wl.xdg-decoration")))
 

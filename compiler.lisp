@@ -409,7 +409,7 @@ argument feed."
      :serial t
      :license "GPLv3"
      :version "0.0.1"
-     :depends-on (#:cffi #:cl-async #:cl-wl #:cl-wl.ffi ,@(mapcar (lambda (dep) (symbolify "#:cl-wl.~a" dep)) deps))
+     :depends-on (#:cffi #:cl-wl #:cl-wl.ffi ,@(mapcar (lambda (dep) (symbolify "#:cl-wl.~a" dep)) deps))
      :components ((:file ,file)))))
 
 (defun symbolify-extract (target-string start end match-start match-end reg-starts reg-ends)

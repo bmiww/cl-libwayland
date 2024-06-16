@@ -6,7 +6,7 @@
   :VERSION
   "0.0.1"
   :DEPENDS-ON
-  (#:CFFI #:CL-ASYNC #:CL-WL #:CL-WL.FFI #:CL-WL.WAYLAND-CORE
+  (#:CFFI #:CL-WL #:CL-WL.FFI #:CL-WL.WAYLAND-CORE
    #:CL-WL.XDG-SHELL)
   :COMPONENTS
   ((:FILE "cl-wl.zwlr-layer-shell")))

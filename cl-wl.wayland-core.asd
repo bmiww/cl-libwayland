@@ -6,7 +6,7 @@
   :VERSION
   "0.0.1"
   :DEPENDS-ON
-  (#:CFFI #:CL-ASYNC #:CL-WL #:CL-WL.FFI)
+  (#:CFFI #:CL-WL #:CL-WL.FFI)
   :COMPONENTS
   ((:FILE "cl-wl.wayland-core")))
 
