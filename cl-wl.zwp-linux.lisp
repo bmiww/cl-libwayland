@@ -161,7 +161,7 @@ Following the interfaces from:
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH)) (CL-WL:DESTROY DISPATCH))
 
-(DEFMETHOD DESTROY (EMPTY) ())
+(DEFMETHOD DESTROY (EMPTY) NIL)
 
 (PUSHNEW
  (LIST "zwp_linux_dmabuf_v1"
@@ -510,7 +510,7 @@ This temporary object is a collection of dmabufs and other
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH)) (CL-WL:DESTROY DISPATCH))
 
-(DEFMETHOD DESTROY (EMPTY) ())
+(DEFMETHOD DESTROY (EMPTY) NIL)
 
 (PUSHNEW
  (LIST "zwp_linux_buffer_params_v1" (LIST "wl_buffer")
@@ -890,7 +890,7 @@ This object advertises dmabuf parameters feedback. This includes the
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH)) (CL-WL:DESTROY DISPATCH))
 
-(DEFMETHOD DESTROY (EMPTY) ())
+(DEFMETHOD DESTROY (EMPTY) NIL)
 
 (PUSHNEW
  (LIST "zwp_linux_dmabuf_feedback_v1" (LIST)
@@ -1237,3 +1237,4 @@ This can be overriden by inheritance in case if custom behaviour is required."
                      (SETF (GETHASH (POINTER-ADDRESS GLOBAL-PTR)
                                     CL-WL::*GLOBAL-TRACKER*)
                              GLOBAL))))
+
