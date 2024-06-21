@@ -6,7 +6,8 @@
   :VERSION
   "0.0.1"
   :DEPENDS-ON
-  (#:CFFI #:CL-WL #:CL-WL.FFI #:CL-WL.WAYLAND-CORE)
+  (#:CFFI #:CL-WL #:CL-WL.FFI #:CL-WL.WAYLAND-CORE
+   #:CL-WL.TEXT-INPUT)
   :COMPONENTS
   ((:FILE "cl-wl.input-method")))
 

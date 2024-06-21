@@ -448,8 +448,10 @@ argument feed."
 			      :deps '("wayland-core"))
     (generate-wayland-classes 'xdg-decoration  (fname "xmls/xdg-decoration-unstable-v1.xml")
 			      :deps '("xdg-shell"))
+    (generate-wayland-classes 'text-input (fname "xmls/text-input-unstable-v3.xml")
+			      :deps '("wayland-core"))
     (generate-wayland-classes 'input-method (fname "xmls/input-method-unstable-v2.xml")
-			      :deps '("wayland-core"))))
+			      :deps '("wayland-core" "text-input"))))
 
 ;; ┬ ┬┌┬┐┬┬
 ;; │ │ │ ││
