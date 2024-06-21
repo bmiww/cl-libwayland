@@ -447,7 +447,9 @@ argument feed."
     (generate-wayland-classes 'virtual-keyboard  (fname "xmls/virtual-keyboard-unstable-v1.xml")
 			      :deps '("wayland-core"))
     (generate-wayland-classes 'xdg-decoration  (fname "xmls/xdg-decoration-unstable-v1.xml")
-			      :deps '("xdg-shell"))))
+			      :deps '("xdg-shell"))
+    (generate-wayland-classes 'input-method (fname "xmls/input-method-unstable-v2.xml")
+			      :deps '("wayland-core"))))
 
 ;; ┬ ┬┌┬┐┬┬
 ;; │ │ │ ││
