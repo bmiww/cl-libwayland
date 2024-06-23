@@ -60,14 +60,15 @@ The virtual keyboard provides an application with requests which emulate
 (DEFGENERIC DESTROY
     (RESOURCE))
 
-(DEFMETHOD CL-WL:DESTROY :AFTER ((DISPATCH DISPATCH))
+(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
                      "zwp_virtual_keyboard_v1")
   (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
     (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK DISPATCH)
           DO (FUNCALL CALLBACK DISPATCH)))
   (LET ((RESOURCE-PTR (ZWP_VIRTUAL_KEYBOARD_V1-PTR DISPATCH)))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR))))
+    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
+  (CL-WL::DN-IF DISPATCH))
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH)) (CL-WL:DESTROY DISPATCH))
 
@@ -307,7 +308,7 @@ A virtual keyboard manager allows an application to provide keyboard
 (DEFGENERIC CREATE-VIRTUAL-KEYBOARD
     (RESOURCE SEAT ID))
 
-(DEFMETHOD CL-WL:DESTROY :AFTER ((DISPATCH DISPATCH))
+(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
   (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
                      "zwp_virtual_keyboard_manager_v1")
   (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
@@ -315,7 +316,8 @@ A virtual keyboard manager allows an application to provide keyboard
           DO (FUNCALL CALLBACK DISPATCH)))
   (LET ((RESOURCE-PTR
          (ZWP_VIRTUAL_KEYBOARD_MANAGER_V1-PTR DISPATCH)))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR))))
+    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
+  (CL-WL::DN-IF DISPATCH))
 
 (PUSHNEW
  (LIST "zwp_virtual_keyboard_manager_v1"

@@ -37,7 +37,17 @@
 
 (defun remove-resource (pointer)
   (if pointer
-      (remhash pointer *resource-tracker*)
+      (progn
+	;; (let ((stuff (gethash pointer *resource-tracker*)))
+	  ;; (when (typep stuff 'smuks::popup)
+	    ;; (format t "Removing ~a~%" pointer)
+	    ;; (format t "XDG_POPUP-PTR: ~a~%" (pointer-address  (xdg-popup::xdg_popup-ptr stuff)))
+	    ;; (format t "XDG_SURFACE-PTR: ~a~%" (pointer-address (xdg-surface::xdg_surface-ptr stuff)))
+	    ;; (format t "WL_SURFACE-PTR: ~a~%" (pointer-address (wl-surface::wl_surface-ptr stuff)))
+	    ;; (describe stuff)
+	    ;; (when (eq (pointer-address (wl-surface::wl_surface-ptr stuff)) pointer)
+	      ;; (break))))
+	(remhash pointer *resource-tracker*))
       (format t "Resource already removed~a~%" pointer)))
 
 ;; ┌┬┐┬┌─┐┌─┐┬  ┌─┐┬ ┬
@@ -89,6 +99,7 @@
   ((display :initarg :display :reader get-display)
    (client :initarg :client :reader client)
    (global :initarg :global :reader global)
+   (upgrade-hierarchy :initform nil :accessor upgrade-hierarchy)
    (version-want :initarg :version-want :reader version-want)
    (version :initarg :version :reader version)
    ;; TODO: This one is now for the most part moved to ${interface-name}-id
@@ -123,14 +134,23 @@ Created object also gets added to the client object tracking hash-table."
 				  :client (client object) :id id
 				  :version-want (or version (version-want object))
 				  args)))
+    (setf (upgrade-hierarchy object) (list class))
     (setf (gethash (transient-id object) (objects (client object))) object)))
 
 (defmethod up-if (class (object object) id &rest args)
   "Convenience method to update an existing interface using the context of the creating object as reference.
 Reuses the display and client fields of the reference object.
 Created object also gets added to the client object tracking hash-table."
+  (setf (upgrade-hierarchy object) (cons class (upgrade-hierarchy object)))
   (let ((new-obj (apply #'change-class object class :id id args)))
     (setf (gethash id (objects (client object))) new-obj)))
+
+(defmethod dn-if ((object object))
+  "Convenience method to downgrade an existing interface to it's previous class type"
+  (let* ((downgrade (member (class-name (class-of object)) (upgrade-hierarchy object))))
+    (when (cadr downgrade)
+      (setf (upgrade-hierarchy object) (cdr downgrade))
+      (funcall #'change-class object (cadr downgrade)))))
 
 (defclass global (object)
   ((dispatch-impl :initarg :dispatch-impl :reader dispatch-impl)
