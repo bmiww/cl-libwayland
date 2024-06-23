@@ -37,17 +37,7 @@
 
 (defun remove-resource (pointer)
   (if pointer
-      (progn
-	;; (let ((stuff (gethash pointer *resource-tracker*)))
-	  ;; (when (typep stuff 'smuks::popup)
-	    ;; (format t "Removing ~a~%" pointer)
-	    ;; (format t "XDG_POPUP-PTR: ~a~%" (pointer-address  (xdg-popup::xdg_popup-ptr stuff)))
-	    ;; (format t "XDG_SURFACE-PTR: ~a~%" (pointer-address (xdg-surface::xdg_surface-ptr stuff)))
-	    ;; (format t "WL_SURFACE-PTR: ~a~%" (pointer-address (wl-surface::wl_surface-ptr stuff)))
-	    ;; (describe stuff)
-	    ;; (when (eq (pointer-address (wl-surface::wl_surface-ptr stuff)) pointer)
-	      ;; (break))))
-	(remhash pointer *resource-tracker*))
+      (remhash pointer *resource-tracker*)
       (format t "Resource already removed~a~%" pointer)))
 
 ;; ┌┬┐┬┌─┐┌─┐┬  ┌─┐┬ ┬
