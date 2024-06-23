@@ -452,7 +452,9 @@ argument feed."
     (generate-wayland-classes 'text-input (fname "xmls/text-input-unstable-v3.xml")
 			      :deps '("wayland-core"))
     (generate-wayland-classes 'input-method (fname "xmls/input-method-unstable-v2.xml")
-			      :deps '("wayland-core" "text-input"))))
+			      :deps '("wayland-core" "text-input"))
+    (generate-wayland-classes 'xwayland (fname "xmls/xwayland-shell-v1.xml")
+			      :deps '("wayland-core"))))
 
 ;; ┬ ┬┌┬┐┬┬
 ;; │ │ │ ││
