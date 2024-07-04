@@ -8,7 +8,7 @@
 (defpackage #:cl-wl
   (:use #:cl #:cffi #:wl-ffi)
   (:nicknames :wl)
-  (:export create-client mk-if up-if iface init-interface-definitions
+  (:export create-client destroy-client mk-if up-if iface init-interface-definitions
 	   object get-display client version version-want id ptr destroy add-destroy-callback
 	   global dispatch-impl
 	   client objects get-display ptr rem-client
@@ -67,7 +67,7 @@
 (defmethod flush-clients ((display display)) (display-flush-clients (display-ptr display)))
 (defmethod all-clients ((display display)) (alexandria:hash-table-values (clients display)))
 (defmethod rem-client ((display display) client)
-  (format t "REMOVING CLIENT ~a~%" (pointer-address (ptr client)))
+  (clear-client-objects client)
   (remhash (pointer-address (ptr client)) (clients display)))
 
 ;; TODO: This could also clean up some of the resources and close client connections
@@ -183,11 +183,9 @@ Created object also gets added to the client object tracking hash-table."
     (unless client (format t "No client found for ptr ~a~%" (pointer-address client-ptr)))
     client))
 
-;; I have no idea what the second argument to this is. Wouldn't touch any more than necessary.
 (defcallback client-destroy-cb :void ((listener :pointer) (data :pointer))
   (declare (ignore data))
   (let* ((client (gethash (pointer-address listener) *destroy-tracker*)))
-    (clear-client-objects client)
     (rem-client (get-display client) client)
     (remhash (pointer-address listener) *destroy-tracker*)
     (foreign-free listener)))
@@ -205,7 +203,6 @@ and set up the client object in the lisp world for further referencing."
 	  (callback client-destroy-cb))
 
     (client-add-destroy-listener client destructo-struct)
-    (format t "Creating client with ptr ~a~%" (pointer-address client))
     (let ((client (setf (gethash (pointer-address client) (clients display)) (make-instance class :display display :ptr client))))
       (setf (gethash (pointer-address destructo-struct) *destroy-tracker*) client))))
 
@@ -222,6 +219,10 @@ and set up the client object in the lisp world for further referencing."
 	     (declare (ignore id))
 	     (destroy iface))
 	   (objects client)))
+
+(defmethod destroy-client ((client client))
+  (rem-client (get-display client) client)
+  (%client-destroy (ptr client)))
 
 ;; ┌┬┐┌─┐┌┬┐┌─┐
 ;;  ││├─┤ │ ├─┤
