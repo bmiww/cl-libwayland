@@ -350,75 +350,102 @@ An input method object allows for clients to compose text.
   (ARGS :POINTER))
  (DECLARE (IGNORE DATA MESSAGE))
  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-   (ECASE OPCODE
-     (0
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "zwp_input_method_v2"
-                         "commit-string")
-      (FUNCALL 'COMMIT-STRING RESOURCE
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::S))))
-     (1
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "zwp_input_method_v2"
-                         "set-preedit-string")
-      (FUNCALL 'SET-PREEDIT-STRING RESOURCE
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::S))
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))
-     (2
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "zwp_input_method_v2"
-                         "delete-surrounding-text")
-      (FUNCALL 'DELETE-SURROUNDING-TEXT RESOURCE
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
-     (3
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "zwp_input_method_v2" "commit")
-      (FUNCALL 'COMMIT RESOURCE
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
-     (4
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "zwp_input_method_v2"
-                         "get-input-popup-surface")
-      (FUNCALL 'GET-INPUT-POPUP-SURFACE RESOURCE
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))
-               (GETHASH
-                (POINTER-ADDRESS
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                CL-WL::*RESOURCE-TRACKER*)))
-     (5
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "zwp_input_method_v2"
-                         "grab-keyboard")
-      (FUNCALL 'GRAB-KEYBOARD RESOURCE
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))))
-     (6
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "zwp_input_method_v2" "destroy")
-      (FUNCALL 'DESTROY RESOURCE))))
+   (RESTART-CASE (ECASE OPCODE
+                   (0
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "zwp_input_method_v2" "commit-string")
+                    (FUNCALL 'COMMIT-STRING RESOURCE
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::S))))
+                   (1
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "zwp_input_method_v2"
+                                       "set-preedit-string")
+                    (FUNCALL 'SET-PREEDIT-STRING RESOURCE
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::S))
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                1)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::I))
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                2)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::I))))
+                   (2
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "zwp_input_method_v2"
+                                       "delete-surrounding-text")
+                    (FUNCALL 'DELETE-SURROUNDING-TEXT RESOURCE
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::U))
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                1)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::U))))
+                   (3
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "zwp_input_method_v2" "commit")
+                    (FUNCALL 'COMMIT RESOURCE
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::U))))
+                   (4
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "zwp_input_method_v2"
+                                       "get-input-popup-surface")
+                    (FUNCALL 'GET-INPUT-POPUP-SURFACE RESOURCE
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::N))
+                             (GETHASH
+                              (POINTER-ADDRESS
+                               (FOREIGN-SLOT-VALUE
+                                (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                 1)
+                                '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                'WL-FFI::O))
+                              CL-WL::*RESOURCE-TRACKER*)))
+                   (5
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "zwp_input_method_v2" "grab-keyboard")
+                    (FUNCALL 'GRAB-KEYBOARD RESOURCE
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::N))))
+                   (6
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "zwp_input_method_v2" "destroy")
+                    (FUNCALL 'DESTROY RESOURCE)))
+     (KILL-CLIENT NIL :REPORT "Kill the client causing errors"
+      (CL-WL:DESTROY-CLIENT (CL-WL:CLIENT RESOURCE)) 0)))
  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
@@ -672,11 +699,13 @@ This interface marks a surface as a popup for interacting with an input
   (ARGS :POINTER))
  (DECLARE (IGNORE DATA MESSAGE ARGS))
  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-   (ECASE OPCODE
-     (0
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "zwp_input_popup_surface_v2"
-                         "destroy")
-      (FUNCALL 'DESTROY RESOURCE))))
+   (RESTART-CASE (ECASE OPCODE
+                   (0
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "zwp_input_popup_surface_v2" "destroy")
+                    (FUNCALL 'DESTROY RESOURCE)))
+     (KILL-CLIENT NIL :REPORT "Kill the client causing errors"
+      (CL-WL:DESTROY-CLIENT (CL-WL:CLIENT RESOURCE)) 0)))
  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
@@ -895,11 +924,14 @@ The zwp_input_method_keyboard_grab_v2 interface represents an exclusive
   (ARGS :POINTER))
  (DECLARE (IGNORE DATA MESSAGE ARGS))
  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-   (ECASE OPCODE
-     (0
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
-                         "zwp_input_method_keyboard_grab_v2" "release")
-      (FUNCALL 'RELEASE RESOURCE))))
+   (RESTART-CASE (ECASE OPCODE
+                   (0
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "zwp_input_method_keyboard_grab_v2"
+                                       "release")
+                    (FUNCALL 'RELEASE RESOURCE)))
+     (KILL-CLIENT NIL :REPORT "Kill the client causing errors"
+      (CL-WL:DESTROY-CLIENT (CL-WL:CLIENT RESOURCE)) 0)))
  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
@@ -1142,25 +1174,32 @@ The input method manager allows the client to become the input method on
   (ARGS :POINTER))
  (DECLARE (IGNORE DATA MESSAGE))
  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-   (ECASE OPCODE
-     (0
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "zwp_input_method_manager_v2"
-                         "get-input-method")
-      (FUNCALL 'GET-INPUT-METHOD RESOURCE
-               (GETHASH
-                (POINTER-ADDRESS
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                CL-WL::*RESOURCE-TRACKER*)
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))))
-     (1
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "zwp_input_method_manager_v2"
-                         "destroy")
-      (FUNCALL 'DESTROY RESOURCE))))
+   (RESTART-CASE (ECASE OPCODE
+                   (0
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "zwp_input_method_manager_v2"
+                                       "get-input-method")
+                    (FUNCALL 'GET-INPUT-METHOD RESOURCE
+                             (GETHASH
+                              (POINTER-ADDRESS
+                               (FOREIGN-SLOT-VALUE
+                                (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                 0)
+                                '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                'WL-FFI::O))
+                              CL-WL::*RESOURCE-TRACKER*)
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                1)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::N))))
+                   (1
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "zwp_input_method_manager_v2" "destroy")
+                    (FUNCALL 'DESTROY RESOURCE)))
+     (KILL-CLIENT NIL :REPORT "Kill the client causing errors"
+      (CL-WL:DESTROY-CLIENT (CL-WL:CLIENT RESOURCE)) 0)))
  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))

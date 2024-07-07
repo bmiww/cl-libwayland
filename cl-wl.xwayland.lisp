@@ -134,24 +134,32 @@ xwayland_shell_v1 is a singleton global object that
   (ARGS :POINTER))
  (DECLARE (IGNORE DATA MESSAGE))
  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-   (ECASE OPCODE
-     (0
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xwayland_shell_v1" "destroy")
-      (FUNCALL 'DESTROY RESOURCE))
-     (1
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xwayland_shell_v1"
-                         "get-xwayland-surface")
-      (FUNCALL 'GET-XWAYLAND-SURFACE RESOURCE
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))
-               (GETHASH
-                (POINTER-ADDRESS
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                CL-WL::*RESOURCE-TRACKER*)))))
+   (RESTART-CASE (ECASE OPCODE
+                   (0
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "xwayland_shell_v1" "destroy")
+                    (FUNCALL 'DESTROY RESOURCE))
+                   (1
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "xwayland_shell_v1"
+                                       "get-xwayland-surface")
+                    (FUNCALL 'GET-XWAYLAND-SURFACE RESOURCE
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::N))
+                             (GETHASH
+                              (POINTER-ADDRESS
+                               (FOREIGN-SLOT-VALUE
+                                (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                 1)
+                                '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                'WL-FFI::O))
+                              CL-WL::*RESOURCE-TRACKER*))))
+     (KILL-CLIENT NIL :REPORT "Kill the client causing errors"
+      (CL-WL:DESTROY-CLIENT (CL-WL:CLIENT RESOURCE)) 0)))
  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
@@ -332,22 +340,29 @@ An Xwayland surface is a surface managed by an Xwayland server.
   (ARGS :POINTER))
  (DECLARE (IGNORE DATA MESSAGE))
  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-   (ECASE OPCODE
-     (0
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xwayland_surface_v1"
-                         "set-serial")
-      (FUNCALL 'SET-SERIAL RESOURCE
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
-     (1
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xwayland_surface_v1" "destroy")
-      (FUNCALL 'DESTROY RESOURCE))))
+   (RESTART-CASE (ECASE OPCODE
+                   (0
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "xwayland_surface_v1" "set-serial")
+                    (FUNCALL 'SET-SERIAL RESOURCE
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::U))
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                1)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::U))))
+                   (1
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "xwayland_surface_v1" "destroy")
+                    (FUNCALL 'DESTROY RESOURCE)))
+     (KILL-CLIENT NIL :REPORT "Kill the client causing errors"
+      (CL-WL:DESTROY-CLIENT (CL-WL:CLIENT RESOURCE)) 0)))
  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))

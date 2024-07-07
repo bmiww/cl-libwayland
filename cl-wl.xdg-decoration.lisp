@@ -146,25 +146,32 @@ This interface allows a compositor to announce support for server-side
   (ARGS :POINTER))
  (DECLARE (IGNORE DATA MESSAGE))
  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-   (ECASE OPCODE
-     (0
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "zxdg_decoration_manager_v1"
-                         "destroy")
-      (FUNCALL 'DESTROY RESOURCE))
-     (1
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "zxdg_decoration_manager_v1"
-                         "get-toplevel-decoration")
-      (FUNCALL 'GET-TOPLEVEL-DECORATION RESOURCE
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))
-               (GETHASH
-                (POINTER-ADDRESS
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                CL-WL::*RESOURCE-TRACKER*)))))
+   (RESTART-CASE (ECASE OPCODE
+                   (0
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "zxdg_decoration_manager_v1" "destroy")
+                    (FUNCALL 'DESTROY RESOURCE))
+                   (1
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "zxdg_decoration_manager_v1"
+                                       "get-toplevel-decoration")
+                    (FUNCALL 'GET-TOPLEVEL-DECORATION RESOURCE
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::N))
+                             (GETHASH
+                              (POINTER-ADDRESS
+                               (FOREIGN-SLOT-VALUE
+                                (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                 1)
+                                '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                'WL-FFI::O))
+                              CL-WL::*RESOURCE-TRACKER*))))
+     (KILL-CLIENT NIL :REPORT "Kill the client causing errors"
+      (CL-WL:DESTROY-CLIENT (CL-WL:CLIENT RESOURCE)) 0)))
  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
@@ -362,23 +369,29 @@ The decoration object allows the compositor to toggle server-side window
   (ARGS :POINTER))
  (DECLARE (IGNORE DATA MESSAGE))
  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-   (ECASE OPCODE
-     (0
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "zxdg_toplevel_decoration_v1"
-                         "destroy")
-      (FUNCALL 'DESTROY RESOURCE))
-     (1
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "zxdg_toplevel_decoration_v1"
-                         "set-mode")
-      (FUNCALL 'SET-MODE RESOURCE
-               (MODE-FROM-VALUE
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
-     (2
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "zxdg_toplevel_decoration_v1"
-                         "unset-mode")
-      (FUNCALL 'UNSET-MODE RESOURCE))))
+   (RESTART-CASE (ECASE OPCODE
+                   (0
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "zxdg_toplevel_decoration_v1" "destroy")
+                    (FUNCALL 'DESTROY RESOURCE))
+                   (1
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "zxdg_toplevel_decoration_v1"
+                                       "set-mode")
+                    (FUNCALL 'SET-MODE RESOURCE
+                             (MODE-FROM-VALUE
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::U))))
+                   (2
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "zxdg_toplevel_decoration_v1"
+                                       "unset-mode")
+                    (FUNCALL 'UNSET-MODE RESOURCE)))
+     (KILL-CLIENT NIL :REPORT "Kill the client causing errors"
+      (CL-WL:DESTROY-CLIENT (CL-WL:CLIENT RESOURCE)) 0)))
  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))

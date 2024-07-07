@@ -158,62 +158,85 @@ The virtual keyboard provides an application with requests which emulate
   (ARGS :POINTER))
  (DECLARE (IGNORE DATA MESSAGE))
  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-   (ECASE OPCODE
-     (0
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "zwp_virtual_keyboard_v1"
-                         "keymap")
-      (FUNCALL 'KEYMAP RESOURCE
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::H))
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
-     (1
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "zwp_virtual_keyboard_v1" "key")
-      (FUNCALL 'KEY RESOURCE
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
-     (2
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "zwp_virtual_keyboard_v1"
-                         "modifiers")
-      (FUNCALL 'MODIFIERS RESOURCE
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
-     (3
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "zwp_virtual_keyboard_v1"
-                         "destroy")
-      (FUNCALL 'DESTROY RESOURCE))))
+   (RESTART-CASE (ECASE OPCODE
+                   (0
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "zwp_virtual_keyboard_v1" "keymap")
+                    (FUNCALL 'KEYMAP RESOURCE
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::U))
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                1)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::H))
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                2)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::U))))
+                   (1
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "zwp_virtual_keyboard_v1" "key")
+                    (FUNCALL 'KEY RESOURCE
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::U))
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                1)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::U))
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                2)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::U))))
+                   (2
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "zwp_virtual_keyboard_v1" "modifiers")
+                    (FUNCALL 'MODIFIERS RESOURCE
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::U))
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                1)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::U))
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                2)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::U))
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                3)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::U))))
+                   (3
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "zwp_virtual_keyboard_v1" "destroy")
+                    (FUNCALL 'DESTROY RESOURCE)))
+     (KILL-CLIENT NIL :REPORT "Kill the client causing errors"
+      (CL-WL:DESTROY-CLIENT (CL-WL:CLIENT RESOURCE)) 0)))
  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
@@ -366,22 +389,28 @@ A virtual keyboard manager allows an application to provide keyboard
   (ARGS :POINTER))
  (DECLARE (IGNORE DATA MESSAGE))
  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-   (ECASE OPCODE
-     (0
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
-                         "zwp_virtual_keyboard_manager_v1"
-                         "create-virtual-keyboard")
-      (FUNCALL 'CREATE-VIRTUAL-KEYBOARD RESOURCE
-               (GETHASH
-                (POINTER-ADDRESS
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                CL-WL::*RESOURCE-TRACKER*)
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))))))
+   (RESTART-CASE (ECASE OPCODE
+                   (0
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "zwp_virtual_keyboard_manager_v1"
+                                       "create-virtual-keyboard")
+                    (FUNCALL 'CREATE-VIRTUAL-KEYBOARD RESOURCE
+                             (GETHASH
+                              (POINTER-ADDRESS
+                               (FOREIGN-SLOT-VALUE
+                                (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                 0)
+                                '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                'WL-FFI::O))
+                              CL-WL::*RESOURCE-TRACKER*)
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                1)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::N)))))
+     (KILL-CLIENT NIL :REPORT "Kill the client causing errors"
+      (CL-WL:DESTROY-CLIENT (CL-WL:CLIENT RESOURCE)) 0)))
  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))

@@ -253,38 +253,51 @@ The xdg_wm_base interface is exposed as a global object enabling clients
   (ARGS :POINTER))
  (DECLARE (IGNORE DATA MESSAGE))
  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-   (ECASE OPCODE
-     (0
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_wm_base" "destroy")
-      (FUNCALL 'DESTROY RESOURCE))
-     (1
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_wm_base"
-                         "create-positioner")
-      (FUNCALL 'CREATE-POSITIONER RESOURCE
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))))
-     (2
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_wm_base" "get-xdg-surface")
-      (FUNCALL 'GET-XDG-SURFACE RESOURCE
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))
-               (GETHASH
-                (POINTER-ADDRESS
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                CL-WL::*RESOURCE-TRACKER*)))
-     (3
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_wm_base" "pong")
-      (FUNCALL 'PONG RESOURCE
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))))
+   (RESTART-CASE (ECASE OPCODE
+                   (0
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_wm_base"
+                                       "destroy")
+                    (FUNCALL 'DESTROY RESOURCE))
+                   (1
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_wm_base"
+                                       "create-positioner")
+                    (FUNCALL 'CREATE-POSITIONER RESOURCE
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::N))))
+                   (2
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_wm_base"
+                                       "get-xdg-surface")
+                    (FUNCALL 'GET-XDG-SURFACE RESOURCE
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::N))
+                             (GETHASH
+                              (POINTER-ADDRESS
+                               (FOREIGN-SLOT-VALUE
+                                (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                 1)
+                                '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                'WL-FFI::O))
+                              CL-WL::*RESOURCE-TRACKER*)))
+                   (3
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_wm_base"
+                                       "pong")
+                    (FUNCALL 'PONG RESOURCE
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::U)))))
+     (KILL-CLIENT NIL :REPORT "Kill the client causing errors"
+      (CL-WL:DESTROY-CLIENT (CL-WL:CLIENT RESOURCE)) 0)))
  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
@@ -610,97 +623,133 @@ The xdg_positioner provides a collection of rules for the placement of a
   (ARGS :POINTER))
  (DECLARE (IGNORE DATA MESSAGE))
  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-   (ECASE OPCODE
-     (0
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner" "destroy")
-      (FUNCALL 'DESTROY RESOURCE))
-     (1
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner" "set-size")
-      (FUNCALL 'SET-SIZE RESOURCE
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))
-     (2
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner"
-                         "set-anchor-rect")
-      (FUNCALL 'SET-ANCHOR-RECT RESOURCE
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))
-     (3
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner" "set-anchor")
-      (FUNCALL 'SET-ANCHOR RESOURCE
-               (ANCHOR-FROM-VALUE
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
-     (4
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner" "set-gravity")
-      (FUNCALL 'SET-GRAVITY RESOURCE
-               (GRAVITY-FROM-VALUE
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
-     (5
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner"
-                         "set-constraint-adjustment")
-      (FUNCALL 'SET-CONSTRAINT-ADJUSTMENT RESOURCE
-               (CONSTRAINT-ADJUSTMENT-FROM-VALUE
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
-     (6
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner" "set-offset")
-      (FUNCALL 'SET-OFFSET RESOURCE
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))
-     (7
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner" "set-reactive")
-      (FUNCALL 'SET-REACTIVE RESOURCE))
-     (8
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner"
-                         "set-parent-size")
-      (FUNCALL 'SET-PARENT-SIZE RESOURCE
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))
-     (9
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner"
-                         "set-parent-configure")
-      (FUNCALL 'SET-PARENT-CONFIGURE RESOURCE
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))))
+   (RESTART-CASE (ECASE OPCODE
+                   (0
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner"
+                                       "destroy")
+                    (FUNCALL 'DESTROY RESOURCE))
+                   (1
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner"
+                                       "set-size")
+                    (FUNCALL 'SET-SIZE RESOURCE
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::I))
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                1)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::I))))
+                   (2
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner"
+                                       "set-anchor-rect")
+                    (FUNCALL 'SET-ANCHOR-RECT RESOURCE
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::I))
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                1)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::I))
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                2)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::I))
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                3)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::I))))
+                   (3
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner"
+                                       "set-anchor")
+                    (FUNCALL 'SET-ANCHOR RESOURCE
+                             (ANCHOR-FROM-VALUE
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::U))))
+                   (4
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner"
+                                       "set-gravity")
+                    (FUNCALL 'SET-GRAVITY RESOURCE
+                             (GRAVITY-FROM-VALUE
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::U))))
+                   (5
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner"
+                                       "set-constraint-adjustment")
+                    (FUNCALL 'SET-CONSTRAINT-ADJUSTMENT RESOURCE
+                             (CONSTRAINT-ADJUSTMENT-FROM-VALUE
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::U))))
+                   (6
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner"
+                                       "set-offset")
+                    (FUNCALL 'SET-OFFSET RESOURCE
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::I))
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                1)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::I))))
+                   (7
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner"
+                                       "set-reactive")
+                    (FUNCALL 'SET-REACTIVE RESOURCE))
+                   (8
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner"
+                                       "set-parent-size")
+                    (FUNCALL 'SET-PARENT-SIZE RESOURCE
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::I))
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                1)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::I))))
+                   (9
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_positioner"
+                                       "set-parent-configure")
+                    (FUNCALL 'SET-PARENT-CONFIGURE RESOURCE
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::U)))))
+     (KILL-CLIENT NIL :REPORT "Kill the client causing errors"
+      (CL-WL:DESTROY-CLIENT (CL-WL:CLIENT RESOURCE)) 0)))
  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
@@ -1061,63 +1110,87 @@ An interface that may be implemented by a wl_surface, for
   (ARGS :POINTER))
  (DECLARE (IGNORE DATA MESSAGE))
  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-   (ECASE OPCODE
-     (0
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_surface" "destroy")
-      (FUNCALL 'DESTROY RESOURCE))
-     (1
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_surface" "get-toplevel")
-      (FUNCALL 'GET-TOPLEVEL RESOURCE
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))))
-     (2
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_surface" "get-popup")
-      (FUNCALL 'GET-POPUP RESOURCE
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))
-               (GETHASH
-                (POINTER-ADDRESS
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                CL-WL::*RESOURCE-TRACKER*)
-               (GETHASH
-                (POINTER-ADDRESS
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                CL-WL::*RESOURCE-TRACKER*)))
-     (3
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_surface"
-                         "set-window-geometry")
-      (FUNCALL 'SET-WINDOW-GEOMETRY RESOURCE
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))
-     (4
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_surface" "ack-configure")
-      (FUNCALL 'ACK-CONFIGURE RESOURCE
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))))
+   (RESTART-CASE (ECASE OPCODE
+                   (0
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_surface"
+                                       "destroy")
+                    (FUNCALL 'DESTROY RESOURCE))
+                   (1
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_surface"
+                                       "get-toplevel")
+                    (FUNCALL 'GET-TOPLEVEL RESOURCE
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::N))))
+                   (2
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_surface"
+                                       "get-popup")
+                    (FUNCALL 'GET-POPUP RESOURCE
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::N))
+                             (GETHASH
+                              (POINTER-ADDRESS
+                               (FOREIGN-SLOT-VALUE
+                                (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                 1)
+                                '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                'WL-FFI::O))
+                              CL-WL::*RESOURCE-TRACKER*)
+                             (GETHASH
+                              (POINTER-ADDRESS
+                               (FOREIGN-SLOT-VALUE
+                                (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                 2)
+                                '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                'WL-FFI::O))
+                              CL-WL::*RESOURCE-TRACKER*)))
+                   (3
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_surface"
+                                       "set-window-geometry")
+                    (FUNCALL 'SET-WINDOW-GEOMETRY RESOURCE
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::I))
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                1)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::I))
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                2)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::I))
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                3)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::I))))
+                   (4
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_surface"
+                                       "ack-configure")
+                    (FUNCALL 'ACK-CONFIGURE RESOURCE
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::U)))))
+     (KILL-CLIENT NIL :REPORT "Kill the client causing errors"
+      (CL-WL:DESTROY-CLIENT (CL-WL:CLIENT RESOURCE)) 0)))
  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
@@ -1604,130 +1677,177 @@ This interface defines an xdg_surface role which allows a surface to,
   (ARGS :POINTER))
  (DECLARE (IGNORE DATA MESSAGE))
  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-   (ECASE OPCODE
-     (0
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "destroy")
-      (FUNCALL 'DESTROY RESOURCE))
-     (1
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "set-parent")
-      (FUNCALL 'SET-PARENT RESOURCE
-               (GETHASH
-                (POINTER-ADDRESS
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                CL-WL::*RESOURCE-TRACKER*)))
-     (2
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "set-title")
-      (FUNCALL 'SET-TITLE RESOURCE
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::S))))
-     (3
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "set-app-id")
-      (FUNCALL 'SET-APP-ID RESOURCE
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::S))))
-     (4
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel"
-                         "show-window-menu")
-      (FUNCALL 'SHOW-WINDOW-MENU RESOURCE
-               (GETHASH
-                (POINTER-ADDRESS
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                CL-WL::*RESOURCE-TRACKER*)
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))
-     (5
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "move")
-      (FUNCALL 'MOVE RESOURCE
-               (GETHASH
-                (POINTER-ADDRESS
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                CL-WL::*RESOURCE-TRACKER*)
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
-     (6
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "resize")
-      (FUNCALL 'RESIZE RESOURCE
-               (GETHASH
-                (POINTER-ADDRESS
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                CL-WL::*RESOURCE-TRACKER*)
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))
-               (RESIZE-EDGE-FROM-VALUE
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
-     (7
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "set-max-size")
-      (FUNCALL 'SET-MAX-SIZE RESOURCE
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))
-     (8
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "set-min-size")
-      (FUNCALL 'SET-MIN-SIZE RESOURCE
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))
-     (9
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "set-maximized")
-      (FUNCALL 'SET-MAXIMIZED RESOURCE))
-     (10
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel"
-                         "unset-maximized")
-      (FUNCALL 'UNSET-MAXIMIZED RESOURCE))
-     (11
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "set-fullscreen")
-      (FUNCALL 'SET-FULLSCREEN RESOURCE
-               (GETHASH
-                (POINTER-ADDRESS
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                CL-WL::*RESOURCE-TRACKER*)))
-     (12
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel"
-                         "unset-fullscreen")
-      (FUNCALL 'UNSET-FULLSCREEN RESOURCE))
-     (13
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel" "set-minimized")
-      (FUNCALL 'SET-MINIMIZED RESOURCE))))
+   (RESTART-CASE (ECASE OPCODE
+                   (0
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel"
+                                       "destroy")
+                    (FUNCALL 'DESTROY RESOURCE))
+                   (1
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel"
+                                       "set-parent")
+                    (FUNCALL 'SET-PARENT RESOURCE
+                             (GETHASH
+                              (POINTER-ADDRESS
+                               (FOREIGN-SLOT-VALUE
+                                (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                 0)
+                                '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                'WL-FFI::O))
+                              CL-WL::*RESOURCE-TRACKER*)))
+                   (2
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel"
+                                       "set-title")
+                    (FUNCALL 'SET-TITLE RESOURCE
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::S))))
+                   (3
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel"
+                                       "set-app-id")
+                    (FUNCALL 'SET-APP-ID RESOURCE
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::S))))
+                   (4
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel"
+                                       "show-window-menu")
+                    (FUNCALL 'SHOW-WINDOW-MENU RESOURCE
+                             (GETHASH
+                              (POINTER-ADDRESS
+                               (FOREIGN-SLOT-VALUE
+                                (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                 0)
+                                '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                'WL-FFI::O))
+                              CL-WL::*RESOURCE-TRACKER*)
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                1)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::U))
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                2)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::I))
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                3)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::I))))
+                   (5
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel"
+                                       "move")
+                    (FUNCALL 'MOVE RESOURCE
+                             (GETHASH
+                              (POINTER-ADDRESS
+                               (FOREIGN-SLOT-VALUE
+                                (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                 0)
+                                '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                'WL-FFI::O))
+                              CL-WL::*RESOURCE-TRACKER*)
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                1)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::U))))
+                   (6
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel"
+                                       "resize")
+                    (FUNCALL 'RESIZE RESOURCE
+                             (GETHASH
+                              (POINTER-ADDRESS
+                               (FOREIGN-SLOT-VALUE
+                                (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                 0)
+                                '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                'WL-FFI::O))
+                              CL-WL::*RESOURCE-TRACKER*)
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                1)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::U))
+                             (RESIZE-EDGE-FROM-VALUE
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                2)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::U))))
+                   (7
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel"
+                                       "set-max-size")
+                    (FUNCALL 'SET-MAX-SIZE RESOURCE
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::I))
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                1)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::I))))
+                   (8
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel"
+                                       "set-min-size")
+                    (FUNCALL 'SET-MIN-SIZE RESOURCE
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::I))
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                1)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::I))))
+                   (9
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel"
+                                       "set-maximized")
+                    (FUNCALL 'SET-MAXIMIZED RESOURCE))
+                   (10
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel"
+                                       "unset-maximized")
+                    (FUNCALL 'UNSET-MAXIMIZED RESOURCE))
+                   (11
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel"
+                                       "set-fullscreen")
+                    (FUNCALL 'SET-FULLSCREEN RESOURCE
+                             (GETHASH
+                              (POINTER-ADDRESS
+                               (FOREIGN-SLOT-VALUE
+                                (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                 0)
+                                '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                'WL-FFI::O))
+                              CL-WL::*RESOURCE-TRACKER*)))
+                   (12
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel"
+                                       "unset-fullscreen")
+                    (FUNCALL 'UNSET-FULLSCREEN RESOURCE))
+                   (13
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_toplevel"
+                                       "set-minimized")
+                    (FUNCALL 'SET-MINIMIZED RESOURCE)))
+     (KILL-CLIENT NIL :REPORT "Kill the client causing errors"
+      (CL-WL:DESTROY-CLIENT (CL-WL:CLIENT RESOURCE)) 0)))
  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
@@ -2131,36 +2251,49 @@ A popup surface is a short-lived, temporary surface. It can be used to
   (ARGS :POINTER))
  (DECLARE (IGNORE DATA MESSAGE))
  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-   (ECASE OPCODE
-     (0
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_popup" "destroy")
-      (FUNCALL 'DESTROY RESOURCE))
-     (1
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_popup" "grab")
-      (FUNCALL 'GRAB RESOURCE
-               (GETHASH
-                (POINTER-ADDRESS
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                CL-WL::*RESOURCE-TRACKER*)
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
-     (2
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_popup" "reposition")
-      (FUNCALL 'REPOSITION RESOURCE
-               (GETHASH
-                (POINTER-ADDRESS
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                CL-WL::*RESOURCE-TRACKER*)
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))))
+   (RESTART-CASE (ECASE OPCODE
+                   (0
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_popup"
+                                       "destroy")
+                    (FUNCALL 'DESTROY RESOURCE))
+                   (1
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_popup"
+                                       "grab")
+                    (FUNCALL 'GRAB RESOURCE
+                             (GETHASH
+                              (POINTER-ADDRESS
+                               (FOREIGN-SLOT-VALUE
+                                (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                 0)
+                                '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                'WL-FFI::O))
+                              CL-WL::*RESOURCE-TRACKER*)
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                1)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::U))))
+                   (2
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "xdg_popup"
+                                       "reposition")
+                    (FUNCALL 'REPOSITION RESOURCE
+                             (GETHASH
+                              (POINTER-ADDRESS
+                               (FOREIGN-SLOT-VALUE
+                                (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                 0)
+                                '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                'WL-FFI::O))
+                              CL-WL::*RESOURCE-TRACKER*)
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                1)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::U)))))
+     (KILL-CLIENT NIL :REPORT "Kill the client causing errors"
+      (CL-WL:DESTROY-CLIENT (CL-WL:CLIENT RESOURCE)) 0)))
  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))

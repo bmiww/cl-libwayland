@@ -140,7 +140,10 @@ argument feed."
 	(declare (ignore data message ,@ignore-list))
 	,(if (requests interface)
 	     `(let ((resource (gethash (pointer-address target) wl::*resource-tracker*)))
-		(ecase opcode ,@matchers))
+		(restart-case (ecase opcode ,@matchers)
+		  (kill-client ()
+		    :report "Kill the client causing errors"
+		    (wl:destroy-client (wl:client resource)) 0)))
 	     `(error (format nil "A dispatcher without requests has been called for interface: ~a~%" ,(name interface))))
 	  0))))
 

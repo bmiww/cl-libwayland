@@ -142,38 +142,52 @@ Clients can use this interface to assign the surface_layer role to
   (ARGS :POINTER))
  (DECLARE (IGNORE DATA MESSAGE))
  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-   (ECASE OPCODE
-     (0
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "zwlr_layer_shell_v1"
-                         "get-layer-surface")
-      (FUNCALL 'GET-LAYER-SURFACE RESOURCE
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::N))
-               (GETHASH
-                (POINTER-ADDRESS
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                CL-WL::*RESOURCE-TRACKER*)
-               (GETHASH
-                (POINTER-ADDRESS
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                CL-WL::*RESOURCE-TRACKER*)
-               (LAYER-FROM-VALUE
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 4)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::S))))
-     (1
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "zwlr_layer_shell_v1" "destroy")
-      (FUNCALL 'DESTROY RESOURCE))))
+   (RESTART-CASE (ECASE OPCODE
+                   (0
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "zwlr_layer_shell_v1"
+                                       "get-layer-surface")
+                    (FUNCALL 'GET-LAYER-SURFACE RESOURCE
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::N))
+                             (GETHASH
+                              (POINTER-ADDRESS
+                               (FOREIGN-SLOT-VALUE
+                                (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                 1)
+                                '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                'WL-FFI::O))
+                              CL-WL::*RESOURCE-TRACKER*)
+                             (GETHASH
+                              (POINTER-ADDRESS
+                               (FOREIGN-SLOT-VALUE
+                                (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                 2)
+                                '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                'WL-FFI::O))
+                              CL-WL::*RESOURCE-TRACKER*)
+                             (LAYER-FROM-VALUE
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                3)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::U))
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                4)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::S))))
+                   (1
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "zwlr_layer_shell_v1" "destroy")
+                    (FUNCALL 'DESTROY RESOURCE)))
+     (KILL-CLIENT NIL :REPORT "Kill the client causing errors"
+      (CL-WL:DESTROY-CLIENT (CL-WL:CLIENT RESOURCE)) 0)))
  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
@@ -523,101 +537,132 @@ An interface that may be implemented by a wl_surface, for surfaces that
   (ARGS :POINTER))
  (DECLARE (IGNORE DATA MESSAGE))
  (LET ((RESOURCE (GETHASH (POINTER-ADDRESS TARGET) CL-WL::*RESOURCE-TRACKER*)))
-   (ECASE OPCODE
-     (0
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "zwlr_layer_surface_v1"
-                         "set-size")
-      (FUNCALL 'SET-SIZE RESOURCE
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
-     (1
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "zwlr_layer_surface_v1"
-                         "set-anchor")
-      (FUNCALL 'SET-ANCHOR RESOURCE
-               (ANCHOR-FROM-VALUE
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
-     (2
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "zwlr_layer_surface_v1"
-                         "set-exclusive-zone")
-      (FUNCALL 'SET-EXCLUSIVE-ZONE RESOURCE
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))
-     (3
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "zwlr_layer_surface_v1"
-                         "set-margin")
-      (FUNCALL 'SET-MARGIN RESOURCE
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 1)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 2)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 3)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::I))))
-     (4
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "zwlr_layer_surface_v1"
-                         "set-keyboard-interactivity")
-      (FUNCALL 'SET-KEYBOARD-INTERACTIVITY RESOURCE
-               (KEYBOARD-INTERACTIVITY-FROM-VALUE
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
-     (5
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "zwlr_layer_surface_v1"
-                         "get-popup")
-      (FUNCALL 'GET-POPUP RESOURCE
-               (GETHASH
-                (POINTER-ADDRESS
-                 (FOREIGN-SLOT-VALUE
-                  (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                  '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::O))
-                CL-WL::*RESOURCE-TRACKER*)))
-     (6
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "zwlr_layer_surface_v1"
-                         "ack-configure")
-      (FUNCALL 'ACK-CONFIGURE RESOURCE
-               (VALUES
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
-     (7
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "zwlr_layer_surface_v1"
-                         "destroy")
-      (FUNCALL 'DESTROY RESOURCE))
-     (8
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "zwlr_layer_surface_v1"
-                         "set-layer")
-      (FUNCALL 'SET-LAYER RESOURCE
-               (ZWLR-LAYER-SHELL-V1::LAYER-FROM-VALUE
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))
-     (9
-      (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%" "zwlr_layer_surface_v1"
-                         "set-exclusive-edge")
-      (FUNCALL 'SET-EXCLUSIVE-EDGE RESOURCE
-               (ANCHOR-FROM-VALUE
-                (FOREIGN-SLOT-VALUE
-                 (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT) 0)
-                 '(:UNION CL-WL.FFI:WL_ARGUMENT) 'WL-FFI::U))))))
+   (RESTART-CASE (ECASE OPCODE
+                   (0
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "zwlr_layer_surface_v1" "set-size")
+                    (FUNCALL 'SET-SIZE RESOURCE
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::U))
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                1)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::U))))
+                   (1
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "zwlr_layer_surface_v1" "set-anchor")
+                    (FUNCALL 'SET-ANCHOR RESOURCE
+                             (ANCHOR-FROM-VALUE
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::U))))
+                   (2
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "zwlr_layer_surface_v1"
+                                       "set-exclusive-zone")
+                    (FUNCALL 'SET-EXCLUSIVE-ZONE RESOURCE
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::I))))
+                   (3
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "zwlr_layer_surface_v1" "set-margin")
+                    (FUNCALL 'SET-MARGIN RESOURCE
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::I))
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                1)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::I))
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                2)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::I))
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                3)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::I))))
+                   (4
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "zwlr_layer_surface_v1"
+                                       "set-keyboard-interactivity")
+                    (FUNCALL 'SET-KEYBOARD-INTERACTIVITY RESOURCE
+                             (KEYBOARD-INTERACTIVITY-FROM-VALUE
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::U))))
+                   (5
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "zwlr_layer_surface_v1" "get-popup")
+                    (FUNCALL 'GET-POPUP RESOURCE
+                             (GETHASH
+                              (POINTER-ADDRESS
+                               (FOREIGN-SLOT-VALUE
+                                (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                 0)
+                                '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                'WL-FFI::O))
+                              CL-WL::*RESOURCE-TRACKER*)))
+                   (6
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "zwlr_layer_surface_v1" "ack-configure")
+                    (FUNCALL 'ACK-CONFIGURE RESOURCE
+                             (VALUES
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::U))))
+                   (7
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "zwlr_layer_surface_v1" "destroy")
+                    (FUNCALL 'DESTROY RESOURCE))
+                   (8
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "zwlr_layer_surface_v1" "set-layer")
+                    (FUNCALL 'SET-LAYER RESOURCE
+                             (ZWLR-LAYER-SHELL-V1::LAYER-FROM-VALUE
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::U))))
+                   (9
+                    (CL-WL::DEBUG-LOG! "Dispatching ~a:~a~%"
+                                       "zwlr_layer_surface_v1"
+                                       "set-exclusive-edge")
+                    (FUNCALL 'SET-EXCLUSIVE-EDGE RESOURCE
+                             (ANCHOR-FROM-VALUE
+                              (FOREIGN-SLOT-VALUE
+                               (MEM-APTR ARGS '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                                0)
+                               '(:UNION CL-WL.FFI:WL_ARGUMENT)
+                               'WL-FFI::U)))))
+     (KILL-CLIENT NIL :REPORT "Kill the client causing errors"
+      (CL-WL:DESTROY-CLIENT (CL-WL:CLIENT RESOURCE)) 0)))
  0)
 
 (DEFVAR *DISPATCHER* (CALLBACK DISPATCHER-FFI))
