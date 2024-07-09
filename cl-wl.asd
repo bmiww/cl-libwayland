@@ -16,5 +16,4 @@
 	       #:alexandria
 	       #:dissect
 	       #:cl-wl.ffi)
-  :components ((:file "cl-wl")
-	       (:file "util")))
+  :components ((:file "cl-wl")))
