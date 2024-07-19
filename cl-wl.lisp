@@ -11,7 +11,7 @@
   (:export create-client destroy-client mk-if up-if iface init-interface-definitions
 	   object get-display client version version-want id ptr destroy add-destroy-callback
 	   global dispatch-impl
-	   client objects get-display ptr rem-client
+	   client objects get-display ptr rem-client remove-client-object
 	   display dispatch-event-loop event-loop-fd flush-clients display-ptr all-clients destroy))
 
 (in-package :cl-wl)
@@ -219,6 +219,8 @@ and set up the client object in the lisp world for further referencing."
 	     (declare (ignore id))
 	     (destroy iface))
 	   (objects client)))
+
+(defmethod remove-client-object ((client client) id) (remhash id (objects client)))
 
 (defmethod destroy-client ((client client))
   (rem-client (get-display client) client)

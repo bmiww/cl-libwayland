@@ -347,9 +347,13 @@ argument feed."
 	 (wl::debug-log! "Destroying dispatch object: ~a~%" ,(name interface))
 	 ;; TODO: This might need to be a hook or something instead
 	 ;; Right now - it is easily overwriteable by different levels of inheritance
+	 ;; TODO: Maybe instead can use the :after :before continuations that i introduced
+	 ;; in Smuks
 	 (when (wl::destroy-callback dispatch) (loop for callback in (wl::destroy-callback dispatch)
 						     do (funcall callback dispatch)))
-	 (let ((resource-ptr (,(dispatch-ptr interface) dispatch)))
+	 (let ((client (wl:client dispatch))
+	       (resource-ptr (,(dispatch-ptr interface) dispatch)))
+	   (wl:remove-client-object client (,(dispatch-id interface) dispatch))
 	   (wl::remove-resource (pointer-address resource-ptr)))
 	 (wl::dn-if dispatch)))
      (if (has-destroy-request interface)
