@@ -132,6 +132,9 @@
   (global :pointer)
   (client :pointer))
 
+(defcfun ("wl_client_get_fd" client-get-fd) :int
+  (client :pointer))
+
 (defcfun ("wl_client_get_credentials" client-get-credentials) :void
   (client :pointer)
   (pid :pointer)
