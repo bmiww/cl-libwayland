@@ -58,7 +58,6 @@
 (defmethod initialize-instance :after ((display display) &key)
   (init-interface-definitions)
   (setf (display-ptr display) (display-create))
-  (display-add-socket-fd (display-ptr display) (socket-fd display))
   (setf (event-loop display) (display-get-event-loop (display-ptr display)))
   (setf (event-loop-fd display) (event-loop-get-fd (event-loop display)))
   (setf *display-singleton* display))
@@ -168,19 +167,11 @@ Created object also gets added to the client object tracking hash-table."
 (defclass client ()
   ((objects :initform (make-hash-table :test 'eq) :accessor objects)
    (display :initarg :display :reader get-display)
-   ;; TODO: Possibly removable - trying to use PTR instead now
-   (pid :initarg :pid :reader pid)
    (ptr :initarg :ptr :reader ptr)))
-
-;; TODO: Possibly removable - trying to use PTR instead now
-(defun client-get-credentials (client)
-  (with-foreign-objects ((pid :int) (uid :int) (gid :int))
-    (wl-ffi::client-get-credentials client pid uid gid)
-    (values (mem-aref pid :int) (mem-aref uid :int) (mem-aref gid :int))))
 
 (defun get-client (client-ptr)
   (let* ((client (gethash (pointer-address client-ptr) (clients *display-singleton*))))
-    (unless client (format t "No client found for ptr ~a~%" (pointer-address client-ptr)))
+    (unless client (error "Client not found locally in lisp world"))
     client))
 
 (defcallback client-destroy-cb :void ((listener :pointer) (data :pointer))
@@ -194,17 +185,14 @@ Created object also gets added to the client object tracking hash-table."
   "This function should be called when a new client connects to the socket.
 This will in essence forward the client to the libwayland implementation
 and set up the client object in the lisp world for further referencing."
-  (let* ((client (client-create (display-ptr display) fd))
-	 (destructo-struct (foreign-alloc '(:struct wl_listener))))
+  (let ((destructo-struct (foreign-alloc '(:struct wl_listener))))
+    (setf (foreign-slot-value destructo-struct '(:struct wl_listener) 'wl-ffi::link) (foreign-alloc '(:struct wl_list)))
+    (setf (foreign-slot-value destructo-struct '(:struct wl_listener) 'wl-ffi::notify) (callback client-destroy-cb))
 
-    (setf (foreign-slot-value destructo-struct '(:struct wl_listener) 'wl-ffi::link)
-	  (foreign-alloc '(:struct wl_list)))
-    (setf (foreign-slot-value destructo-struct '(:struct wl_listener) 'wl-ffi::notify)
-	  (callback client-destroy-cb))
-
-    (client-add-destroy-listener client destructo-struct)
-    (let ((client (setf (gethash (pointer-address client) (clients display)) (make-instance class :display display :ptr client))))
-      (setf (gethash (pointer-address destructo-struct) *destroy-tracker*) client))))
+    (let* ((client (client-create (display-ptr display) fd))
+	   (client (setf (gethash (pointer-address client) (clients display)) (make-instance class :display display :ptr client))))
+      (setf (gethash (pointer-address destructo-struct) *destroy-tracker*) client)
+      (client-add-destroy-listener (ptr client) destructo-struct))))
 
 (defmethod iface ((client client) id)
   (let ((iface (gethash id (objects client))))
