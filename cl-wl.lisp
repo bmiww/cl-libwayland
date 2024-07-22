@@ -105,9 +105,6 @@
 (defmethod add-destroy-callback ((object object) callback)
   (setf (destroy-callback object) (push callback (destroy-callback object))))
 
-;; NOTE: Empty implementation - since the dispatch object implementations are supposed to connect :after
-;; TODO: The basic implementations could also do regular overrides instead of :after
-;; Although - i think the specific smuks implementation is already overriding. A bit awkward.
 (defgeneric destroy (object))
 (defmethod destroy ((object object)))
 
