@@ -71,10 +71,6 @@ Clients can use this interface to assign the surface_layer role to
 (DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
                          (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
                                             "zwlr_layer_shell_v1")
-                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
-                                                  DISPATCH)
-                                 DO (FUNCALL CALLBACK DISPATCH)))
                          (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
                                (RESOURCE-PTR
                                 (ZWLR_LAYER_SHELL_V1-PTR DISPATCH)))
@@ -353,10 +349,6 @@ An interface that may be implemented by a wl_surface, for surfaces that
 (DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
                          (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
                                             "zwlr_layer_surface_v1")
-                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
-                                                  DISPATCH)
-                                 DO (FUNCALL CALLBACK DISPATCH)))
                          (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
                                (RESOURCE-PTR
                                 (ZWLR_LAYER_SURFACE_V1-PTR

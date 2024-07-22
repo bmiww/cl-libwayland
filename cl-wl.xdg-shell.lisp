@@ -150,10 +150,6 @@ The xdg_wm_base interface is exposed as a global object enabling clients
 (DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
                          (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
                                             "xdg_wm_base")
-                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
-                                                  DISPATCH)
-                                 DO (FUNCALL CALLBACK DISPATCH)))
                          (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
                                (RESOURCE-PTR
                                 (XDG_WM_BASE-PTR DISPATCH)))
@@ -466,10 +462,6 @@ The xdg_positioner provides a collection of rules for the placement of a
 (DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
                          (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
                                             "xdg_positioner")
-                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
-                                                  DISPATCH)
-                                 DO (FUNCALL CALLBACK DISPATCH)))
                          (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
                                (RESOURCE-PTR
                                 (XDG_POSITIONER-PTR DISPATCH)))
@@ -1005,10 +997,6 @@ An interface that may be implemented by a wl_surface, for
 (DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
                          (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
                                             "xdg_surface")
-                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
-                                                  DISPATCH)
-                                 DO (FUNCALL CALLBACK DISPATCH)))
                          (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
                                (RESOURCE-PTR
                                 (XDG_SURFACE-PTR DISPATCH)))
@@ -1431,10 +1419,6 @@ This interface defines an xdg_surface role which allows a surface to,
 (DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
                          (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
                                             "xdg_toplevel")
-                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
-                                                  DISPATCH)
-                                 DO (FUNCALL CALLBACK DISPATCH)))
                          (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
                                (RESOURCE-PTR
                                 (XDG_TOPLEVEL-PTR DISPATCH)))
@@ -2166,10 +2150,6 @@ A popup surface is a short-lived, temporary surface. It can be used to
 (DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
                          (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
                                             "xdg_popup")
-                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
-                                                  DISPATCH)
-                                 DO (FUNCALL CALLBACK DISPATCH)))
                          (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
                                (RESOURCE-PTR
                                 (XDG_POPUP-PTR DISPATCH)))

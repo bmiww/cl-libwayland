@@ -63,10 +63,6 @@ The virtual keyboard provides an application with requests which emulate
 (DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
                          (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
                                             "zwp_virtual_keyboard_v1")
-                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
-                                                  DISPATCH)
-                                 DO (FUNCALL CALLBACK DISPATCH)))
                          (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
                                (RESOURCE-PTR
                                 (ZWP_VIRTUAL_KEYBOARD_V1-PTR
@@ -342,10 +338,6 @@ A virtual keyboard manager allows an application to provide keyboard
 (DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
                          (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
                                             "zwp_virtual_keyboard_manager_v1")
-                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
-                                                  DISPATCH)
-                                 DO (FUNCALL CALLBACK DISPATCH)))
                          (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
                                (RESOURCE-PTR
                                 (ZWP_VIRTUAL_KEYBOARD_MANAGER_V1-PTR

@@ -9,7 +9,7 @@
   (:use #:cl #:cffi #:wl-ffi #:defcontinue)
   (:nicknames :wl)
   (:export create-client destroy-client mk-if up-if iface init-interface-definitions
-	   object get-display client version version-want id ptr destroy add-destroy-callback
+	   object get-display client version version-want id ptr destroy
 	   global dispatch-impl
 	   client objects get-display ptr rem-client remove-client-object
 	   display dispatch-event-loop event-loop-fd flush-clients display-ptr all-clients destroy
@@ -99,11 +99,7 @@
    ;; NOTE: I'm using this one to be able to grab the latest id attached to a resource
    ;; It should by no means be used in runtime since class upgrades will change it.
    ;; Used in mk-if
-   (transient-id :initarg :transient-id :accessor transient-id)
-   (destroy :initform nil :accessor destroy-callback)))
-
-(defmethod add-destroy-callback ((object object) callback)
-  (setf (destroy-callback object) (push callback (destroy-callback object))))
+   (transient-id :initarg :transient-id :accessor transient-id)))
 
 (defgeneric destroy (object))
 (defmethod destroy ((object object)))

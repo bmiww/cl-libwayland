@@ -68,10 +68,6 @@ xwayland_shell_v1 is a singleton global object that
 (DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
                          (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
                                             "xwayland_shell_v1")
-                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
-                                                  DISPATCH)
-                                 DO (FUNCALL CALLBACK DISPATCH)))
                          (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
                                (RESOURCE-PTR
                                 (XWAYLAND_SHELL_V1-PTR DISPATCH)))
@@ -284,10 +280,6 @@ An Xwayland surface is a surface managed by an Xwayland server.
 (DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
                          (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
                                             "xwayland_surface_v1")
-                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
-                                                  DISPATCH)
-                                 DO (FUNCALL CALLBACK DISPATCH)))
                          (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
                                (RESOURCE-PTR
                                 (XWAYLAND_SURFACE_V1-PTR DISPATCH)))
