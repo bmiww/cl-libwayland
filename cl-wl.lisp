@@ -197,10 +197,7 @@ and set up the client object in the lisp world for further referencing."
   (setf (gethash id (objects client)) iface))
 
 (defmethod clear-client-objects ((client client))
-  (maphash (lambda (id iface)
-	     (declare (ignore id))
-	     (format t "DESTROYER! ~a~%" iface)
-	     (destroy iface))
+  (maphash (lambda (id iface) (declare (ignore id)) (destroy iface))
 	   (objects client)))
 
 (defmethod remove-client-object ((client client) id) (remhash id (objects client)))
