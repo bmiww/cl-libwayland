@@ -15,5 +15,7 @@
 	       #:cffi
 	       #:alexandria
 	       #:dissect
-	       #:cl-wl.ffi)
-  :components ((:file "cl-wl")))
+	       #:cl-wl.ffi
+	       #:closer-mop)
+  :components ((:file "defcontinue")
+	       (:file "cl-wl")))

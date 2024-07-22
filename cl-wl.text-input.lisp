@@ -106,17 +106,22 @@ The zwp_text_input_v3 interface represents text input and input methods
 (DEFGENERIC COMMIT
     (RESOURCE))
 
-(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
-  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "zwp_text_input_v3")
-  (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-    (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK DISPATCH)
-          DO (FUNCALL CALLBACK DISPATCH)))
-  (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
-        (RESOURCE-PTR (ZWP_TEXT_INPUT_V3-PTR DISPATCH)))
-    (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
-                                (ZWP_TEXT_INPUT_V3-ID DISPATCH))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
-  (CL-WL::DN-IF DISPATCH))
+(DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
+                         (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
+                                            "zwp_text_input_v3")
+                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
+                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
+                                                  DISPATCH)
+                                 DO (FUNCALL CALLBACK DISPATCH)))
+                         (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
+                               (RESOURCE-PTR
+                                (ZWP_TEXT_INPUT_V3-PTR DISPATCH)))
+                           (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
+                                                       (ZWP_TEXT_INPUT_V3-ID
+                                                        DISPATCH))
+                           (CL-WL::REMOVE-RESOURCE
+                            (POINTER-ADDRESS RESOURCE-PTR)))
+                         (CL-WL::DN-IF DISPATCH))
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH)) (CL-WL:DESTROY DISPATCH))
 
@@ -681,19 +686,23 @@ A factory for text-input objects. This object is a global singleton.
 (DEFGENERIC GET-TEXT-INPUT
     (RESOURCE ID SEAT))
 
-(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
-  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
-                     "zwp_text_input_manager_v3")
-  (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-    (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK DISPATCH)
-          DO (FUNCALL CALLBACK DISPATCH)))
-  (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
-        (RESOURCE-PTR (ZWP_TEXT_INPUT_MANAGER_V3-PTR DISPATCH)))
-    (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
-                                (ZWP_TEXT_INPUT_MANAGER_V3-ID
-                                 DISPATCH))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
-  (CL-WL::DN-IF DISPATCH))
+(DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
+                         (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
+                                            "zwp_text_input_manager_v3")
+                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
+                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
+                                                  DISPATCH)
+                                 DO (FUNCALL CALLBACK DISPATCH)))
+                         (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
+                               (RESOURCE-PTR
+                                (ZWP_TEXT_INPUT_MANAGER_V3-PTR
+                                 DISPATCH)))
+                           (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
+                                                       (ZWP_TEXT_INPUT_MANAGER_V3-ID
+                                                        DISPATCH))
+                           (CL-WL::REMOVE-RESOURCE
+                            (POINTER-ADDRESS RESOURCE-PTR)))
+                         (CL-WL::DN-IF DISPATCH))
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH)) (CL-WL:DESTROY DISPATCH))
 

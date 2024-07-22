@@ -147,16 +147,22 @@ The xdg_wm_base interface is exposed as a global object enabling clients
 (DEFGENERIC PONG
     (RESOURCE SERIAL))
 
-(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
-  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "xdg_wm_base")
-  (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-    (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK DISPATCH)
-          DO (FUNCALL CALLBACK DISPATCH)))
-  (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
-        (RESOURCE-PTR (XDG_WM_BASE-PTR DISPATCH)))
-    (CL-WL:REMOVE-CLIENT-OBJECT CLIENT (XDG_WM_BASE-ID DISPATCH))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
-  (CL-WL::DN-IF DISPATCH))
+(DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
+                         (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
+                                            "xdg_wm_base")
+                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
+                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
+                                                  DISPATCH)
+                                 DO (FUNCALL CALLBACK DISPATCH)))
+                         (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
+                               (RESOURCE-PTR
+                                (XDG_WM_BASE-PTR DISPATCH)))
+                           (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
+                                                       (XDG_WM_BASE-ID
+                                                        DISPATCH))
+                           (CL-WL::REMOVE-RESOURCE
+                            (POINTER-ADDRESS RESOURCE-PTR)))
+                         (CL-WL::DN-IF DISPATCH))
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH)) (CL-WL:DESTROY DISPATCH))
 
@@ -457,17 +463,22 @@ The xdg_positioner provides a collection of rules for the placement of a
 (DEFGENERIC SET-PARENT-CONFIGURE
     (RESOURCE SERIAL))
 
-(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
-  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "xdg_positioner")
-  (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-    (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK DISPATCH)
-          DO (FUNCALL CALLBACK DISPATCH)))
-  (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
-        (RESOURCE-PTR (XDG_POSITIONER-PTR DISPATCH)))
-    (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
-                                (XDG_POSITIONER-ID DISPATCH))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
-  (CL-WL::DN-IF DISPATCH))
+(DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
+                         (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
+                                            "xdg_positioner")
+                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
+                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
+                                                  DISPATCH)
+                                 DO (FUNCALL CALLBACK DISPATCH)))
+                         (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
+                               (RESOURCE-PTR
+                                (XDG_POSITIONER-PTR DISPATCH)))
+                           (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
+                                                       (XDG_POSITIONER-ID
+                                                        DISPATCH))
+                           (CL-WL::REMOVE-RESOURCE
+                            (POINTER-ADDRESS RESOURCE-PTR)))
+                         (CL-WL::DN-IF DISPATCH))
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH)) (CL-WL:DESTROY DISPATCH))
 
@@ -991,16 +1002,22 @@ An interface that may be implemented by a wl_surface, for
 (DEFGENERIC ACK-CONFIGURE
     (RESOURCE SERIAL))
 
-(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
-  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "xdg_surface")
-  (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-    (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK DISPATCH)
-          DO (FUNCALL CALLBACK DISPATCH)))
-  (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
-        (RESOURCE-PTR (XDG_SURFACE-PTR DISPATCH)))
-    (CL-WL:REMOVE-CLIENT-OBJECT CLIENT (XDG_SURFACE-ID DISPATCH))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
-  (CL-WL::DN-IF DISPATCH))
+(DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
+                         (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
+                                            "xdg_surface")
+                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
+                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
+                                                  DISPATCH)
+                                 DO (FUNCALL CALLBACK DISPATCH)))
+                         (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
+                               (RESOURCE-PTR
+                                (XDG_SURFACE-PTR DISPATCH)))
+                           (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
+                                                       (XDG_SURFACE-ID
+                                                        DISPATCH))
+                           (CL-WL::REMOVE-RESOURCE
+                            (POINTER-ADDRESS RESOURCE-PTR)))
+                         (CL-WL::DN-IF DISPATCH))
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH)) (CL-WL:DESTROY DISPATCH))
 
@@ -1411,16 +1428,22 @@ This interface defines an xdg_surface role which allows a surface to,
 (DEFGENERIC SET-MINIMIZED
     (RESOURCE))
 
-(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
-  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "xdg_toplevel")
-  (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-    (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK DISPATCH)
-          DO (FUNCALL CALLBACK DISPATCH)))
-  (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
-        (RESOURCE-PTR (XDG_TOPLEVEL-PTR DISPATCH)))
-    (CL-WL:REMOVE-CLIENT-OBJECT CLIENT (XDG_TOPLEVEL-ID DISPATCH))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
-  (CL-WL::DN-IF DISPATCH))
+(DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
+                         (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
+                                            "xdg_toplevel")
+                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
+                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
+                                                  DISPATCH)
+                                 DO (FUNCALL CALLBACK DISPATCH)))
+                         (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
+                               (RESOURCE-PTR
+                                (XDG_TOPLEVEL-PTR DISPATCH)))
+                           (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
+                                                       (XDG_TOPLEVEL-ID
+                                                        DISPATCH))
+                           (CL-WL::REMOVE-RESOURCE
+                            (POINTER-ADDRESS RESOURCE-PTR)))
+                         (CL-WL::DN-IF DISPATCH))
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH)) (CL-WL:DESTROY DISPATCH))
 
@@ -2140,16 +2163,22 @@ A popup surface is a short-lived, temporary surface. It can be used to
 (DEFGENERIC REPOSITION
     (RESOURCE POSITIONER TOKEN))
 
-(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
-  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "xdg_popup")
-  (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-    (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK DISPATCH)
-          DO (FUNCALL CALLBACK DISPATCH)))
-  (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
-        (RESOURCE-PTR (XDG_POPUP-PTR DISPATCH)))
-    (CL-WL:REMOVE-CLIENT-OBJECT CLIENT (XDG_POPUP-ID DISPATCH))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
-  (CL-WL::DN-IF DISPATCH))
+(DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
+                         (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
+                                            "xdg_popup")
+                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
+                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
+                                                  DISPATCH)
+                                 DO (FUNCALL CALLBACK DISPATCH)))
+                         (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
+                               (RESOURCE-PTR
+                                (XDG_POPUP-PTR DISPATCH)))
+                           (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
+                                                       (XDG_POPUP-ID
+                                                        DISPATCH))
+                           (CL-WL::REMOVE-RESOURCE
+                            (POINTER-ADDRESS RESOURCE-PTR)))
+                         (CL-WL::DN-IF DISPATCH))
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH)) (CL-WL:DESTROY DISPATCH))
 

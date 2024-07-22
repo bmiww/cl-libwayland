@@ -343,7 +343,7 @@ argument feed."
 	 (:default-initargs :version ,(version interface))
 	 (:documentation ,(description interface))))
      (mapcar 'gen-request-generic (requests interface))
-     `((defmethod wl::destroy ((dispatch dispatch))
+     `((wl:defcontinue wl::destroy ((dispatch dispatch))
 	 (wl::debug-log! "Destroying dispatch object: ~a~%" ,(name interface))
 	 ;; TODO: This might need to be a hook or something instead
 	 ;; Right now - it is easily overwriteable by different levels of inheritance

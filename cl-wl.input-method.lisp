@@ -130,17 +130,22 @@ An input method object allows for clients to compose text.
 (DEFGENERIC DESTROY
     (RESOURCE))
 
-(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
-  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "zwp_input_method_v2")
-  (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-    (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK DISPATCH)
-          DO (FUNCALL CALLBACK DISPATCH)))
-  (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
-        (RESOURCE-PTR (ZWP_INPUT_METHOD_V2-PTR DISPATCH)))
-    (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
-                                (ZWP_INPUT_METHOD_V2-ID DISPATCH))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
-  (CL-WL::DN-IF DISPATCH))
+(DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
+                         (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
+                                            "zwp_input_method_v2")
+                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
+                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
+                                                  DISPATCH)
+                                 DO (FUNCALL CALLBACK DISPATCH)))
+                         (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
+                               (RESOURCE-PTR
+                                (ZWP_INPUT_METHOD_V2-PTR DISPATCH)))
+                           (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
+                                                       (ZWP_INPUT_METHOD_V2-ID
+                                                        DISPATCH))
+                           (CL-WL::REMOVE-RESOURCE
+                            (POINTER-ADDRESS RESOURCE-PTR)))
+                         (CL-WL::DN-IF DISPATCH))
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH)) (CL-WL:DESTROY DISPATCH))
 
@@ -632,19 +637,23 @@ This interface marks a surface as a popup for interacting with an input
 (DEFGENERIC DESTROY
     (RESOURCE))
 
-(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
-  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
-                     "zwp_input_popup_surface_v2")
-  (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-    (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK DISPATCH)
-          DO (FUNCALL CALLBACK DISPATCH)))
-  (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
-        (RESOURCE-PTR (ZWP_INPUT_POPUP_SURFACE_V2-PTR DISPATCH)))
-    (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
-                                (ZWP_INPUT_POPUP_SURFACE_V2-ID
-                                 DISPATCH))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
-  (CL-WL::DN-IF DISPATCH))
+(DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
+                         (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
+                                            "zwp_input_popup_surface_v2")
+                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
+                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
+                                                  DISPATCH)
+                                 DO (FUNCALL CALLBACK DISPATCH)))
+                         (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
+                               (RESOURCE-PTR
+                                (ZWP_INPUT_POPUP_SURFACE_V2-PTR
+                                 DISPATCH)))
+                           (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
+                                                       (ZWP_INPUT_POPUP_SURFACE_V2-ID
+                                                        DISPATCH))
+                           (CL-WL::REMOVE-RESOURCE
+                            (POINTER-ADDRESS RESOURCE-PTR)))
+                         (CL-WL::DN-IF DISPATCH))
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH)) (CL-WL:DESTROY DISPATCH))
 
@@ -820,20 +829,23 @@ The zwp_input_method_keyboard_grab_v2 interface represents an exclusive
 (DEFGENERIC RELEASE
     (RESOURCE))
 
-(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
-  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
-                     "zwp_input_method_keyboard_grab_v2")
-  (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-    (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK DISPATCH)
-          DO (FUNCALL CALLBACK DISPATCH)))
-  (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
-        (RESOURCE-PTR
-         (ZWP_INPUT_METHOD_KEYBOARD_GRAB_V2-PTR DISPATCH)))
-    (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
-                                (ZWP_INPUT_METHOD_KEYBOARD_GRAB_V2-ID
-                                 DISPATCH))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
-  (CL-WL::DN-IF DISPATCH))
+(DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
+                         (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
+                                            "zwp_input_method_keyboard_grab_v2")
+                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
+                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
+                                                  DISPATCH)
+                                 DO (FUNCALL CALLBACK DISPATCH)))
+                         (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
+                               (RESOURCE-PTR
+                                (ZWP_INPUT_METHOD_KEYBOARD_GRAB_V2-PTR
+                                 DISPATCH)))
+                           (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
+                                                       (ZWP_INPUT_METHOD_KEYBOARD_GRAB_V2-ID
+                                                        DISPATCH))
+                           (CL-WL::REMOVE-RESOURCE
+                            (POINTER-ADDRESS RESOURCE-PTR)))
+                         (CL-WL::DN-IF DISPATCH))
 
 (PUSHNEW
  (LIST "zwp_input_method_keyboard_grab_v2" (LIST)
@@ -1115,19 +1127,23 @@ The input method manager allows the client to become the input method on
 (DEFGENERIC DESTROY
     (RESOURCE))
 
-(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
-  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
-                     "zwp_input_method_manager_v2")
-  (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-    (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK DISPATCH)
-          DO (FUNCALL CALLBACK DISPATCH)))
-  (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
-        (RESOURCE-PTR (ZWP_INPUT_METHOD_MANAGER_V2-PTR DISPATCH)))
-    (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
-                                (ZWP_INPUT_METHOD_MANAGER_V2-ID
-                                 DISPATCH))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
-  (CL-WL::DN-IF DISPATCH))
+(DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
+                         (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
+                                            "zwp_input_method_manager_v2")
+                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
+                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
+                                                  DISPATCH)
+                                 DO (FUNCALL CALLBACK DISPATCH)))
+                         (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
+                               (RESOURCE-PTR
+                                (ZWP_INPUT_METHOD_MANAGER_V2-PTR
+                                 DISPATCH)))
+                           (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
+                                                       (ZWP_INPUT_METHOD_MANAGER_V2-ID
+                                                        DISPATCH))
+                           (CL-WL::REMOVE-RESOURCE
+                            (POINTER-ADDRESS RESOURCE-PTR)))
+                         (CL-WL::DN-IF DISPATCH))
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH)) (CL-WL:DESTROY DISPATCH))
 

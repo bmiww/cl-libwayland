@@ -68,17 +68,22 @@ Clients can use this interface to assign the surface_layer role to
 (DEFGENERIC DESTROY
     (RESOURCE))
 
-(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
-  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "zwlr_layer_shell_v1")
-  (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-    (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK DISPATCH)
-          DO (FUNCALL CALLBACK DISPATCH)))
-  (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
-        (RESOURCE-PTR (ZWLR_LAYER_SHELL_V1-PTR DISPATCH)))
-    (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
-                                (ZWLR_LAYER_SHELL_V1-ID DISPATCH))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
-  (CL-WL::DN-IF DISPATCH))
+(DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
+                         (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
+                                            "zwlr_layer_shell_v1")
+                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
+                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
+                                                  DISPATCH)
+                                 DO (FUNCALL CALLBACK DISPATCH)))
+                         (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
+                               (RESOURCE-PTR
+                                (ZWLR_LAYER_SHELL_V1-PTR DISPATCH)))
+                           (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
+                                                       (ZWLR_LAYER_SHELL_V1-ID
+                                                        DISPATCH))
+                           (CL-WL::REMOVE-RESOURCE
+                            (POINTER-ADDRESS RESOURCE-PTR)))
+                         (CL-WL::DN-IF DISPATCH))
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH)) (CL-WL:DESTROY DISPATCH))
 
@@ -345,19 +350,23 @@ An interface that may be implemented by a wl_surface, for surfaces that
 (DEFGENERIC SET-EXCLUSIVE-EDGE
     (RESOURCE EDGE))
 
-(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
-  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
-                     "zwlr_layer_surface_v1")
-  (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-    (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK DISPATCH)
-          DO (FUNCALL CALLBACK DISPATCH)))
-  (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
-        (RESOURCE-PTR (ZWLR_LAYER_SURFACE_V1-PTR DISPATCH)))
-    (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
-                                (ZWLR_LAYER_SURFACE_V1-ID
-                                 DISPATCH))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
-  (CL-WL::DN-IF DISPATCH))
+(DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
+                         (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
+                                            "zwlr_layer_surface_v1")
+                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
+                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
+                                                  DISPATCH)
+                                 DO (FUNCALL CALLBACK DISPATCH)))
+                         (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
+                               (RESOURCE-PTR
+                                (ZWLR_LAYER_SURFACE_V1-PTR
+                                 DISPATCH)))
+                           (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
+                                                       (ZWLR_LAYER_SURFACE_V1-ID
+                                                        DISPATCH))
+                           (CL-WL::REMOVE-RESOURCE
+                            (POINTER-ADDRESS RESOURCE-PTR)))
+                         (CL-WL::DN-IF DISPATCH))
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH)) (CL-WL:DESTROY DISPATCH))
 

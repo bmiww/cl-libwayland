@@ -468,16 +468,22 @@ The core global object.  This is a special singleton object.  It
 (DEFGENERIC GET-REGISTRY
     (RESOURCE REGISTRY))
 
-(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
-  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_display")
-  (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-    (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK DISPATCH)
-          DO (FUNCALL CALLBACK DISPATCH)))
-  (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
-        (RESOURCE-PTR (WL_DISPLAY-PTR DISPATCH)))
-    (CL-WL:REMOVE-CLIENT-OBJECT CLIENT (WL_DISPLAY-ID DISPATCH))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
-  (CL-WL::DN-IF DISPATCH))
+(DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
+                         (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
+                                            "wl_display")
+                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
+                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
+                                                  DISPATCH)
+                                 DO (FUNCALL CALLBACK DISPATCH)))
+                         (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
+                               (RESOURCE-PTR
+                                (WL_DISPLAY-PTR DISPATCH)))
+                           (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
+                                                       (WL_DISPLAY-ID
+                                                        DISPATCH))
+                           (CL-WL::REMOVE-RESOURCE
+                            (POINTER-ADDRESS RESOURCE-PTR)))
+                         (CL-WL::DN-IF DISPATCH))
 
 (PUSHNEW
  (LIST "wl_display" (LIST "wl_callback" "wl_registry")
@@ -729,16 +735,22 @@ The singleton global registry object.  The server has a number of
 (DEFGENERIC BIND
     (RESOURCE NAME ID))
 
-(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
-  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_registry")
-  (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-    (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK DISPATCH)
-          DO (FUNCALL CALLBACK DISPATCH)))
-  (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
-        (RESOURCE-PTR (WL_REGISTRY-PTR DISPATCH)))
-    (CL-WL:REMOVE-CLIENT-OBJECT CLIENT (WL_REGISTRY-ID DISPATCH))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
-  (CL-WL::DN-IF DISPATCH))
+(DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
+                         (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
+                                            "wl_registry")
+                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
+                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
+                                                  DISPATCH)
+                                 DO (FUNCALL CALLBACK DISPATCH)))
+                         (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
+                               (RESOURCE-PTR
+                                (WL_REGISTRY-PTR DISPATCH)))
+                           (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
+                                                       (WL_REGISTRY-ID
+                                                        DISPATCH))
+                           (CL-WL::REMOVE-RESOURCE
+                            (POINTER-ADDRESS RESOURCE-PTR)))
+                         (CL-WL::DN-IF DISPATCH))
 
 (PUSHNEW
  (LIST "wl_registry" (LIST)
@@ -953,16 +965,22 @@ Clients can handle the 'done' event to get notified when
       factory interfaces, the wl_callback interface is frozen at version 1.
 "))
 
-(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
-  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_callback")
-  (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-    (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK DISPATCH)
-          DO (FUNCALL CALLBACK DISPATCH)))
-  (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
-        (RESOURCE-PTR (WL_CALLBACK-PTR DISPATCH)))
-    (CL-WL:REMOVE-CLIENT-OBJECT CLIENT (WL_CALLBACK-ID DISPATCH))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
-  (CL-WL::DN-IF DISPATCH))
+(DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
+                         (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
+                                            "wl_callback")
+                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
+                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
+                                                  DISPATCH)
+                                 DO (FUNCALL CALLBACK DISPATCH)))
+                         (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
+                               (RESOURCE-PTR
+                                (WL_CALLBACK-PTR DISPATCH)))
+                           (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
+                                                       (WL_CALLBACK-ID
+                                                        DISPATCH))
+                           (CL-WL::REMOVE-RESOURCE
+                            (POINTER-ADDRESS RESOURCE-PTR)))
+                         (CL-WL::DN-IF DISPATCH))
 
 (PUSHNEW
  (LIST "wl_callback" (LIST)
@@ -1103,16 +1121,22 @@ A compositor.  This object is a singleton global.  The
 (DEFGENERIC CREATE-REGION
     (RESOURCE ID))
 
-(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
-  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_compositor")
-  (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-    (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK DISPATCH)
-          DO (FUNCALL CALLBACK DISPATCH)))
-  (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
-        (RESOURCE-PTR (WL_COMPOSITOR-PTR DISPATCH)))
-    (CL-WL:REMOVE-CLIENT-OBJECT CLIENT (WL_COMPOSITOR-ID DISPATCH))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
-  (CL-WL::DN-IF DISPATCH))
+(DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
+                         (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
+                                            "wl_compositor")
+                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
+                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
+                                                  DISPATCH)
+                                 DO (FUNCALL CALLBACK DISPATCH)))
+                         (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
+                               (RESOURCE-PTR
+                                (WL_COMPOSITOR-PTR DISPATCH)))
+                           (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
+                                                       (WL_COMPOSITOR-ID
+                                                        DISPATCH))
+                           (CL-WL::REMOVE-RESOURCE
+                            (POINTER-ADDRESS RESOURCE-PTR)))
+                         (CL-WL::DN-IF DISPATCH))
 
 (PUSHNEW
  (LIST "wl_compositor" (LIST "wl_surface" "wl_region")
@@ -1282,16 +1306,22 @@ The wl_shm_pool object encapsulates a piece of memory shared
 (DEFGENERIC RESIZE
     (RESOURCE SIZE))
 
-(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
-  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_shm_pool")
-  (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-    (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK DISPATCH)
-          DO (FUNCALL CALLBACK DISPATCH)))
-  (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
-        (RESOURCE-PTR (WL_SHM_POOL-PTR DISPATCH)))
-    (CL-WL:REMOVE-CLIENT-OBJECT CLIENT (WL_SHM_POOL-ID DISPATCH))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
-  (CL-WL::DN-IF DISPATCH))
+(DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
+                         (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
+                                            "wl_shm_pool")
+                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
+                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
+                                                  DISPATCH)
+                                 DO (FUNCALL CALLBACK DISPATCH)))
+                         (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
+                               (RESOURCE-PTR
+                                (WL_SHM_POOL-PTR DISPATCH)))
+                           (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
+                                                       (WL_SHM_POOL-ID
+                                                        DISPATCH))
+                           (CL-WL::REMOVE-RESOURCE
+                            (POINTER-ADDRESS RESOURCE-PTR)))
+                         (CL-WL::DN-IF DISPATCH))
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH)) (CL-WL:DESTROY DISPATCH))
 
@@ -1513,16 +1543,21 @@ A singleton global object that provides support for shared
 (DEFGENERIC CREATE-POOL
     (RESOURCE ID FD SIZE))
 
-(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
-  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_shm")
-  (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-    (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK DISPATCH)
-          DO (FUNCALL CALLBACK DISPATCH)))
-  (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
-        (RESOURCE-PTR (WL_SHM-PTR DISPATCH)))
-    (CL-WL:REMOVE-CLIENT-OBJECT CLIENT (WL_SHM-ID DISPATCH))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
-  (CL-WL::DN-IF DISPATCH))
+(DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
+                         (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
+                                            "wl_shm")
+                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
+                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
+                                                  DISPATCH)
+                                 DO (FUNCALL CALLBACK DISPATCH)))
+                         (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
+                               (RESOURCE-PTR (WL_SHM-PTR DISPATCH)))
+                           (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
+                                                       (WL_SHM-ID
+                                                        DISPATCH))
+                           (CL-WL::REMOVE-RESOURCE
+                            (POINTER-ADDRESS RESOURCE-PTR)))
+                         (CL-WL::DN-IF DISPATCH))
 
 (PUSHNEW
  (LIST "wl_shm" (LIST "wl_shm_pool")
@@ -1951,16 +1986,22 @@ A buffer provides the content for a wl_surface. Buffers are
 (DEFGENERIC DESTROY
     (RESOURCE))
 
-(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
-  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_buffer")
-  (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-    (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK DISPATCH)
-          DO (FUNCALL CALLBACK DISPATCH)))
-  (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
-        (RESOURCE-PTR (WL_BUFFER-PTR DISPATCH)))
-    (CL-WL:REMOVE-CLIENT-OBJECT CLIENT (WL_BUFFER-ID DISPATCH))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
-  (CL-WL::DN-IF DISPATCH))
+(DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
+                         (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
+                                            "wl_buffer")
+                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
+                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
+                                                  DISPATCH)
+                                 DO (FUNCALL CALLBACK DISPATCH)))
+                         (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
+                               (RESOURCE-PTR
+                                (WL_BUFFER-PTR DISPATCH)))
+                           (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
+                                                       (WL_BUFFER-ID
+                                                        DISPATCH))
+                           (CL-WL::REMOVE-RESOURCE
+                            (POINTER-ADDRESS RESOURCE-PTR)))
+                         (CL-WL::DN-IF DISPATCH))
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH)) (CL-WL:DESTROY DISPATCH))
 
@@ -2134,16 +2175,22 @@ A wl_data_offer represents a piece of data offered for transfer
 (DEFGENERIC SET-ACTIONS
     (RESOURCE DND_ACTIONS PREFERRED_ACTION))
 
-(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
-  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_data_offer")
-  (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-    (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK DISPATCH)
-          DO (FUNCALL CALLBACK DISPATCH)))
-  (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
-        (RESOURCE-PTR (WL_DATA_OFFER-PTR DISPATCH)))
-    (CL-WL:REMOVE-CLIENT-OBJECT CLIENT (WL_DATA_OFFER-ID DISPATCH))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
-  (CL-WL::DN-IF DISPATCH))
+(DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
+                         (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
+                                            "wl_data_offer")
+                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
+                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
+                                                  DISPATCH)
+                                 DO (FUNCALL CALLBACK DISPATCH)))
+                         (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
+                               (RESOURCE-PTR
+                                (WL_DATA_OFFER-PTR DISPATCH)))
+                           (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
+                                                       (WL_DATA_OFFER-ID
+                                                        DISPATCH))
+                           (CL-WL::REMOVE-RESOURCE
+                            (POINTER-ADDRESS RESOURCE-PTR)))
+                         (CL-WL::DN-IF DISPATCH))
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH)) (CL-WL:DESTROY DISPATCH))
 
@@ -2476,17 +2523,22 @@ The wl_data_source object is the source side of a wl_data_offer.
 (DEFGENERIC SET-ACTIONS
     (RESOURCE DND_ACTIONS))
 
-(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
-  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_data_source")
-  (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-    (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK DISPATCH)
-          DO (FUNCALL CALLBACK DISPATCH)))
-  (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
-        (RESOURCE-PTR (WL_DATA_SOURCE-PTR DISPATCH)))
-    (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
-                                (WL_DATA_SOURCE-ID DISPATCH))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
-  (CL-WL::DN-IF DISPATCH))
+(DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
+                         (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
+                                            "wl_data_source")
+                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
+                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
+                                                  DISPATCH)
+                                 DO (FUNCALL CALLBACK DISPATCH)))
+                         (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
+                               (RESOURCE-PTR
+                                (WL_DATA_SOURCE-PTR DISPATCH)))
+                           (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
+                                                       (WL_DATA_SOURCE-ID
+                                                        DISPATCH))
+                           (CL-WL::REMOVE-RESOURCE
+                            (POINTER-ADDRESS RESOURCE-PTR)))
+                         (CL-WL::DN-IF DISPATCH))
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH)) (CL-WL:DESTROY DISPATCH))
 
@@ -2812,17 +2864,22 @@ There is one wl_data_device per seat which can be obtained
 (DEFGENERIC RELEASE
     (RESOURCE))
 
-(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
-  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_data_device")
-  (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-    (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK DISPATCH)
-          DO (FUNCALL CALLBACK DISPATCH)))
-  (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
-        (RESOURCE-PTR (WL_DATA_DEVICE-PTR DISPATCH)))
-    (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
-                                (WL_DATA_DEVICE-ID DISPATCH))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
-  (CL-WL::DN-IF DISPATCH))
+(DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
+                         (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
+                                            "wl_data_device")
+                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
+                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
+                                                  DISPATCH)
+                                 DO (FUNCALL CALLBACK DISPATCH)))
+                         (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
+                               (RESOURCE-PTR
+                                (WL_DATA_DEVICE-PTR DISPATCH)))
+                           (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
+                                                       (WL_DATA_DEVICE-ID
+                                                        DISPATCH))
+                           (CL-WL::REMOVE-RESOURCE
+                            (POINTER-ADDRESS RESOURCE-PTR)))
+                         (CL-WL::DN-IF DISPATCH))
 
 (PUSHNEW
  (LIST "wl_data_device" (LIST "wl_data_offer" "wl_data_source" "wl_surface")
@@ -3223,19 +3280,23 @@ The wl_data_device_manager is a singleton global object that
 (DEFGENERIC GET-DATA-DEVICE
     (RESOURCE ID SEAT))
 
-(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
-  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
-                     "wl_data_device_manager")
-  (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-    (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK DISPATCH)
-          DO (FUNCALL CALLBACK DISPATCH)))
-  (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
-        (RESOURCE-PTR (WL_DATA_DEVICE_MANAGER-PTR DISPATCH)))
-    (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
-                                (WL_DATA_DEVICE_MANAGER-ID
-                                 DISPATCH))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
-  (CL-WL::DN-IF DISPATCH))
+(DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
+                         (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
+                                            "wl_data_device_manager")
+                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
+                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
+                                                  DISPATCH)
+                                 DO (FUNCALL CALLBACK DISPATCH)))
+                         (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
+                               (RESOURCE-PTR
+                                (WL_DATA_DEVICE_MANAGER-PTR
+                                 DISPATCH)))
+                           (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
+                                                       (WL_DATA_DEVICE_MANAGER-ID
+                                                        DISPATCH))
+                           (CL-WL::REMOVE-RESOURCE
+                            (POINTER-ADDRESS RESOURCE-PTR)))
+                         (CL-WL::DN-IF DISPATCH))
 
 (PUSHNEW
  (LIST "wl_data_device_manager"
@@ -3445,16 +3506,22 @@ This interface is implemented by servers that provide
 (DEFGENERIC GET-SHELL-SURFACE
     (RESOURCE ID SURFACE))
 
-(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
-  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_shell")
-  (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-    (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK DISPATCH)
-          DO (FUNCALL CALLBACK DISPATCH)))
-  (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
-        (RESOURCE-PTR (WL_SHELL-PTR DISPATCH)))
-    (CL-WL:REMOVE-CLIENT-OBJECT CLIENT (WL_SHELL-ID DISPATCH))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
-  (CL-WL::DN-IF DISPATCH))
+(DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
+                         (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
+                                            "wl_shell")
+                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
+                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
+                                                  DISPATCH)
+                                 DO (FUNCALL CALLBACK DISPATCH)))
+                         (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
+                               (RESOURCE-PTR
+                                (WL_SHELL-PTR DISPATCH)))
+                           (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
+                                                       (WL_SHELL-ID
+                                                        DISPATCH))
+                           (CL-WL::REMOVE-RESOURCE
+                            (POINTER-ADDRESS RESOURCE-PTR)))
+                         (CL-WL::DN-IF DISPATCH))
 
 (PUSHNEW
  (LIST "wl_shell" (LIST "wl_shell_surface" "wl_surface")
@@ -3656,17 +3723,22 @@ An interface that may be implemented by a wl_surface, for
 (DEFGENERIC SET-CLASS
     (RESOURCE CLASS_))
 
-(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
-  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_shell_surface")
-  (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-    (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK DISPATCH)
-          DO (FUNCALL CALLBACK DISPATCH)))
-  (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
-        (RESOURCE-PTR (WL_SHELL_SURFACE-PTR DISPATCH)))
-    (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
-                                (WL_SHELL_SURFACE-ID DISPATCH))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
-  (CL-WL::DN-IF DISPATCH))
+(DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
+                         (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
+                                            "wl_shell_surface")
+                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
+                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
+                                                  DISPATCH)
+                                 DO (FUNCALL CALLBACK DISPATCH)))
+                         (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
+                               (RESOURCE-PTR
+                                (WL_SHELL_SURFACE-PTR DISPATCH)))
+                           (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
+                                                       (WL_SHELL_SURFACE-ID
+                                                        DISPATCH))
+                           (CL-WL::REMOVE-RESOURCE
+                            (POINTER-ADDRESS RESOURCE-PTR)))
+                         (CL-WL::DN-IF DISPATCH))
 
 (PUSHNEW
  (LIST "wl_shell_surface" (LIST "wl_seat" "wl_surface" "wl_output")
@@ -4318,16 +4390,22 @@ A surface is a rectangular area that may be displayed on zero
 (DEFGENERIC OFFSET
     (RESOURCE X Y))
 
-(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
-  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_surface")
-  (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-    (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK DISPATCH)
-          DO (FUNCALL CALLBACK DISPATCH)))
-  (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
-        (RESOURCE-PTR (WL_SURFACE-PTR DISPATCH)))
-    (CL-WL:REMOVE-CLIENT-OBJECT CLIENT (WL_SURFACE-ID DISPATCH))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
-  (CL-WL::DN-IF DISPATCH))
+(DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
+                         (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
+                                            "wl_surface")
+                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
+                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
+                                                  DISPATCH)
+                                 DO (FUNCALL CALLBACK DISPATCH)))
+                         (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
+                               (RESOURCE-PTR
+                                (WL_SURFACE-PTR DISPATCH)))
+                           (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
+                                                       (WL_SURFACE-ID
+                                                        DISPATCH))
+                           (CL-WL::REMOVE-RESOURCE
+                            (POINTER-ADDRESS RESOURCE-PTR)))
+                         (CL-WL::DN-IF DISPATCH))
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH)) (CL-WL:DESTROY DISPATCH))
 
@@ -4911,16 +4989,22 @@ A seat is a group of keyboards, pointer and touch devices. This
 (DEFGENERIC RELEASE
     (RESOURCE))
 
-(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
-  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_seat")
-  (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-    (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK DISPATCH)
-          DO (FUNCALL CALLBACK DISPATCH)))
-  (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
-        (RESOURCE-PTR (WL_SEAT-PTR DISPATCH)))
-    (CL-WL:REMOVE-CLIENT-OBJECT CLIENT (WL_SEAT-ID DISPATCH))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
-  (CL-WL::DN-IF DISPATCH))
+(DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
+                         (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
+                                            "wl_seat")
+                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
+                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
+                                                  DISPATCH)
+                                 DO (FUNCALL CALLBACK DISPATCH)))
+                         (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
+                               (RESOURCE-PTR
+                                (WL_SEAT-PTR DISPATCH)))
+                           (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
+                                                       (WL_SEAT-ID
+                                                        DISPATCH))
+                           (CL-WL::REMOVE-RESOURCE
+                            (POINTER-ADDRESS RESOURCE-PTR)))
+                         (CL-WL::DN-IF DISPATCH))
 
 (PUSHNEW
  (LIST "wl_seat" (LIST "wl_pointer" "wl_keyboard" "wl_touch")
@@ -5208,16 +5292,22 @@ The wl_pointer interface represents one or more input devices,
 (DEFGENERIC RELEASE
     (RESOURCE))
 
-(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
-  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_pointer")
-  (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-    (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK DISPATCH)
-          DO (FUNCALL CALLBACK DISPATCH)))
-  (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
-        (RESOURCE-PTR (WL_POINTER-PTR DISPATCH)))
-    (CL-WL:REMOVE-CLIENT-OBJECT CLIENT (WL_POINTER-ID DISPATCH))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
-  (CL-WL::DN-IF DISPATCH))
+(DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
+                         (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
+                                            "wl_pointer")
+                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
+                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
+                                                  DISPATCH)
+                                 DO (FUNCALL CALLBACK DISPATCH)))
+                         (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
+                               (RESOURCE-PTR
+                                (WL_POINTER-PTR DISPATCH)))
+                           (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
+                                                       (WL_POINTER-ID
+                                                        DISPATCH))
+                           (CL-WL::REMOVE-RESOURCE
+                            (POINTER-ADDRESS RESOURCE-PTR)))
+                         (CL-WL::DN-IF DISPATCH))
 
 (PUSHNEW
  (LIST "wl_pointer" (LIST "wl_surface")
@@ -5800,16 +5890,22 @@ The wl_keyboard interface represents one or more keyboards
 (DEFGENERIC RELEASE
     (RESOURCE))
 
-(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
-  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_keyboard")
-  (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-    (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK DISPATCH)
-          DO (FUNCALL CALLBACK DISPATCH)))
-  (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
-        (RESOURCE-PTR (WL_KEYBOARD-PTR DISPATCH)))
-    (CL-WL:REMOVE-CLIENT-OBJECT CLIENT (WL_KEYBOARD-ID DISPATCH))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
-  (CL-WL::DN-IF DISPATCH))
+(DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
+                         (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
+                                            "wl_keyboard")
+                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
+                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
+                                                  DISPATCH)
+                                 DO (FUNCALL CALLBACK DISPATCH)))
+                         (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
+                               (RESOURCE-PTR
+                                (WL_KEYBOARD-PTR DISPATCH)))
+                           (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
+                                                       (WL_KEYBOARD-ID
+                                                        DISPATCH))
+                           (CL-WL::REMOVE-RESOURCE
+                            (POINTER-ADDRESS RESOURCE-PTR)))
+                         (CL-WL::DN-IF DISPATCH))
 
 (PUSHNEW
  (LIST "wl_keyboard" (LIST "wl_surface")
@@ -6193,16 +6289,22 @@ The wl_touch interface represents a touchscreen
 (DEFGENERIC RELEASE
     (RESOURCE))
 
-(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
-  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_touch")
-  (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-    (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK DISPATCH)
-          DO (FUNCALL CALLBACK DISPATCH)))
-  (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
-        (RESOURCE-PTR (WL_TOUCH-PTR DISPATCH)))
-    (CL-WL:REMOVE-CLIENT-OBJECT CLIENT (WL_TOUCH-ID DISPATCH))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
-  (CL-WL::DN-IF DISPATCH))
+(DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
+                         (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
+                                            "wl_touch")
+                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
+                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
+                                                  DISPATCH)
+                                 DO (FUNCALL CALLBACK DISPATCH)))
+                         (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
+                               (RESOURCE-PTR
+                                (WL_TOUCH-PTR DISPATCH)))
+                           (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
+                                                       (WL_TOUCH-ID
+                                                        DISPATCH))
+                           (CL-WL::REMOVE-RESOURCE
+                            (POINTER-ADDRESS RESOURCE-PTR)))
+                         (CL-WL::DN-IF DISPATCH))
 
 (PUSHNEW
  (LIST "wl_touch" (LIST "wl_surface")
@@ -6550,16 +6652,22 @@ An output describes part of the compositor geometry.  The
 (DEFGENERIC RELEASE
     (RESOURCE))
 
-(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
-  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_output")
-  (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-    (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK DISPATCH)
-          DO (FUNCALL CALLBACK DISPATCH)))
-  (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
-        (RESOURCE-PTR (WL_OUTPUT-PTR DISPATCH)))
-    (CL-WL:REMOVE-CLIENT-OBJECT CLIENT (WL_OUTPUT-ID DISPATCH))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
-  (CL-WL::DN-IF DISPATCH))
+(DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
+                         (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
+                                            "wl_output")
+                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
+                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
+                                                  DISPATCH)
+                                 DO (FUNCALL CALLBACK DISPATCH)))
+                         (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
+                               (RESOURCE-PTR
+                                (WL_OUTPUT-PTR DISPATCH)))
+                           (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
+                                                       (WL_OUTPUT-ID
+                                                        DISPATCH))
+                           (CL-WL::REMOVE-RESOURCE
+                            (POINTER-ADDRESS RESOURCE-PTR)))
+                         (CL-WL::DN-IF DISPATCH))
 
 (PUSHNEW
  (LIST "wl_output" (LIST)
@@ -6947,16 +7055,22 @@ A region object describes an area.
 (DEFGENERIC SUBTRACT
     (RESOURCE X Y WIDTH HEIGHT))
 
-(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
-  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_region")
-  (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-    (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK DISPATCH)
-          DO (FUNCALL CALLBACK DISPATCH)))
-  (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
-        (RESOURCE-PTR (WL_REGION-PTR DISPATCH)))
-    (CL-WL:REMOVE-CLIENT-OBJECT CLIENT (WL_REGION-ID DISPATCH))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
-  (CL-WL::DN-IF DISPATCH))
+(DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
+                         (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
+                                            "wl_region")
+                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
+                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
+                                                  DISPATCH)
+                                 DO (FUNCALL CALLBACK DISPATCH)))
+                         (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
+                               (RESOURCE-PTR
+                                (WL_REGION-PTR DISPATCH)))
+                           (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
+                                                       (WL_REGION-ID
+                                                        DISPATCH))
+                           (CL-WL::REMOVE-RESOURCE
+                            (POINTER-ADDRESS RESOURCE-PTR)))
+                         (CL-WL::DN-IF DISPATCH))
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH)) (CL-WL:DESTROY DISPATCH))
 
@@ -7193,17 +7307,22 @@ The global interface exposing sub-surface compositing capabilities.
 (DEFGENERIC GET-SUBSURFACE
     (RESOURCE ID SURFACE PARENT))
 
-(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
-  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_subcompositor")
-  (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-    (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK DISPATCH)
-          DO (FUNCALL CALLBACK DISPATCH)))
-  (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
-        (RESOURCE-PTR (WL_SUBCOMPOSITOR-PTR DISPATCH)))
-    (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
-                                (WL_SUBCOMPOSITOR-ID DISPATCH))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
-  (CL-WL::DN-IF DISPATCH))
+(DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
+                         (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
+                                            "wl_subcompositor")
+                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
+                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
+                                                  DISPATCH)
+                                 DO (FUNCALL CALLBACK DISPATCH)))
+                         (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
+                               (RESOURCE-PTR
+                                (WL_SUBCOMPOSITOR-PTR DISPATCH)))
+                           (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
+                                                       (WL_SUBCOMPOSITOR-ID
+                                                        DISPATCH))
+                           (CL-WL::REMOVE-RESOURCE
+                            (POINTER-ADDRESS RESOURCE-PTR)))
+                         (CL-WL::DN-IF DISPATCH))
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH)) (CL-WL:DESTROY DISPATCH))
 
@@ -7469,16 +7588,22 @@ An additional interface to a wl_surface object, which has been
 (DEFGENERIC SET-DESYNC
     (RESOURCE))
 
-(DEFMETHOD CL-WL:DESTROY ((DISPATCH DISPATCH))
-  (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%" "wl_subsurface")
-  (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
-    (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK DISPATCH)
-          DO (FUNCALL CALLBACK DISPATCH)))
-  (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
-        (RESOURCE-PTR (WL_SUBSURFACE-PTR DISPATCH)))
-    (CL-WL:REMOVE-CLIENT-OBJECT CLIENT (WL_SUBSURFACE-ID DISPATCH))
-    (CL-WL::REMOVE-RESOURCE (POINTER-ADDRESS RESOURCE-PTR)))
-  (CL-WL::DN-IF DISPATCH))
+(DEFCONTINUE:DEFCONTINUE CL-WL:DESTROY ((DISPATCH DISPATCH))
+                         (CL-WL::DEBUG-LOG! "Destroying dispatch object: ~a~%"
+                                            "wl_subsurface")
+                         (WHEN (CL-WL::DESTROY-CALLBACK DISPATCH)
+                           (LOOP FOR CALLBACK IN (CL-WL::DESTROY-CALLBACK
+                                                  DISPATCH)
+                                 DO (FUNCALL CALLBACK DISPATCH)))
+                         (LET ((CLIENT (CL-WL:CLIENT DISPATCH))
+                               (RESOURCE-PTR
+                                (WL_SUBSURFACE-PTR DISPATCH)))
+                           (CL-WL:REMOVE-CLIENT-OBJECT CLIENT
+                                                       (WL_SUBSURFACE-ID
+                                                        DISPATCH))
+                           (CL-WL::REMOVE-RESOURCE
+                            (POINTER-ADDRESS RESOURCE-PTR)))
+                         (CL-WL::DN-IF DISPATCH))
 
 (DEFMETHOD DESTROY ((DISPATCH DISPATCH)) (CL-WL:DESTROY DISPATCH))
 

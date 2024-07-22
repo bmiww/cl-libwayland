@@ -1,19 +1,20 @@
 
-;; ██╗    ██╗ █████╗ ██╗   ██╗██╗      █████╗ ███╗   ██╗██████╗
-;; ██║    ██║██╔══██╗╚██╗ ██╔╝██║     ██╔══██╗████╗  ██║██╔══██╗
-;; ██║ █╗ ██║███████║ ╚████╔╝ ██║     ███████║██╔██╗ ██║██║  ██║
-;; ██║███╗██║██╔══██║  ╚██╔╝  ██║     ██╔══██║██║╚██╗██║██║  ██║
-;; ╚███╔███╔╝██║  ██║   ██║   ███████╗██║  ██║██║ ╚████║██████╔╝
-;;  ╚══╝╚══╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═════╝
+;;  ██████╗██╗      ██╗    ██╗██╗
+;; ██╔════╝██║      ██║    ██║██║
+;; ██║     ██║█████╗██║ █╗ ██║██║
+;; ██║     ██║╚════╝██║███╗██║██║
+;; ╚██████╗███████╗ ╚███╔███╔╝███████╗
+;;  ╚═════╝╚══════╝  ╚══╝╚══╝ ╚══════╝
 (defpackage #:cl-wl
-  (:use #:cl #:cffi #:wl-ffi)
+  (:use #:cl #:cffi #:wl-ffi #:defcontinue)
   (:nicknames :wl)
   (:export create-client destroy-client mk-if up-if iface init-interface-definitions
 	   object get-display client version version-want id ptr destroy add-destroy-callback
 	   global dispatch-impl
 	   client objects get-display ptr rem-client remove-client-object
-	   display dispatch-event-loop event-loop-fd flush-clients display-ptr all-clients destroy))
+	   display dispatch-event-loop event-loop-fd flush-clients display-ptr all-clients destroy
 
+	   defcontinue after before))
 (in-package :cl-wl)
 
 ;; ┌┬┐┬─┐┌─┐┌─┐┬┌─┌─┐┬─┐┌─┐
@@ -205,6 +206,7 @@ and set up the client object in the lisp world for further referencing."
 (defmethod clear-client-objects ((client client))
   (maphash (lambda (id iface)
 	     (declare (ignore id))
+	     (format t "DESTROYER! ~a~%" iface)
 	     (destroy iface))
 	   (objects client)))
 
