@@ -74,6 +74,7 @@
 ;; Gracefully. Maybe need to also do a notify for all globals/objects that they are being
 ;; destroyed.
 (defmethod destroy ((display display))
+  (loop for client in (all-clients display) do (destroy-client client))
   (display-destroy-clients (display-ptr display))
   (display-destroy (display-ptr display))
   (setf *resource-tracker* (make-hash-table :test 'eq))
