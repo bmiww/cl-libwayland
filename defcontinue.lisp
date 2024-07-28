@@ -20,27 +20,28 @@
 ;; TODO: The :keep list might need to be reversed
 (defmacro defcontinue (name &rest args)
   (let* ((method-declaration `(defmethod ,name ,@args))
-	 (after-slot (intern (format nil "after~a" name) (symbol-package name)))
-	 (before-slot (intern (format nil "before~a" name) (symbol-package name)))
+	 (after-slot (intern (format nil "after~a" name) (method-package name)))
+	 (before-slot (intern (format nil "before~a" name) (method-package name)))
 	 (arg-list (car args))
+	 (class-arg (method-class-arg arg-list))
 	 (after-method `(defmethod ,name :after ,(car args)
 			  (let ((keep nil))
-			    (loop for cb in (slot-value ,(caar arg-list) ',after-slot)
+			    (loop for cb in (slot-value ,(car class-arg) ',after-slot)
 				  do (let ((result (funcall cb ,@(args-from-arglist arg-list))))
 				       (when (eq result :keep) (push cb keep))))
-			    (setf (slot-value ,(caar arg-list) ',after-slot) keep))))
+			    (setf (slot-value ,(car class-arg) ',after-slot) keep))))
 	 (before-method `(defmethod ,name :before ,(car args)
 			   (let ((keep nil))
-			     (loop for cb in (slot-value ,(caar arg-list) ',before-slot)
+			     (loop for cb in (slot-value ,(car class-arg) ',before-slot)
 				   do (let ((result (funcall cb ,@(args-from-arglist arg-list))))
 					(when (eq result :keep) (push cb keep))))
-			     (setf (slot-value ,(caar arg-list) ',before-slot) keep)))))
+			     (setf (slot-value ,(car class-arg) ',before-slot) keep)))))
 
     `(progn
        ,method-declaration
        ,after-method
        ,before-method
-       (let* ((class-name (cadar ',arg-list))
+       (let* ((class-name (cadr ',class-arg))
 	      (class (find-class class-name)))
 	 (ensure-class-slot class ',after-slot)
 	 (ensure-class-slot class ',before-slot)))))
@@ -48,10 +49,10 @@
 ;; TODO: You had to remove the compile time checks cause they didn't make sense
 ;; Maybe you can still add back in runtime checks if safety or debug compile values are high enough
 (defmacro after (method instance callback)
-  `(push ,callback (slot-value ,instance ',(intern (format nil "after~a" method) (symbol-package method)))))
+  `(push ,callback (slot-value ,instance ',(intern (format nil "after~a" method) (method-package method)))))
 
 (defmacro before (method instance callback)
-  `(push ,callback (slot-value ,instance ',(intern (format nil "before~a" method) (symbol-package method)))))
+  `(push ,callback (slot-value ,instance ',(intern (format nil "before~a" method) (method-package method)))))
 
 
 ;; ┌─┐┬  ┌─┐┌─┐┌─┐  ┌┬┐┌─┐┌┐┌┬┌─┐┬ ┬┬  ┌─┐┌┬┐┬┌─┐┌┐┌
@@ -94,3 +95,12 @@
 (defun args-from-arglist (arglist)
   (loop for arg in arglist
 	collect (if (listp arg) (car arg) arg)))
+
+(defun method-package (method)
+  (symbol-package
+   (etypecase method
+     (list (cadr method))
+     (symbol method))))
+
+;; TODO: Would still fail if the first typed arg is not the class
+(defun method-class-arg (arg-list) (find-if (lambda (arg) (listp arg)) arg-list))
