@@ -24,16 +24,22 @@
 	 (before-slot (intern (format nil "before~a" name) (method-package name)))
 	 (arg-list (car args))
 	 (class-arg (method-class-arg arg-list))
+	 (has-rest (member '&rest arg-list))
 	 (after-method `(defmethod ,name :after ,(car args)
 			  (let ((keep nil))
 			    (loop for cb in (slot-value ,(car class-arg) ',after-slot)
-				  do (let ((result (funcall cb ,@(args-from-arglist arg-list))))
+				  do (let ((result ,(if has-rest
+							`(apply cb ,@(args-with-rest arg-list))
+							`(funcall cb ,@(args-from-arglist arg-list)))))
 				       (when (eq result :keep) (push cb keep))))
+
 			    (setf (slot-value ,(car class-arg) ',after-slot) keep))))
 	 (before-method `(defmethod ,name :before ,(car args)
 			   (let ((keep nil))
 			     (loop for cb in (slot-value ,(car class-arg) ',before-slot)
-				   do (let ((result (funcall cb ,@(args-from-arglist arg-list))))
+				   do (let ((result ,(if has-rest
+							 `(apply cb ,@(args-with-rest arg-list))
+							 `(funcall cb ,@(args-from-arglist arg-list)))))
 					(when (eq result :keep) (push cb keep))))
 			     (setf (slot-value ,(car class-arg) ',before-slot) keep)))))
 
@@ -92,6 +98,8 @@
 ;; ┬ ┬┌┬┐┬┬
 ;; │ │ │ ││
 ;; └─┘ ┴ ┴┴─┘
+(defun args-with-rest (arglist) (args-from-arglist (remove '&rest arglist)))
+
 (defun args-from-arglist (arglist)
   (loop for arg in arglist
 	collect (if (listp arg) (car arg) arg)))

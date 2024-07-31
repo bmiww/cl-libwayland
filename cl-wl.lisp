@@ -121,7 +121,7 @@ Created object also gets added to the client object tracking hash-table."
     (setf (upgrade-hierarchy object) (list class))
     (setf (gethash (transient-id object) (objects (client object))) object)))
 
-(defmethod up-if (class (object object) id &rest args)
+(defcontinue up-if (class (object object) id &rest args)
   "Convenience method to update an existing interface using the context of the creating object as reference.
 Reuses the display and client fields of the reference object.
 Created object also gets added to the client object tracking hash-table."
@@ -129,7 +129,7 @@ Created object also gets added to the client object tracking hash-table."
   (let ((new-obj (apply #'change-class object class :id id args)))
     (setf (gethash id (objects (client object))) new-obj)))
 
-(defmethod dn-if ((object object))
+(defcontinue dn-if ((object object))
   "Convenience method to downgrade an existing interface to it's previous class type"
   (let* ((downgrade (member (class-name (class-of object)) (upgrade-hierarchy object))))
     (when (cadr downgrade)
