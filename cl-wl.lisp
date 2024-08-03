@@ -8,13 +8,13 @@
 (defpackage #:cl-wl
   (:use #:cl #:cffi #:wl-ffi #:defcontinue)
   (:nicknames :wl)
-  (:export create-client destroy-client mk-if up-if iface init-interface-definitions
+  (:export create-client destroy-client mk-if up-if change-if iface init-interface-definitions
 	   object get-display client version version-want id ptr destroy
 	   global dispatch-impl
 	   client objects get-display ptr rem-client remove-client-object
 	   display dispatch-event-loop event-loop-fd flush-clients display-ptr all-clients destroy
 
-	   defcontinue after before))
+	   defcontinue after before after* before*))
 (in-package :cl-wl)
 
 ;; ┌┬┐┬─┐┌─┐┌─┐┬┌─┌─┐┬─┐┌─┐
@@ -121,20 +121,26 @@ Created object also gets added to the client object tracking hash-table."
     (setf (upgrade-hierarchy object) (list class))
     (setf (gethash (transient-id object) (objects (client object))) object)))
 
-(defcontinue up-if (class (object object) id &rest args)
+(defmethod up-if (class (object object) id &rest args)
   "Convenience method to update an existing interface using the context of the creating object as reference.
 Reuses the display and client fields of the reference object.
 Created object also gets added to the client object tracking hash-table."
   (setf (upgrade-hierarchy object) (cons class (upgrade-hierarchy object)))
-  (let ((new-obj (apply #'change-class object class :id id args)))
+  (let ((new-obj (apply #'change-if class object :id id args)))
     (setf (gethash id (objects (client object))) new-obj)))
 
-(defcontinue dn-if ((object object))
+(defmethod dn-if ((object object))
   "Convenience method to downgrade an existing interface to it's previous class type"
-  (let* ((downgrade (member (class-name (class-of object)) (upgrade-hierarchy object))))
+  (let ((downgrade (member (class-name (class-of object)) (upgrade-hierarchy object))))
     (when (cadr downgrade)
       (setf (upgrade-hierarchy object) (cdr downgrade))
-      (funcall #'change-class object (cadr downgrade)))))
+      (change-if (cadr downgrade) object))))
+
+;; This method exists primarily just so we could attach one time "hooks" to the object
+(defcontinue change-if (class (object object) &rest args)
+  (if args
+      (apply #'change-class object class args)
+      (funcall #'change-class object class)))
 
 (defclass global (object)
   ((dispatch-impl :initarg :dispatch-impl :reader dispatch-impl)

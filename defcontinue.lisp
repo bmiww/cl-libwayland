@@ -7,7 +7,7 @@
 ;;  ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝   ╚═╝   ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
 (defpackage #:defcontinue
   (:use #:cl)
-  (:export defcontinue after before)
+  (:export defcontinue after before after* before*)
   (:local-nicknames (:clos :closer-mop)))
 (in-package :defcontinue)
 
@@ -60,6 +60,12 @@
 (defmacro before (method instance callback)
   `(push ,callback (slot-value ,instance ',(intern (format nil "before~a" method) (method-package method)))))
 
+(defmacro after* (method instance callback)
+  `(push (lambda (&rest args) (apply ,callback args) :keep) (slot-value ,instance ',(intern (format nil "after~a" method) (method-package method)))))
+
+(defmacro before* (method instance callback)
+  `(push (lambda (&rest args) (apply ,callback args) :keep) (slot-value ,instance ',(intern (format nil "before~a" method) (method-package method)))))
+
 
 ;; ┌─┐┬  ┌─┐┌─┐┌─┐  ┌┬┐┌─┐┌┐┌┬┌─┐┬ ┬┬  ┌─┐┌┬┐┬┌─┐┌┐┌
 ;; │  │  ├─┤└─┐└─┐  │││├─┤││││├─┘│ ││  ├─┤ │ ││ ││││
@@ -101,7 +107,7 @@
 (defun args-with-rest (arglist) (args-from-arglist (remove '&rest arglist)))
 
 (defun args-from-arglist (arglist)
-  (loop for arg in arglist
+  (loop for arg in (remove '&optional arglist)
 	collect (if (listp arg) (car arg) arg)))
 
 (defun method-package (method)
