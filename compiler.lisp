@@ -461,6 +461,8 @@ argument feed."
     (generate-wayland-classes 'xdg-output (fname "xmls/xdg-output-unstable-v1.xml")
 			      :deps '("wayland-core"))
     (generate-wayland-classes 'viewporter (fname "xmls/viewporter.xml")
+			      :deps '("wayland-core"))
+    (generate-wayland-classes 'session-lock (fname "xmls/ext-session-lock-v1.xml")
 			      :deps '("wayland-core"))))
 
 ;; ┬ ┬┌┬┐┬┬
