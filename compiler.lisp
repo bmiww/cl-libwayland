@@ -459,6 +459,8 @@ argument feed."
     (generate-wayland-classes 'xwayland (fname "xmls/xwayland-shell-v1.xml")
 			      :deps '("wayland-core"))
     (generate-wayland-classes 'xdg-output (fname "xmls/xdg-output-unstable-v1.xml")
+			      :deps '("wayland-core"))
+    (generate-wayland-classes 'viewporter (fname "xmls/viewporter.xml")
 			      :deps '("wayland-core"))))
 
 ;; ┬ ┬┌┬┐┬┬
