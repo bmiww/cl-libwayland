@@ -429,10 +429,12 @@ argument feed."
 	 (protocol (read-protocol xml))
 	 (code (gen-code protocol))
 	 (file (format nil "cl-wl.~a" (string-downcase package)))
+	 (path (merge-pathnames file (asdf:system-source-directory :cl-wl)))
 	 (asd (gen-asd package file deps)))
-    (with-open-file (stream (format nil "~a.lisp" file) :direction :output :if-exists :supersede)
+    (format t "Generating protocol lib: ~a~%" file)
+    (with-open-file (stream (format nil "~a.lisp" path) :direction :output :if-exists :supersede)
       (write-sexps code stream))
-    (with-open-file (stream (format nil "~a.asd" file) :direction :output :if-exists :supersede)
+    (with-open-file (stream (format nil "~a.asd" path) :direction :output :if-exists :supersede)
       (write-sexps asd stream))
     t))
 
@@ -455,6 +457,8 @@ argument feed."
     (generate-wayland-classes 'input-method (fname "xmls/input-method-unstable-v2.xml")
 			      :deps '("wayland-core" "text-input"))
     (generate-wayland-classes 'xwayland (fname "xmls/xwayland-shell-v1.xml")
+			      :deps '("wayland-core"))
+    (generate-wayland-classes 'xdg-output (fname "xmls/xdg-output-unstable-v1.xml")
 			      :deps '("wayland-core"))))
 
 ;; ┬ ┬┌┬┐┬┬
